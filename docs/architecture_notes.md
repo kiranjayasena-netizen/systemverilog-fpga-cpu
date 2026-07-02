@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter and instruction memory.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory and fetch unit.
 
 ## ALU
 
@@ -108,6 +108,32 @@ Behaviour:
 - Out-of-range addresses return `32'h0000_0000`.
 
 This block connects naturally to the program counter output. The program counter supplies a byte address, and the instruction memory returns the 32-bit instruction at that word-aligned location.
+
+## Fetch Unit
+
+File: `rtl/fetch_unit.sv`
+
+The fetch unit integrates the existing program counter and instruction memory into a simple instruction-fetch stage.
+
+Interface summary:
+
+- `clk`: clock input.
+- `rst`: active-high synchronous reset passed to the program counter.
+- `enable`: allows the program counter to advance when high.
+- `pc`: 32-bit current program counter output.
+- `instruction`: 32-bit instruction fetched from instruction memory.
+
+Behaviour:
+
+- Internally creates `next_pc`.
+- Computes `next_pc = pc + 32'd4`.
+- Instantiates `program_counter` with `RESET_ADDR = 32'h0000_0000`.
+- Instantiates `instruction_memory`.
+- Connects `pc` directly to the instruction memory `addr` input.
+- When enabled, the fetch stage advances by one 32-bit instruction word per clock.
+- When disabled, the PC and fetched instruction hold their current values.
+
+This is the first integrated datapath block in the project. It proves that the program counter and instruction memory interfaces work together before adding decode and execution logic.
 
 ## Open Architecture Decisions
 

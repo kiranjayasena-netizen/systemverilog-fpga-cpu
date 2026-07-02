@@ -26,7 +26,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_memory.sv` contains the combinational instruction memory.
 - `tb/instruction_memory_tb.sv` contains a self-checking instruction memory testbench.
 - The instruction memory simulation has passed in Vivado XSim.
-- ALU, register file, program counter and instruction memory waveform images have been generated.
+- `rtl/fetch_unit.sv` integrates the program counter and instruction memory.
+- `tb/fetch_unit_tb.sv` contains a self-checking fetch unit testbench.
+- The fetch unit simulation has passed in Vivado XSim.
+- ALU, register file, program counter, instruction memory and fetch unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Planned Modules
@@ -35,6 +38,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Register file
 - Program counter
 - Instruction memory or ROM
+- Fetch unit
 - Data memory or RAM interface
 - Instruction decoder
 - Control unit

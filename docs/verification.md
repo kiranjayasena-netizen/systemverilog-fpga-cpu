@@ -157,6 +157,47 @@ Conclusion:
 
 Initial instruction memory functional simulation passed.
 
+## Fetch Unit Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/fetch_unit.sv`
+- `tb/fetch_unit_tb.sv`
+
+Simulator:
+
+- Vivado XSim
+
+Tests covered:
+
+- Testbench preload of instruction memory words 0 to 3.
+- Reset returns `pc` to `32'h0000_0000`.
+- Reset fetches instruction word 0.
+- Sequential fetch advances to PC values `32'h0000_0004`, `32'h0000_0008` and `32'h0000_000c`.
+- Sequential fetch returns instruction values `32'h2222_2222`, `32'h3333_3333` and `32'h4444_4444`.
+- `enable = 0` holds the PC and instruction.
+- Final reset returns fetch state to PC 0 and instruction word 0.
+
+Result:
+
+- Console output included: "FETCH UNIT TEST PASSED."
+- Testbench summary reported 6 tests run and 0 tests failed.
+- Simulation completed at 66 ns.
+- A VCD waveform was generated.
+
+Waveform notes:
+
+- The generated waveform file is `fetch_unit_tb.vcd`.
+- The fetch unit waveform image is saved as `docs/images/fetch_unit_waveform.png`.
+
+Conclusion:
+
+Initial fetch unit integration simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.

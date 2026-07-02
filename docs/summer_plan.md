@@ -57,3 +57,13 @@
 - [x] Confirm unaligned, unwritten and out-of-range read behaviour.
 - [x] Save waveform image under `docs/images/`.
 - [x] Update verification and architecture documentation.
+
+## Phase 2 Fetch Unit Completed
+
+- [x] Create `rtl/fetch_unit.sv`.
+- [x] Create `tb/fetch_unit_tb.sv`.
+- [x] Integrate `program_counter` and `instruction_memory`.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm reset, sequential fetch, enable hold and final reset behaviour.
+- [x] Save waveform image under `docs/images/`.
+- [x] Update verification and architecture documentation.

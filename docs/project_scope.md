@@ -31,7 +31,10 @@ The project has moved beyond the Week 1 baseline into early CPU building blocks:
 - `rtl/instruction_memory.sv` implements a combinational-read instruction memory.
 - `tb/instruction_memory_tb.sv` verifies byte-address mapping, unaligned access behaviour, unwritten reads and out-of-range reads.
 - Instruction memory simulation has passed in Vivado XSim.
-- Waveform images have been generated for the ALU, register file, program counter and instruction memory.
+- `rtl/fetch_unit.sv` integrates the program counter and instruction memory.
+- `tb/fetch_unit_tb.sv` verifies reset, sequential fetch, enable hold and final reset behaviour.
+- Fetch unit simulation has passed in Vivado XSim.
+- Waveform images have been generated for the ALU, register file, program counter, instruction memory and fetch unit.
 
 ## Planned CPU Building Blocks
 
@@ -39,6 +42,7 @@ The project has moved beyond the Week 1 baseline into early CPU building blocks:
 - Register file
 - Program counter
 - Instruction memory or ROM
+- Fetch unit
 - Data memory or RAM interface
 - Instruction decoder
 - Control unit
