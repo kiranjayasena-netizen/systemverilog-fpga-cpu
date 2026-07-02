@@ -31,7 +31,6 @@
 
 ## Later Weeks
 
-- Instruction memory or ROM.
 - Data memory or RAM interface.
 - Instruction decoder.
 - Control unit.
@@ -46,5 +45,15 @@
 - [x] Create `tb/program_counter_tb.sv`.
 - [x] Run Vivado XSim simulation.
 - [x] Confirm reset, update, increment, hold and custom load behaviour.
+- [x] Save waveform image under `docs/images/`.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 Instruction Memory Completed
+
+- [x] Create `rtl/instruction_memory.sv`.
+- [x] Create `tb/instruction_memory_tb.sv`.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm byte-address to word-address mapping.
+- [x] Confirm unaligned, unwritten and out-of-range read behaviour.
 - [x] Save waveform image under `docs/images/`.
 - [x] Update verification and architecture documentation.

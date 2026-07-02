@@ -23,7 +23,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/program_counter.sv` contains the 32-bit program counter.
 - `tb/program_counter_tb.sv` contains a self-checking program counter testbench.
 - The program counter simulation has passed in Vivado XSim.
-- ALU, register file and program counter waveform images have been generated.
+- `rtl/instruction_memory.sv` contains the combinational instruction memory.
+- `tb/instruction_memory_tb.sv` contains a self-checking instruction memory testbench.
+- The instruction memory simulation has passed in Vivado XSim.
+- ALU, register file, program counter and instruction memory waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Planned Modules

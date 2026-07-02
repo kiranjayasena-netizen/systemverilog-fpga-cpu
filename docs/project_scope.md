@@ -28,7 +28,10 @@ The project has moved beyond the Week 1 baseline into early CPU building blocks:
 - `rtl/program_counter.sv` implements a 32-bit program counter.
 - `tb/program_counter_tb.sv` verifies reset, update, increment, hold and custom load behaviour.
 - Program counter simulation has passed in Vivado XSim.
-- Waveform images have been generated for the ALU, register file and program counter.
+- `rtl/instruction_memory.sv` implements a combinational-read instruction memory.
+- `tb/instruction_memory_tb.sv` verifies byte-address mapping, unaligned access behaviour, unwritten reads and out-of-range reads.
+- Instruction memory simulation has passed in Vivado XSim.
+- Waveform images have been generated for the ALU, register file, program counter and instruction memory.
 
 ## Planned CPU Building Blocks
 

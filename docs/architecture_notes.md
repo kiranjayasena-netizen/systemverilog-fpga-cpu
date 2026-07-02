@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file and program counter.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter and instruction memory.
 
 ## ALU
 
@@ -84,6 +84,30 @@ Behaviour:
 - Else the current `pc` value is held.
 
 The PC does not calculate branch or increment addresses internally. The surrounding datapath/control logic will provide `next_pc`, allowing the same interface to support sequential execution, branches and jumps later.
+
+## Instruction Memory
+
+File: `rtl/instruction_memory.sv`
+
+The instruction memory is a simple combinational-read ROM-style block for fetching 32-bit instructions from byte addresses.
+
+Interface summary:
+
+- `addr`: 32-bit byte address input.
+- `instruction`: 32-bit instruction output.
+- `DEPTH`: parameter for the number of 32-bit instruction words, defaulting to 256.
+- `INIT_FILE`: optional hex file path used with `$readmemh`, defaulting to an empty string.
+
+Behaviour:
+
+- Internally stores instructions as `logic [31:0] mem [0:DEPTH-1]`.
+- All instruction words initialise to `32'h0000_0000`.
+- If `INIT_FILE` is not empty, memory contents are loaded with `$readmemh`.
+- Uses `addr[31:2]` as the word address, so byte addresses `0`, `4`, `8` and `12` map to words `0`, `1`, `2` and `3`.
+- Reads are combinational.
+- Out-of-range addresses return `32'h0000_0000`.
+
+This block connects naturally to the program counter output. The program counter supplies a byte address, and the instruction memory returns the 32-bit instruction at that word-aligned location.
 
 ## Open Architecture Decisions
 

@@ -117,6 +117,46 @@ Conclusion:
 
 Initial program counter functional simulation passed.
 
+## Instruction Memory Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/instruction_memory.sv`
+- `tb/instruction_memory_tb.sv`
+
+Simulator:
+
+- Vivado XSim
+
+Tests covered:
+
+- Direct testbench initialisation of DUT memory words 0 to 3.
+- Byte address `0` maps to word 0.
+- Byte address `4` maps to word 1.
+- Byte address `8` maps to word 2.
+- Byte address `12` maps to word 3.
+- Unaligned byte addresses `1`, `2` and `5` map through `addr[31:2]`.
+- Unwritten memory locations return zero.
+- Out-of-range addresses return zero.
+
+Result:
+
+- Console output included: "INSTRUCTION MEMORY TEST PASSED."
+- Testbench summary reported 9 tests run and 0 tests failed.
+- Simulation completed at 11 ns.
+- A VCD waveform was generated.
+
+Waveform notes:
+
+- The generated waveform file is `instruction_memory_tb.vcd`.
+- The instruction memory waveform image is saved as `docs/images/instruction_memory_waveform.png`.
+
+Conclusion:
+
+Initial instruction memory functional simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.
