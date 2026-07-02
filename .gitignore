@@ -1,11 +1,11 @@
 # Vivado generated folders
 .Xil/
 *.cache/
-*.hw/
-*.ip_user_files/
 *.runs/
 *.sim/
+*.hw/
 *.gen/
+*.ip_user_files/
 
 # Vivado logs and journals
 *.jou
@@ -13,18 +13,29 @@
 vivado*.backup.jou
 vivado*.backup.log
 
+# Vivado generated databases and waveforms
+*.wdb
+*.pb
+xsim.dir/
+
+# Simulation outputs
+obj_dir/
+*.vcd
+*.vvp
+*.fst
+
+# Compiled binaries and build outputs
+*.exe
+*.o
+*.obj
+*.a
+*.d
+
 # Generated bitstreams/checkpoints
 *.bit
 *.bin
 *.dcp
 *.ltx
-
-# Simulation outputs
-*.vcd
-*.wdb
-*.fst
-*.vvp
-obj_dir/
 
 # Temporary/editor files
 *.tmp
@@ -36,3 +47,5 @@ Thumbs.db
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
