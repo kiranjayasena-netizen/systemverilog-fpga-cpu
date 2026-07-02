@@ -18,16 +18,16 @@
 
 ## Week 2 Task List
 
-- [ ] Define the register file interface.
-- [ ] Create `rtl/register_file.sv`.
-- [ ] Create `tb/register_file_tb.sv`.
-- [ ] Add self-checking register file tests.
-- [ ] Run Vivado simulation.
-- [ ] Generate and inspect the register file waveform.
-- [ ] Save a waveform screenshot under `docs/images/`.
-- [ ] Update `docs/verification.md` with register file simulation results.
-- [ ] Review generated files before committing.
-- [ ] Commit and push the Week 2 work.
+- [x] Define the register file interface.
+- [x] Create `rtl/register_file.sv`.
+- [x] Create `tb/register_file_tb.sv`.
+- [x] Add self-checking register file tests.
+- [x] Run Vivado simulation.
+- [x] Generate and inspect the register file waveform.
+- [x] Save a waveform screenshot under `docs/images/`.
+- [x] Update `docs/verification.md` with register file simulation results.
+- [x] Review generated files before committing.
+- [x] Commit and push the Week 2 work.
 
 ## Later Weeks
 

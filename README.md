@@ -17,7 +17,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/alu.sv` contains the first RTL module: an 8-bit combinational ALU.
 - `tb/alu_tb.sv` contains a self-checking ALU testbench.
 - The ALU simulation has passed in Vivado XSim.
-- A VCD waveform was generated and viewed.
+- `rtl/register_file.sv` contains a 32-register, 32-bit register file.
+- `tb/register_file_tb.sv` contains a self-checking register file testbench.
+- The register file simulation has passed in Vivado XSim.
+- ALU and register file waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Planned Modules

@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The only completed RTL block is the ALU.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU and register file.
 
 ## ALU
 
@@ -32,18 +32,35 @@ The first integrated CPU should stay simple. A likely starting point is a single
 - Load/store support if data memory is added early.
 - A control unit or decoder that drives the datapath.
 
-## Register File Notes
+## Register File
 
-The next module should be the register file. The interface should be agreed before implementation. Typical decisions:
+File: `rtl/register_file.sv`
 
-- Number of registers.
-- Register width.
-- Number of read ports.
-- Number of write ports.
-- Synchronous or asynchronous reads.
-- Write-enable behaviour.
-- Reset behaviour.
-- Whether register zero is hardwired to zero.
+The register file is a 32-register, 32-bit storage block intended to provide operands to the ALU and accept writeback data from the CPU datapath.
+
+Interface summary:
+
+- `clk`: clock input.
+- `rst`: active-high reset.
+- `we`: write enable.
+- `waddr`: 5-bit write address.
+- `wdata`: 32-bit write data.
+- `raddr_a`: 5-bit read address for read port A.
+- `raddr_b`: 5-bit read address for read port B.
+- `rdata_a`: 32-bit read data from read port A.
+- `rdata_b`: 32-bit read data from read port B.
+
+Behaviour:
+
+- 32 registers, addressed from `x0` to `x31`.
+- 32-bit data width.
+- Two asynchronous read ports.
+- One synchronous write port.
+- Register `x0` is hardwired to zero.
+- Writes to `x0` are ignored.
+- Reset clears the stored registers.
+
+This interface matches a simple CPU datapath where two source registers can be read at the same time and one destination register can be written back on a clock edge.
 
 ## Open Architecture Decisions
 
