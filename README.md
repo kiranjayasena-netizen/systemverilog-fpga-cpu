@@ -20,7 +20,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/register_file.sv` contains a 32-register, 32-bit register file.
 - `tb/register_file_tb.sv` contains a self-checking register file testbench.
 - The register file simulation has passed in Vivado XSim.
-- ALU and register file waveform images have been generated.
+- `rtl/program_counter.sv` contains the 32-bit program counter.
+- `tb/program_counter_tb.sv` contains a self-checking program counter testbench.
+- The program counter simulation has passed in Vivado XSim.
+- ALU, register file and program counter waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Planned Modules

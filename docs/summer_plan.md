@@ -31,7 +31,6 @@
 
 ## Later Weeks
 
-- Program counter.
 - Instruction memory or ROM.
 - Data memory or RAM interface.
 - Instruction decoder.
@@ -40,3 +39,12 @@
 - FPGA top-level wrapper.
 - Constraints and board bring-up.
 - Timing, utilisation, power and maximum clock frequency analysis.
+
+## Phase 2 Program Counter Completed
+
+- [x] Create `rtl/program_counter.sv`.
+- [x] Create `tb/program_counter_tb.sv`.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm reset, update, increment, hold and custom load behaviour.
+- [x] Save waveform image under `docs/images/`.
+- [x] Update verification and architecture documentation.

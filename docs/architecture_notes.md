@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU and register file.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file and program counter.
 
 ## ALU
 
@@ -62,11 +62,33 @@ Behaviour:
 
 This interface matches a simple CPU datapath where two source registers can be read at the same time and one destination register can be written back on a clock edge.
 
+## Program Counter
+
+File: `rtl/program_counter.sv`
+
+The program counter stores the address of the current instruction. It is a 32-bit synchronous state register with reset and enable control.
+
+Interface summary:
+
+- `clk`: clock input.
+- `rst`: active-high synchronous reset.
+- `enable`: allows the PC to update when high.
+- `next_pc`: 32-bit next PC value.
+- `pc`: 32-bit current PC output.
+
+Behaviour:
+
+- `RESET_ADDR` parameter defaults to `32'h0000_0000`.
+- On a rising clock edge, if `rst` is high, `pc` is loaded with `RESET_ADDR`.
+- Else if `enable` is high, `pc` is loaded with `next_pc`.
+- Else the current `pc` value is held.
+
+The PC does not calculate branch or increment addresses internally. The surrounding datapath/control logic will provide `next_pc`, allowing the same interface to support sequential execution, branches and jumps later.
+
 ## Open Architecture Decisions
 
 - Instruction width.
 - Data width.
-- Register count.
 - Instruction encoding.
 - Memory map.
 - Single-cycle versus multi-cycle CPU structure.

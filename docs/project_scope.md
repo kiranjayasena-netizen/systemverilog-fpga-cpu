@@ -15,14 +15,20 @@ Build a simple FPGA soft-core processor in SystemVerilog and use it to practise 
 
 ## Current Scope
 
-The project is currently at the Week 1 baseline:
+The project has moved beyond the Week 1 baseline into early CPU building blocks:
 
 - Repository structure has been created.
 - Vivado 2026.1 with Vivado Basic is available.
 - `rtl/alu.sv` implements the first combinational ALU module.
 - `tb/alu_tb.sv` verifies ADD, SUB, AND, OR, XOR and invalid/default opcode behaviour.
 - ALU simulation has passed in Vivado XSim.
-- A waveform has been generated and viewed.
+- `rtl/register_file.sv` implements a 32-register, 32-bit register file.
+- `tb/register_file_tb.sv` verifies register file reset, read, write, hold and `x0` behaviour.
+- Register file simulation has passed in Vivado XSim.
+- `rtl/program_counter.sv` implements a 32-bit program counter.
+- `tb/program_counter_tb.sv` verifies reset, update, increment, hold and custom load behaviour.
+- Program counter simulation has passed in Vivado XSim.
+- Waveform images have been generated for the ALU, register file and program counter.
 
 ## Planned CPU Building Blocks
 

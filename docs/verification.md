@@ -79,6 +79,44 @@ Conclusion:
 
 Initial register file functional simulation passed.
 
+## Program Counter Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/program_counter.sv`
+- `tb/program_counter_tb.sv`
+
+Simulator:
+
+- Vivado XSim
+
+Tests covered:
+
+- Synchronous reset loads `RESET_ADDR`.
+- Normal PC update to `32'h0000_0004`.
+- PC increment behaviour using `pc + 32'd4`.
+- `enable = 0` holds the current PC value.
+- Custom `next_pc` load to `32'h0000_0100`.
+- Final reset reloads `RESET_ADDR`.
+
+Result:
+
+- Console output included: "PROGRAM COUNTER TEST PASSED."
+- Testbench summary reported 6 tests run and 0 tests failed.
+- Simulation completed at 66 ns.
+- A VCD waveform was generated.
+
+Waveform notes:
+
+- The generated waveform file is `program_counter_tb.vcd`.
+- The program counter waveform image is saved as `docs/images/program_counter_waveform.png`.
+
+Conclusion:
+
+Initial program counter functional simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.
