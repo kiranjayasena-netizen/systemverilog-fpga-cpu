@@ -49,3 +49,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Local VS Code settings
+.vscode/
+
+# Local Vivado project folders
+vivado/
