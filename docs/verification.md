@@ -32,8 +32,7 @@ Result:
 Waveform notes:
 
 - The generated waveform file is `alu_tb.vcd`.
-- The ALU waveform screenshot should be saved as `docs/images/alu_waveform.png`.
-- No waveform screenshot has been added yet.
+- The ALU waveform image is saved as `docs/images/alu_waveform.png`.
 
 Conclusion:
 
