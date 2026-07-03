@@ -32,7 +32,6 @@
 ## Later Weeks
 
 - Data memory or RAM interface.
-- Instruction decoder.
 - Control unit.
 - CPU core integration.
 - FPGA top-level wrapper.
@@ -73,4 +72,16 @@
 - [x] Run Vivado XSim simulation.
 - [x] Confirm reset, sequential fetch, enable hold and final reset behaviour.
 - [x] Save waveform image under `docs/images/`.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 Instruction Decoder Completed
+
+- [x] Create `rtl/instruction_decoder.sv`.
+- [x] Create `tb/instruction_decoder_tb.sv`.
+- [x] Define the initial 32-bit instruction format.
+- [x] Decode opcode, register fields and signed 13-bit immediate.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm NOP, ADD, SUB, AND, OR, XOR and ADDI decode behaviour.
+- [x] Confirm positive and negative immediate sign extension.
+- [x] Confirm edge register values.
 - [x] Update verification and architecture documentation.
