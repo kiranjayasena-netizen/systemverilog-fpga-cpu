@@ -29,6 +29,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/fetch_unit.sv` integrates the program counter and instruction memory.
 - `tb/fetch_unit_tb.sv` contains a self-checking fetch unit testbench.
 - The fetch unit simulation has passed in Vivado XSim.
+- `rtl/instruction_decoder.sv` decodes the 32-bit instruction fields for opcode, register indexes and signed immediate values.
+- `tb/instruction_decoder_tb.sv` contains a self-checking instruction decoder testbench.
+- The instruction decoder simulation has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory and fetch unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
