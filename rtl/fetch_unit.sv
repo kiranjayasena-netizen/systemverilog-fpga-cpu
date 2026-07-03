@@ -1,4 +1,7 @@
-module fetch_unit (
+module fetch_unit #(
+    parameter int unsigned IMEM_DEPTH = 256,
+    parameter string       IMEM_INIT_FILE = ""
+) (
     input  logic        clk,
     input  logic        rst,
     input  logic        enable,
@@ -20,7 +23,10 @@ module fetch_unit (
         .pc(pc)
     );
 
-    instruction_memory imem (
+    instruction_memory #(
+        .DEPTH(IMEM_DEPTH),
+        .INIT_FILE(IMEM_INIT_FILE)
+    ) imem (
         .addr(pc),
         .instruction(instruction)
     );

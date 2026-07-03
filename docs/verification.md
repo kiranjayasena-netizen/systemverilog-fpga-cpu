@@ -462,6 +462,74 @@ Conclusion:
 
 CPU core LOAD/STORE integration simulation passed.
 
+## CPU Core File-Loaded Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/alu.sv`
+- `rtl/register_file.sv`
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/data_memory.sv`
+- `rtl/fetch_unit.sv`
+- `rtl/instruction_decoder.sv`
+- `rtl/control_unit.sv`
+- `rtl/cpu_core.sv`
+- `programs/load_store_test.mem`
+- `tb/cpu_core_program_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Instruction memory program loading through `IMEM_INIT_FILE`.
+- CPU core parameter forwarding through `cpu_core` and `fetch_unit`.
+- LOAD/STORE base-plus-offset execution using the standalone program file.
+- Negative sign-extended LOAD offset using `imm13 = 13'h1ffc`.
+- Register checks for `x1`, `x2`, `x3`, `x4`, `x5` and `x6`.
+- Data memory checks for words 16 and 17.
+
+Program tested:
+
+- `programs/load_store_test.mem`
+
+Result:
+
+- Console output included: "CPU CORE PROGRAM TEST PASSED."
+- Testbench summary reported 8 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x1 = 32'd64`
+  - `x2 = 32'd123`
+  - `x3 = 32'd123`
+  - `x4 = 32'd68`
+  - `x5 = 32'd123`
+  - `x6 = 32'd123`
+- Final data memory values matched expectations:
+  - `data_mem_inst.mem[16] = 32'd123`
+  - `data_mem_inst.mem[17] = 32'd123`
+- Simulation completed at 111 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_program_tb.sv
+xelab cpu_core_program_tb -s cpu_core_program_sim
+xsim cpu_core_program_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `cpu_core_program_tb.vcd`.
+
+Conclusion:
+
+CPU core file-based instruction program loading simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.

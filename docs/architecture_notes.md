@@ -121,7 +121,7 @@ This block connects naturally to the program counter output. The program counter
 
 File: `rtl/data_memory.sv`
 
-The data memory is a standalone 32-bit word memory block intended for future load/store support. It is not connected to the CPU core yet.
+The data memory is a standalone 32-bit word memory block used by the CPU core for LOAD and STORE instructions.
 
 Interface summary:
 
@@ -157,14 +157,17 @@ Interface summary:
 - `enable`: allows the program counter to advance when high.
 - `pc`: 32-bit current program counter output.
 - `instruction`: 32-bit instruction fetched from instruction memory.
+- `IMEM_DEPTH`: forwarded instruction memory depth parameter, defaulting to 256 words.
+- `IMEM_INIT_FILE`: forwarded instruction memory hex init-file path, defaulting to an empty string.
 
 Behaviour:
 
 - Internally creates `next_pc`.
 - Computes `next_pc = pc + 32'd4`.
 - Instantiates `program_counter` with `RESET_ADDR = 32'h0000_0000`.
-- Instantiates `instruction_memory`.
+- Instantiates `instruction_memory` with the forwarded `IMEM_DEPTH` and `IMEM_INIT_FILE` parameters.
 - Connects `pc` directly to the instruction memory `addr` input.
+- Supports file-based instruction program loading through the instruction memory `$readmemh` path.
 - When enabled, the fetch stage advances by one 32-bit instruction word per clock.
 - When disabled, the PC and fetched instruction hold their current values.
 
@@ -257,6 +260,8 @@ Interface summary:
 - `clk`: clock input.
 - `rst`: active-high synchronous reset passed to the fetch unit and register file.
 - `enable`: enables instruction fetch and PC advance.
+- `IMEM_DEPTH`: forwarded instruction memory depth parameter, defaulting to 256 words.
+- `IMEM_INIT_FILE`: forwarded instruction memory hex init-file path, defaulting to an empty string.
 - `pc`: current 32-bit program counter debug output.
 - `instruction`: fetched 32-bit instruction debug output.
 - `opcode`, `rd`, `rs1`, `rs2`, `imm_ext`: decoded instruction debug outputs.
@@ -265,7 +270,7 @@ Interface summary:
 
 Datapath behaviour:
 
-- `fetch_unit` supplies `pc` and `instruction`.
+- `fetch_unit` supplies `pc` and `instruction`, with optional file-based instruction memory initialisation.
 - `instruction_decoder` extracts opcode, register fields and sign-extended immediate.
 - `control_unit` maps opcode to register write, immediate select, ALU operation and valid-instruction control signals.
 - `register_file` reads `rs1` and `rs2`.
@@ -279,6 +284,8 @@ Datapath behaviour:
 - Register file write enable is `reg_write && valid_instr`.
 
 This first core supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD and STORE using the existing instruction format. Invalid opcodes are blocked from register and memory writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include branching, hazards, stalls or pipelining yet.
+
+The `programs/load_store_test.mem` program image exercises the current LOAD/STORE path through the `IMEM_INIT_FILE` parameter path. This allows CPU programs to be kept as standalone hex files instead of being inserted directly into a testbench.
 
 ## Open Architecture Decisions
 

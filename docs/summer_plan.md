@@ -126,3 +126,14 @@
 - [x] Run Vivado XSim CPU core LOAD/STORE integration simulation.
 - [x] Confirm LOAD/STORE base-plus-offset addressing and data memory contents.
 - [x] Update verification and architecture documentation.
+
+## Phase 2 File-Loaded Program Execution Completed
+
+- [x] Expose instruction memory depth and init-file parameters through `fetch_unit`.
+- [x] Expose instruction memory depth and init-file parameters through `cpu_core`.
+- [x] Add `programs/load_store_test.mem`.
+- [x] Add `tb/cpu_core_program_tb.sv`.
+- [x] Run Vivado XSim CPU core program-file simulation.
+- [x] Confirm the file-loaded LOAD/STORE program produces the expected register and data memory values.
+- [x] Confirm the existing `tb/cpu_core_tb.sv` still passes with default CPU core parameters.
+- [x] Update verification and architecture documentation.

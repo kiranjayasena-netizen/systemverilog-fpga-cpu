@@ -1,4 +1,7 @@
-module cpu_core (
+module cpu_core #(
+    parameter int unsigned IMEM_DEPTH = 256,
+    parameter string       IMEM_INIT_FILE = ""
+) (
     input  logic        clk,
     input  logic        rst,
     input  logic        enable,
@@ -35,7 +38,10 @@ module cpu_core (
     assign data_mem_write_en = mem_write && valid_instr;
     assign writeback_data    = mem_to_reg ? data_mem_read_data : alu_result;
 
-    fetch_unit fetch_inst (
+    fetch_unit #(
+        .IMEM_DEPTH(IMEM_DEPTH),
+        .IMEM_INIT_FILE(IMEM_INIT_FILE)
+    ) fetch_inst (
         .clk(clk),
         .rst(rst),
         .enable(enable),
