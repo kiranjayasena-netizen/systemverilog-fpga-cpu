@@ -207,6 +207,51 @@ Conclusion:
 
 Initial fetch unit integration simulation passed.
 
+## Instruction Decoder Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/instruction_decoder.sv`
+- `tb/instruction_decoder_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- NOP decode.
+- ADD, SUB, AND, OR, XOR and ADDI opcode decode.
+- Register field extraction for `rd`, `rs1` and `rs2`.
+- Positive immediate sign extension.
+- Negative immediate sign extension with `imm13 = 13'h1fff`, producing `imm_ext = 32'hffff_ffff`.
+- Edge register values with `rd = 31`, `rs1 = 31` and `rs2 = 31`.
+
+Result:
+
+- Console output included: "INSTRUCTION DECODER TEST PASSED."
+- Testbench summary reported 9 tests run and 0 tests failed.
+- Simulation completed at 9 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/instruction_decoder.sv tb/instruction_decoder_tb.sv
+xelab instruction_decoder_tb -s instruction_decoder_tb_sim
+xsim instruction_decoder_tb_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `instruction_decoder_tb.vcd`.
+
+Conclusion:
+
+Initial instruction decoder functional simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.
