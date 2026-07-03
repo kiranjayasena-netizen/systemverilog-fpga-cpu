@@ -26,7 +26,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_memory.sv` contains the combinational instruction memory.
 - `tb/instruction_memory_tb.sv` contains a self-checking instruction memory testbench.
 - The instruction memory simulation has passed in Vivado XSim.
-- `rtl/data_memory.sv` contains the standalone data memory block for future load/store support.
+- `rtl/data_memory.sv` contains the standalone data memory block used by the CPU core for LOAD and STORE support.
 - `tb/data_memory_tb.sv` contains a self-checking data memory testbench.
 - The data memory simulation has passed in Vivado XSim.
 - `rtl/fetch_unit.sv` integrates the program counter and parameterised instruction memory.
@@ -35,15 +35,18 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_decoder.sv` decodes the 32-bit instruction fields for opcode, register indexes and signed immediate values.
 - `tb/instruction_decoder_tb.sv` contains a self-checking instruction decoder testbench.
 - The instruction decoder simulation has passed in Vivado XSim.
-- `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation, memory access and validity control signals.
+- `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation, memory access, branch, jump and validity control signals.
 - `tb/control_unit_tb.sv` contains a self-checking control unit testbench.
 - The control unit simulation has passed in Vivado XSim.
 - `rtl/cpu_core.sv` integrates fetch, decode, control, register file, ALU and data memory blocks into the first simple CPU core, with instruction memory depth and init-file parameters exposed for program loading.
 - `tb/cpu_core_tb.sv` contains a strengthened self-checking CPU core integration testbench.
-- The CPU core simulation has passed in Vivado XSim, including LOAD and STORE integration.
+- The CPU core simulation has passed in Vivado XSim, including LOAD, STORE, BEQ and JUMP integration.
 - `programs/load_store_test.mem` contains a file-loadable LOAD/STORE CPU test program.
 - `tb/cpu_core_program_tb.sv` contains a self-checking CPU core testbench that loads `programs/load_store_test.mem` through the instruction memory `INIT_FILE` path.
 - The file-loaded CPU core program simulation has passed in Vivado XSim.
+- `programs/branch_jump_test.mem` contains a file-loadable BEQ/JUMP CPU test program.
+- `tb/cpu_core_branch_tb.sv` and `tb/cpu_core_branch_program_tb.sv` contain self-checking branch/jump CPU core testbenches.
+- The branch/jump CPU core simulations have passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 

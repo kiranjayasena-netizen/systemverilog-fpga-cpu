@@ -37,8 +37,9 @@ The first integrated CPU should stay simple. A likely starting point is a single
 - A program counter.
 - Instruction memory.
 - Basic arithmetic and logic instructions.
-- Standalone data memory and initial LOAD/STORE support.
-- Existing decoder and control unit blocks that start to drive the datapath.
+- Standalone data memory and LOAD/STORE support.
+- Initial BEQ and JUMP control-flow support.
+- Existing decoder and control unit blocks that drive the datapath.
 
 ## Register File
 
@@ -155,6 +156,7 @@ Interface summary:
 - `clk`: clock input.
 - `rst`: active-high synchronous reset passed to the program counter.
 - `enable`: allows the program counter to advance when high.
+- `next_pc`: externally selected 32-bit next program counter value.
 - `pc`: 32-bit current program counter output.
 - `instruction`: 32-bit instruction fetched from instruction memory.
 - `IMEM_DEPTH`: forwarded instruction memory depth parameter, defaulting to 256 words.
@@ -162,16 +164,14 @@ Interface summary:
 
 Behaviour:
 
-- Internally creates `next_pc`.
-- Computes `next_pc = pc + 32'd4`.
 - Instantiates `program_counter` with `RESET_ADDR = 32'h0000_0000`.
 - Instantiates `instruction_memory` with the forwarded `IMEM_DEPTH` and `IMEM_INIT_FILE` parameters.
 - Connects `pc` directly to the instruction memory `addr` input.
 - Supports file-based instruction program loading through the instruction memory `$readmemh` path.
-- When enabled, the fetch stage advances by one 32-bit instruction word per clock.
+- When enabled, the fetch stage loads the externally provided `next_pc`.
 - When disabled, the PC and fetched instruction hold their current values.
 
-This is the first integrated datapath block in the project. It proves that the program counter and instruction memory interfaces work together before adding decode and execution logic.
+This block keeps PC storage and instruction memory together while allowing the CPU core to choose sequential, branch or jump next-PC values.
 
 ## Instruction Decoder
 
@@ -212,14 +212,16 @@ Initial opcode map:
 | `4'h6` | ADDI |
 | `4'h7` | LOAD |
 | `4'h8` | STORE |
+| `4'h9` | BEQ |
+| `4'ha` | JUMP |
 
-This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic such as ADDI and base-plus-offset addressing for LOAD and STORE.
+This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic, base-plus-offset addressing for LOAD and STORE, and PC-relative BEQ/JUMP targets.
 
 ## Control Unit
 
 File: `rtl/control_unit.sv`
 
-The control unit is a purely combinational block that maps the decoded 4-bit instruction opcode to datapath control signals. It does not handle branches or status flags yet.
+The control unit is a purely combinational block that maps the decoded 4-bit instruction opcode to datapath control signals. It does not handle status flags yet.
 
 Interface summary:
 
@@ -231,23 +233,27 @@ Interface summary:
 - `mem_read`: enables data memory read for LOAD.
 - `mem_write`: enables data memory write for STORE.
 - `mem_to_reg`: selects data memory read data for register writeback.
+- `branch`: marks BEQ instructions for conditional PC target selection.
+- `jump`: marks JUMP instructions for unconditional PC target selection.
 
 Control signal table:
 
-| Instruction | Opcode | `reg_write` | `use_imm` | `alu_op` | `mem_read` | `mem_write` | `mem_to_reg` | `valid_instr` |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| NOP | `4'h0` | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `1` |
-| ADD | `4'h1` | `1` | `0` | `3'b000` ADD | `0` | `0` | `0` | `1` |
-| SUB | `4'h2` | `1` | `0` | `3'b001` SUB | `0` | `0` | `0` | `1` |
-| AND | `4'h3` | `1` | `0` | `3'b010` AND | `0` | `0` | `0` | `1` |
-| OR | `4'h4` | `1` | `0` | `3'b011` OR | `0` | `0` | `0` | `1` |
-| XOR | `4'h5` | `1` | `0` | `3'b100` XOR | `0` | `0` | `0` | `1` |
-| ADDI | `4'h6` | `1` | `1` | `3'b000` ADD | `0` | `0` | `0` | `1` |
-| LOAD | `4'h7` | `1` | `1` | `3'b000` ADD | `1` | `0` | `1` | `1` |
-| STORE | `4'h8` | `0` | `1` | `3'b000` ADD | `0` | `1` | `0` | `1` |
-| Invalid | Other | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` |
+| Instruction | Opcode | `reg_write` | `use_imm` | `alu_op` | `mem_read` | `mem_write` | `mem_to_reg` | `branch` | `jump` | `valid_instr` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| NOP | `4'h0` | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` | `0` | `1` |
+| ADD | `4'h1` | `1` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` | `0` | `1` |
+| SUB | `4'h2` | `1` | `0` | `3'b001` SUB | `0` | `0` | `0` | `0` | `0` | `1` |
+| AND | `4'h3` | `1` | `0` | `3'b010` AND | `0` | `0` | `0` | `0` | `0` | `1` |
+| OR | `4'h4` | `1` | `0` | `3'b011` OR | `0` | `0` | `0` | `0` | `0` | `1` |
+| XOR | `4'h5` | `1` | `0` | `3'b100` XOR | `0` | `0` | `0` | `0` | `0` | `1` |
+| ADDI | `4'h6` | `1` | `1` | `3'b000` ADD | `0` | `0` | `0` | `0` | `0` | `1` |
+| LOAD | `4'h7` | `1` | `1` | `3'b000` ADD | `1` | `0` | `1` | `0` | `0` | `1` |
+| STORE | `4'h8` | `0` | `1` | `3'b000` ADD | `0` | `1` | `0` | `0` | `0` | `1` |
+| BEQ | `4'h9` | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `1` | `0` | `1` |
+| JUMP | `4'ha` | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` | `1` | `1` |
+| Invalid | Other | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` | `0` | `0` |
 
-The default control outputs are safe for invalid instructions: register writeback and memory access are disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
+The default control outputs are safe for invalid instructions: register writeback, memory access, branch and jump are disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
 
 ## CPU Core
 
@@ -272,7 +278,7 @@ Datapath behaviour:
 
 - `fetch_unit` supplies `pc` and `instruction`, with optional file-based instruction memory initialisation.
 - `instruction_decoder` extracts opcode, register fields and sign-extended immediate.
-- `control_unit` maps opcode to register write, immediate select, ALU operation and valid-instruction control signals.
+- `control_unit` maps opcode to register write, immediate select, ALU operation, memory access, branch, jump and valid-instruction control signals.
 - `register_file` reads `rs1` and `rs2`.
 - ALU input A is register file read port A.
 - ALU input B is either register file read port B or `imm_ext`, selected by `use_imm`.
@@ -282,10 +288,16 @@ Datapath behaviour:
 - LOAD selects data memory read data for register writeback through `mem_to_reg`.
 - Non-memory ALU instructions select the ALU result for register writeback.
 - Register file write enable is `reg_write && valid_instr`.
+- `pc_plus_4 = pc + 32'd4`.
+- `pc_target = pc + (imm_ext << 2)`, where `imm_ext` is signed and counts instruction words.
+- BEQ takes the PC target when `branch && valid_instr && (rdata_a == rdata_b)`.
+- JUMP always takes the PC target when `jump && valid_instr`.
+- `next_pc` selects `pc_target` for a taken branch or valid jump, otherwise `pc_plus_4`.
 
-This first core supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD and STORE using the existing instruction format. Invalid opcodes are blocked from register and memory writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include branching, hazards, stalls or pipelining yet.
+This first core supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and JUMP using the existing instruction format. Invalid opcodes are blocked from register and memory writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include hazards, stalls or pipelining yet.
 
 The `programs/load_store_test.mem` program image exercises the current LOAD/STORE path through the `IMEM_INIT_FILE` parameter path. This allows CPU programs to be kept as standalone hex files instead of being inserted directly into a testbench.
+The `programs/branch_jump_test.mem` program image exercises BEQ, JUMP and not-taken branch behaviour through the same file-loaded instruction path.
 
 ## Open Architecture Decisions
 

@@ -27,16 +27,28 @@ module cpu_core #(
     logic        mem_read;
     logic        mem_write;
     logic        mem_to_reg;
+    logic        branch;
+    logic        jump;
+    logic        branch_taken;
+    logic        take_pc_target;
     logic        data_mem_read_en;
     logic        data_mem_write_en;
     logic [31:0] data_mem_read_data;
     logic [31:0] writeback_data;
+    logic [31:0] pc_plus_4;
+    logic [31:0] pc_target;
+    logic [31:0] next_pc;
 
     assign alu_b             = use_imm ? imm_ext : rdata_b;
     assign reg_file_we       = reg_write && valid_instr;
     assign data_mem_read_en  = mem_read && valid_instr;
     assign data_mem_write_en = mem_write && valid_instr;
     assign writeback_data    = mem_to_reg ? data_mem_read_data : alu_result;
+    assign pc_plus_4         = pc + 32'd4;
+    assign pc_target         = pc + (imm_ext << 2);
+    assign branch_taken      = branch && valid_instr && (rdata_a == rdata_b);
+    assign take_pc_target    = branch_taken || (jump && valid_instr);
+    assign next_pc           = take_pc_target ? pc_target : pc_plus_4;
 
     fetch_unit #(
         .IMEM_DEPTH(IMEM_DEPTH),
@@ -45,6 +57,7 @@ module cpu_core #(
         .clk(clk),
         .rst(rst),
         .enable(enable),
+        .next_pc(next_pc),
         .pc(pc),
         .instruction(instruction)
     );
@@ -67,7 +80,9 @@ module cpu_core #(
         .valid_instr(valid_instr),
         .mem_read(mem_read),
         .mem_write(mem_write),
-        .mem_to_reg(mem_to_reg)
+        .mem_to_reg(mem_to_reg),
+        .branch(branch),
+        .jump(jump)
     );
 
     register_file reg_file_inst (

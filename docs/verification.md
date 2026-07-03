@@ -234,6 +234,7 @@ Simulator:
 Tests covered:
 
 - Testbench preload of instruction memory words 0 to 3.
+- External `next_pc` drive into `fetch_unit`.
 - Reset returns `pc` to `32'h0000_0000`.
 - Reset fetches instruction word 0.
 - Sequential fetch advances to PC values `32'h0000_0004`, `32'h0000_0008` and `32'h0000_000c`.
@@ -247,6 +248,14 @@ Result:
 - Testbench summary reported 6 tests run and 0 tests failed.
 - Simulation completed at 66 ns.
 - A VCD waveform was generated.
+
+Commands rerun after adding external next-PC support:
+
+```powershell
+xvlog -sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/fetch_unit.sv tb/fetch_unit_tb.sv
+xelab fetch_unit_tb -s fetch_unit_branch_sim
+xsim fetch_unit_branch_sim -runall
+```
 
 Waveform notes:
 
@@ -322,21 +331,23 @@ Tests covered:
 - ADDI immediate-operand control outputs.
 - LOAD memory-read and memory-to-register control outputs.
 - STORE memory-write control outputs.
-- Invalid opcode defaults for `4'h9` and `4'hf`.
+- BEQ branch control output.
+- JUMP control output.
+- Invalid opcode defaults for `4'hb` and `4'hf`.
 
 Result:
 
 - Console output included: "CONTROL UNIT TEST PASSED."
-- Testbench summary reported 11 tests run and 0 tests failed.
-- Simulation completed at 11 ns.
+- Testbench summary reported 13 tests run and 0 tests failed.
+- Simulation completed at 13 ns.
 - A VCD waveform was generated.
 
 Commands run from the repository root:
 
 ```powershell
 xvlog -sv rtl/control_unit.sv tb/control_unit_tb.sv
-xelab control_unit_tb -s control_unit_load_store_sim
-xsim control_unit_load_store_sim -runall
+xelab control_unit_tb -s control_unit_branch_sim
+xsim control_unit_branch_sim -runall
 ```
 
 Waveform notes:
@@ -345,7 +356,7 @@ Waveform notes:
 
 Conclusion:
 
-Control unit LOAD/STORE functional simulation passed.
+Control unit LOAD/STORE and BEQ/JUMP functional simulation passed.
 
 ## CPU Core Functional Simulation
 
@@ -450,8 +461,8 @@ Commands run from the repository root:
 
 ```powershell
 xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
-xelab cpu_core_tb -s cpu_core_load_store_sim
-xsim cpu_core_load_store_sim -runall
+xelab cpu_core_tb -s cpu_core_regression_sim
+xsim cpu_core_regression_sim -runall
 ```
 
 Waveform notes:
@@ -518,8 +529,8 @@ Commands run from the repository root:
 
 ```powershell
 xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_program_tb.sv
-xelab cpu_core_program_tb -s cpu_core_program_sim
-xsim cpu_core_program_sim -runall
+xelab cpu_core_program_tb -s cpu_core_program_regression_sim
+xsim cpu_core_program_regression_sim -runall
 ```
 
 Waveform notes:
@@ -529,6 +540,145 @@ Waveform notes:
 Conclusion:
 
 CPU core file-based instruction program loading simulation passed.
+
+## CPU Core Branch/Jump Integration Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/alu.sv`
+- `rtl/register_file.sv`
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/data_memory.sv`
+- `rtl/fetch_unit.sv`
+- `rtl/instruction_decoder.sv`
+- `rtl/control_unit.sv`
+- `rtl/cpu_core.sv`
+- `tb/cpu_core_branch_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- BEQ taken when `rs1 == rs2`.
+- PC-relative branch target calculation using `pc + (imm_ext << 2)`.
+- JUMP target calculation using the same signed word-offset path.
+- Skipped instruction protection for branch and jump paths.
+- Not-taken BEQ falls through to `pc + 4`.
+- Register `x0` remains hardwired to zero.
+
+Program tested:
+
+- `ADDI x1, x0, 5`
+- `ADDI x2, x0, 5`
+- `BEQ  x1, x2, +2`
+- `ADDI x3, x0, 99`
+- `ADDI x3, x0, 42`
+- `JUMP +2`
+- `ADDI x4, x0, 99`
+- `ADDI x4, x0, 77`
+- `NOP`
+- `ADDI x5, x0, 1`
+- `ADDI x6, x0, 2`
+- `BEQ  x5, x6, +2`
+- `ADDI x7, x0, 55`
+- `NOP`
+
+Result:
+
+- Console output included: "CPU CORE BRANCH TEST PASSED."
+- Testbench summary reported 8 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd5`
+  - `x2 = 32'd5`
+  - `x3 = 32'd42`
+  - `x4 = 32'd77`
+  - `x7 = 32'd55`
+- The test also confirmed `x3 != 32'd99` and `x4 != 32'd99`.
+- Simulation completed at 161 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_tb.sv
+xelab cpu_core_branch_tb -s cpu_core_branch_sim
+xsim cpu_core_branch_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `cpu_core_branch_tb.vcd`.
+
+Conclusion:
+
+CPU core BEQ/JUMP integration simulation passed.
+
+## CPU Core File-Loaded Branch/Jump Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/alu.sv`
+- `rtl/register_file.sv`
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/data_memory.sv`
+- `rtl/fetch_unit.sv`
+- `rtl/instruction_decoder.sv`
+- `rtl/control_unit.sv`
+- `rtl/cpu_core.sv`
+- `programs/branch_jump_test.mem`
+- `tb/cpu_core_branch_program_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded BEQ/JUMP program execution through `IMEM_INIT_FILE`.
+- Taken BEQ skip path.
+- JUMP skip path.
+- Not-taken BEQ fall-through path.
+- Final register checks through `dut.reg_file_inst.regs`.
+
+Result:
+
+- Console output included: "CPU CORE BRANCH PROGRAM TEST PASSED."
+- Testbench summary reported 8 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd5`
+  - `x2 = 32'd5`
+  - `x3 = 32'd42`
+  - `x4 = 32'd77`
+  - `x7 = 32'd55`
+- The test also confirmed `x3 != 32'd99` and `x4 != 32'd99`.
+- Simulation completed at 161 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_program_tb.sv
+xelab cpu_core_branch_program_tb -s cpu_core_branch_program_sim
+xsim cpu_core_branch_program_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `cpu_core_branch_program_tb.vcd`.
+
+Conclusion:
+
+CPU core file-loaded BEQ/JUMP program simulation passed.
 
 ## Future Verification Work
 

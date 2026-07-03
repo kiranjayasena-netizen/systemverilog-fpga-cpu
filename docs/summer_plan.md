@@ -137,3 +137,17 @@
 - [x] Confirm the file-loaded LOAD/STORE program produces the expected register and data memory values.
 - [x] Confirm the existing `tb/cpu_core_tb.sv` still passes with default CPU core parameters.
 - [x] Update verification and architecture documentation.
+
+## Phase 2 Branch/Jump Control Flow Completed
+
+- [x] Add BEQ and JUMP opcodes to the control unit.
+- [x] Add branch and jump control outputs.
+- [x] Move next-PC selection into `rtl/cpu_core.sv`.
+- [x] Update `rtl/fetch_unit.sv` to accept an external `next_pc`.
+- [x] Update `tb/fetch_unit_tb.sv` for the new fetch interface.
+- [x] Add `tb/cpu_core_branch_tb.sv`.
+- [x] Add `programs/branch_jump_test.mem`.
+- [x] Add `tb/cpu_core_branch_program_tb.sv`.
+- [x] Run Vivado XSim control unit, fetch unit, branch CPU and file-loaded branch program simulations.
+- [x] Rerun existing CPU core and file-loaded LOAD/STORE regressions.
+- [x] Update verification and architecture documentation.

@@ -5,6 +5,7 @@ module fetch_unit_tb;
     logic        clk;
     logic        rst;
     logic        enable;
+    logic [31:0] next_pc;
     logic [31:0] pc;
     logic [31:0] instruction;
 
@@ -15,6 +16,7 @@ module fetch_unit_tb;
         .clk(clk),
         .rst(rst),
         .enable(enable),
+        .next_pc(next_pc),
         .pc(pc),
         .instruction(instruction)
     );
@@ -66,6 +68,7 @@ module fetch_unit_tb;
         clk          = 1'b0;
         rst          = 1'b0;
         enable       = 1'b0;
+        next_pc      = 32'h0000_0000;
         tests_run    = 0;
         tests_failed = 0;
 
@@ -84,17 +87,21 @@ module fetch_unit_tb;
         @(negedge clk);
         rst    = 1'b0;
         enable = 1'b1;
+        next_pc = 32'h0000_0004;
         clock_tick();
         check_fetch("fetch word 1", 32'h0000_0004, 32'h2222_2222);
 
+        next_pc = 32'h0000_0008;
         clock_tick();
         check_fetch("fetch word 2", 32'h0000_0008, 32'h3333_3333);
 
+        next_pc = 32'h0000_000c;
         clock_tick();
         check_fetch("fetch word 3", 32'h0000_000c, 32'h4444_4444);
 
         @(negedge clk);
         enable = 1'b0;
+        next_pc = 32'h0000_0100;
         clock_tick();
         check_fetch("enable low holds fetch state", 32'h0000_000c, 32'h4444_4444);
 

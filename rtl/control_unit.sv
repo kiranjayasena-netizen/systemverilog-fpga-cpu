@@ -6,7 +6,9 @@ module control_unit (
     output logic       valid_instr,
     output logic       mem_read,
     output logic       mem_write,
-    output logic       mem_to_reg
+    output logic       mem_to_reg,
+    output logic       branch,
+    output logic       jump
 );
 
     localparam logic [2:0] ALU_ADD = 3'b000;
@@ -23,6 +25,8 @@ module control_unit (
         mem_read    = 1'b0;
         mem_write   = 1'b0;
         mem_to_reg  = 1'b0;
+        branch      = 1'b0;
+        jump        = 1'b0;
 
         case (opcode)
             4'h0: begin
@@ -80,6 +84,18 @@ module control_unit (
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
                 mem_write   = 1'b1;
+            end
+
+            4'h9: begin
+                alu_op      = ALU_ADD;
+                valid_instr = 1'b1;
+                branch      = 1'b1;
+            end
+
+            4'ha: begin
+                alu_op      = ALU_ADD;
+                valid_instr = 1'b1;
+                jump        = 1'b1;
             end
 
             default: begin
