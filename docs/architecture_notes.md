@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit and instruction decoder.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory and fetch unit.
 
 ## ALU
 
@@ -38,7 +38,7 @@ The first integrated CPU should stay simple. A likely starting point is a single
 - Instruction memory.
 - Basic arithmetic and logic instructions.
 - Load/store support if data memory is added early.
-- A control unit or decoder that drives the datapath.
+- Existing decoder and control unit blocks that start to drive the datapath.
 
 ## Register File
 
@@ -142,46 +142,6 @@ Behaviour:
 - When disabled, the PC and fetched instruction hold their current values.
 
 This is the first integrated datapath block in the project. It proves that the program counter and instruction memory interfaces work together before adding decode and execution logic.
-
-## Instruction Decoder
-
-File: `rtl/instruction_decoder.sv`
-
-The instruction decoder is a purely combinational block that splits a 32-bit instruction into opcode, register index and immediate fields. It does not generate control signals yet; that will be added later in the control unit or a wider decode stage.
-
-Instruction format:
-
-| Bits | Field | Description |
-| --- | --- | --- |
-| `[31:28]` | `opcode` | 4-bit operation code |
-| `[27:23]` | `rd` | 5-bit destination register index |
-| `[22:18]` | `rs1` | 5-bit source register 1 index |
-| `[17:13]` | `rs2` | 5-bit source register 2 index |
-| `[12:0]` | `imm13` | 13-bit immediate field |
-
-Interface summary:
-
-- `instruction`: 32-bit instruction input.
-- `opcode`: decoded 4-bit opcode.
-- `rd`: decoded 5-bit destination register.
-- `rs1`: decoded 5-bit source register 1.
-- `rs2`: decoded 5-bit source register 2.
-- `imm13`: raw 13-bit immediate.
-- `imm_ext`: `imm13` sign-extended to 32 bits.
-
-Initial opcode map:
-
-| Opcode | Operation |
-| --- | --- |
-| `4'h0` | NOP |
-| `4'h1` | ADD |
-| `4'h2` | SUB |
-| `4'h3` | AND |
-| `4'h4` | OR |
-| `4'h5` | XOR |
-| `4'h6` | ADDI |
-
-This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic such as ADDI.
 
 ## Open Architecture Decisions
 

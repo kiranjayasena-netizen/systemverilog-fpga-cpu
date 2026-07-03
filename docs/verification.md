@@ -252,6 +252,52 @@ Conclusion:
 
 Initial instruction decoder functional simulation passed.
 
+
+## Control Unit Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/control_unit.sv`
+- `tb/control_unit_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- NOP control outputs.
+- ADD, SUB, AND, OR and XOR register-register ALU control outputs.
+- ADDI immediate-operand control outputs.
+- Invalid opcode defaults for `4'h7` and `4'hf`.
+
+Result:
+
+- Console output included: "CONTROL UNIT TEST PASSED."
+- Testbench summary reported 9 tests run and 0 tests failed.
+- Simulation completed at 9 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/control_unit.sv tb/control_unit_tb.sv
+xelab control_unit_tb -s control_unit_tb_sim
+xsim control_unit_tb_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `control_unit_tb.vcd`.
+
+Conclusion:
+
+Initial control unit functional simulation passed.
+
+=======
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.
