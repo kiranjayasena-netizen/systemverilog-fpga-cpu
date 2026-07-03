@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit and instruction decoder.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit.
 
 ## ALU
 
@@ -147,7 +147,7 @@ This is the first integrated datapath block in the project. It proves that the p
 
 File: `rtl/instruction_decoder.sv`
 
-The instruction decoder is a purely combinational block that splits a 32-bit instruction into opcode, register index and immediate fields. It does not generate control signals yet; that will be added later in the control unit or a wider decode stage.
+The instruction decoder is a purely combinational block that splits a 32-bit instruction into opcode, register index and immediate fields. The decoded opcode feeds the control unit.
 
 Instruction format:
 
@@ -182,6 +182,35 @@ Initial opcode map:
 | `4'h6` | ADDI |
 
 This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic such as ADDI.
+
+## Control Unit
+
+File: `rtl/control_unit.sv`
+
+The control unit is a purely combinational block that maps the decoded 4-bit instruction opcode to the first set of datapath control signals. It does not handle branches, memory access or status flags yet.
+
+Interface summary:
+
+- `opcode`: 4-bit instruction opcode from the instruction decoder.
+- `reg_write`: enables register file writeback.
+- `use_imm`: selects the sign-extended immediate as the second ALU operand instead of `rs2` data.
+- `alu_op`: 3-bit ALU operation code.
+- `valid_instr`: marks recognised instruction opcodes.
+
+Control signal table:
+
+| Instruction | Opcode | `reg_write` | `use_imm` | `alu_op` | `valid_instr` |
+| --- | --- | --- | --- | --- | --- |
+| NOP | `4'h0` | `0` | `0` | `3'b000` ADD | `1` |
+| ADD | `4'h1` | `1` | `0` | `3'b000` ADD | `1` |
+| SUB | `4'h2` | `1` | `0` | `3'b001` SUB | `1` |
+| AND | `4'h3` | `1` | `0` | `3'b010` AND | `1` |
+| OR | `4'h4` | `1` | `0` | `3'b011` OR | `1` |
+| XOR | `4'h5` | `1` | `0` | `3'b100` XOR | `1` |
+| ADDI | `4'h6` | `1` | `1` | `3'b000` ADD | `1` |
+| Invalid | Other | `0` | `0` | `3'b000` ADD | `0` |
+
+The default control outputs are safe for invalid instructions: register writeback is disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
 
 ## Open Architecture Decisions
 

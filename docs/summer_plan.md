@@ -32,7 +32,6 @@
 ## Later Weeks
 
 - Data memory or RAM interface.
-- Control unit.
 - CPU core integration.
 - FPGA top-level wrapper.
 - Constraints and board bring-up.
@@ -84,4 +83,14 @@
 - [x] Confirm NOP, ADD, SUB, AND, OR, XOR and ADDI decode behaviour.
 - [x] Confirm positive and negative immediate sign extension.
 - [x] Confirm edge register values.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 Control Unit Completed
+
+- [x] Create `rtl/control_unit.sv`.
+- [x] Create `tb/control_unit_tb.sv`.
+- [x] Map instruction opcodes to register write, immediate select, ALU operation and valid-instruction control signals.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm NOP, ADD, SUB, AND, OR, XOR and ADDI control behaviour.
+- [x] Confirm invalid opcode defaults.
 - [x] Update verification and architecture documentation.

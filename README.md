@@ -32,9 +32,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_decoder.sv` decodes the 32-bit instruction fields for opcode, register indexes and signed immediate values.
 - `tb/instruction_decoder_tb.sv` contains a self-checking instruction decoder testbench.
 - The instruction decoder simulation has passed in Vivado XSim.
-
-=======
-- ALU, register file, program counter, instruction memory and fetch unit waveform images have been generated.
+- `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation and validity control signals.
+- `tb/control_unit_tb.sv` contains a self-checking control unit testbench.
+- The control unit simulation has passed in Vivado XSim.
+- ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Planned Modules
@@ -45,7 +46,6 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Instruction memory or ROM
 - Fetch unit
 - Data memory or RAM interface
-- Instruction decoder
 - CPU core integration module
 - FPGA top-level wrapper
 - Constraint files for the target FPGA board

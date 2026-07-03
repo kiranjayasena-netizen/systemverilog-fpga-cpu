@@ -252,7 +252,6 @@ Conclusion:
 
 Initial instruction decoder functional simulation passed.
 
-
 ## Control Unit Functional Simulation
 
 Status: passed.
@@ -295,10 +294,6 @@ Waveform notes:
 Conclusion:
 
 Initial control unit functional simulation passed.
-
-=======
-
-=======
 
 ## Future Verification Work
 
