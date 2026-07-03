@@ -101,5 +101,6 @@
 - [x] Integrate fetch unit, instruction decoder, control unit, register file and ALU.
 - [x] Run Vivado XSim simulation.
 - [x] Confirm ADDI, ADD, SUB and XOR execution through final register checks.
+- [x] Strengthen CPU core test coverage for AND, OR, negative immediates, `x0` protection, invalid opcode protection and NOP.
 - [x] Generate `cpu_core_tb.vcd`.
 - [x] Update verification and architecture documentation.

@@ -319,40 +319,61 @@ Tests covered:
 
 - Integrated fetch, decode, control, register read, ALU execution and register writeback.
 - Program preload through `dut.fetch_inst.imem.mem`.
-- ADDI writeback to `x1` and `x2`.
-- ADD using `x1` and `x2`.
-- SUB using `x3` and `x1`.
-- XOR using `x1` and `x2`.
+- ADDI immediate path.
+- ADD register-register path.
+- SUB register-register path.
+- AND register-register path.
+- OR register-register path.
+- XOR register-register path.
+- Negative immediate sign extension.
+- Register `x0` write protection.
+- Invalid opcode protection through disabled register writeback.
+- NOP execution without state corruption.
+- Final PC check after 11 instructions.
 - Final register checks through `dut.reg_file_inst.regs`.
 
 Program tested:
 
-- `ADDI x1, x0, 5`
-- `ADDI x2, x0, 7`
+- `ADDI x1, x0, 15`
+- `ADDI x2, x0, 10`
 - `ADD  x3, x1, x2`
-- `SUB  x4, x3, x1`
-- `XOR  x5, x1, x2`
+- `SUB  x4, x1, x2`
+- `AND  x5, x1, x2`
+- `OR   x6, x1, x2`
+- `XOR  x7, x1, x2`
+- `ADDI x8, x0, -1`
+- `ADDI x0, x0, 99`
+- Invalid opcode `4'hf` writing `x9`
+- `NOP`
 
 Result:
 
 - Console output included: "CPU CORE TEST PASSED."
-- Testbench summary reported 5 tests run and 0 tests failed.
+- Testbench summary reported 11 tests run and 0 tests failed.
 - Final register values matched expectations:
-  - `x1 = 32'h0000_0005`
-  - `x2 = 32'h0000_0007`
-  - `x3 = 32'h0000_000c`
-  - `x4 = 32'h0000_0007`
-  - `x5 = 32'h0000_0002`
-- Simulation completed at 66 ns.
+  - `x0 = 32'h0000_0000`
+  - `x1 = 32'h0000_000f`
+  - `x2 = 32'h0000_000a`
+  - `x3 = 32'h0000_0019`
+  - `x4 = 32'h0000_0005`
+  - `x5 = 32'h0000_000a`
+  - `x6 = 32'h0000_000f`
+  - `x7 = 32'h0000_0005`
+  - `x8 = 32'hffff_ffff`
+  - `x9 = 32'h0000_0000`
+- Final PC matched `32'h0000_002c`.
+- Simulation completed at 131 ns.
 - A VCD waveform was generated.
 
 Commands run from the repository root:
 
 ```powershell
 xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
-xelab cpu_core_tb -s cpu_core_tb_sim
-xsim cpu_core_tb_sim -runall
+xelab cpu_core_tb -s cpu_core_tb_strong_sim
+xsim cpu_core_tb_strong_sim -runall
 ```
+
+The requested snapshot name `cpu_core_tb_sim` was locked by an open Vivado/XSim process in this session, so the strengthened test was elaborated and run with the fresh snapshot name `cpu_core_tb_strong_sim`.
 
 Waveform notes:
 
@@ -360,7 +381,7 @@ Waveform notes:
 
 Conclusion:
 
-Initial CPU core integration simulation passed.
+Strengthened CPU core integration simulation passed.
 
 ## Future Verification Work
 

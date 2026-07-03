@@ -240,7 +240,7 @@ Datapath behaviour:
 - The ALU result is connected to register file writeback data.
 - Register file write enable is `reg_write && valid_instr`.
 
-This first core supports NOP, ADD, SUB, AND, OR, XOR and ADDI using the existing instruction format. It does not include data memory, branching, hazards, stalls or pipelining yet.
+This first core supports NOP, ADD, SUB, AND, OR, XOR and ADDI using the existing instruction format. Invalid opcodes are blocked from register writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include data memory, branching, hazards, stalls or pipelining yet.
 
 ## Open Architecture Decisions
 
