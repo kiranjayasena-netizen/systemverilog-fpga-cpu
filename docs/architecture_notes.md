@@ -8,7 +8,15 @@ The architecture is still in the early module-building phase. The completed RTL 
 
 File: `rtl/alu.sv`
 
-The ALU is an 8-bit combinational block with two operands, a 3-bit opcode and one 8-bit result.
+The ALU is a parameterised combinational block with two operands, a 3-bit opcode and one result. Its `WIDTH` parameter defaults to 32 bits, matching the register file and the current CPU datapath width.
+
+Interface summary:
+
+- `WIDTH`: data width parameter, defaulting to 32.
+- `a`: `WIDTH`-bit operand A.
+- `b`: `WIDTH`-bit operand B.
+- `op`: 3-bit operation select.
+- `y`: `WIDTH`-bit result.
 
 | Opcode | Operation |
 | --- | --- |
@@ -17,7 +25,7 @@ The ALU is an 8-bit combinational block with two operands, a 3-bit opcode and on
 | `3'b010` | AND |
 | `3'b011` | OR |
 | `3'b100` | XOR |
-| Other | `8'h00` default result |
+| Other | `'0` default result |
 
 The ALU currently does not expose flags such as carry, zero, negative or overflow. These can be added later if the CPU instruction set needs them.
 
@@ -138,7 +146,6 @@ This is the first integrated datapath block in the project. It proves that the p
 ## Open Architecture Decisions
 
 - Instruction width.
-- Data width.
 - Instruction encoding.
 - Memory map.
 - Single-cycle versus multi-cycle CPU structure.

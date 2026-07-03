@@ -39,6 +39,13 @@
 - Constraints and board bring-up.
 - Timing, utilisation, power and maximum clock frequency analysis.
 
+## ALU Datapath Alignment In Progress
+
+- [x] Parameterise `rtl/alu.sv` with `WIDTH = 32` by default.
+- [x] Update `tb/alu_tb.sv` to test the 32-bit ALU datapath.
+- [x] Run the updated ALU testbench in Vivado XSim.
+- [x] Refresh `docs/images/alu_waveform.png` from the updated waveform.
+
 ## Phase 2 Program Counter Completed
 
 - [x] Create `rtl/program_counter.sv`.

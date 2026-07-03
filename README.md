@@ -14,9 +14,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Vivado XSim is the main simulator.
 - GitHub is connected to ChatGPT.
 - Codex CLI is installed.
-- `rtl/alu.sv` contains the first RTL module: an 8-bit combinational ALU.
-- `tb/alu_tb.sv` contains a self-checking ALU testbench.
-- The ALU simulation has passed in Vivado XSim.
+- `rtl/alu.sv` contains the first RTL module: a parameterised combinational ALU that defaults to the 32-bit CPU datapath width.
+- `tb/alu_tb.sv` contains a self-checking 32-bit ALU testbench.
+- The parameterised 32-bit ALU simulation has passed in Vivado XSim.
 - `rtl/register_file.sv` contains a 32-register, 32-bit register file.
 - `tb/register_file_tb.sv` contains a self-checking register file testbench.
 - The register file simulation has passed in Vivado XSim.

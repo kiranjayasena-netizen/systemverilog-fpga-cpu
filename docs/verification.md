@@ -11,32 +11,41 @@ Files tested:
 
 Simulator:
 
-- Vivado XSim
+- Vivado XSim 2026.1
 
 Tests covered:
 
-- ADD
-- SUB
-- AND
-- OR
-- XOR
-- Invalid/default opcodes
+- ADD zero, basic add and 32-bit wraparound.
+- SUB zero, basic subtract and 32-bit underflow.
+- AND bit patterns.
+- OR bit patterns.
+- XOR bit patterns.
+- Invalid/default opcodes `3'b101`, `3'b110` and `3'b111`.
 
 Result:
 
-- ADD, SUB, AND, OR, XOR and invalid/default opcode tests passed.
-- Console output included: "All ALU tests passed."
-- The upgraded testbench currently reports: "All 27 ALU tests passed."
-- A VCD waveform was generated and viewed.
+- The updated parameterised 32-bit ALU testbench passed in Vivado XSim.
+- Console summary:
+  - `Tests run:    27`
+  - `Tests failed: 0`
+  - `ALU TEST PASSED`
+
+Commands to run from the repository root in a Vivado-enabled PowerShell:
+
+```powershell
+xvlog -sv rtl/alu.sv tb/alu_tb.sv
+xelab alu_tb -s alu_tb_sim
+xsim alu_tb_sim -runall
+```
 
 Waveform notes:
 
 - The generated waveform file is `alu_tb.vcd`.
-- The ALU waveform image is saved as `docs/images/alu_waveform.png`.
+- The refreshed ALU waveform image is saved as `docs/images/alu_waveform.png`.
 
 Conclusion:
 
-Initial ALU functional simulation passed.
+The parameterised ALU aligns with the 32-bit register file and CPU datapath, and the updated 32-bit functional simulation passed.
 
 ## Register File Functional Simulation
 
