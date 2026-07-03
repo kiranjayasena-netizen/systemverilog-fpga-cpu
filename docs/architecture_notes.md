@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and first simple CPU core.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, data memory, fetch unit, instruction decoder, control unit and first simple CPU core.
 
 ## ALU
 
@@ -116,6 +116,33 @@ Behaviour:
 - Out-of-range addresses return `32'h0000_0000`.
 
 This block connects naturally to the program counter output. The program counter supplies a byte address, and the instruction memory returns the 32-bit instruction at that word-aligned location.
+
+## Data Memory
+
+File: `rtl/data_memory.sv`
+
+The data memory is a standalone 32-bit word memory block intended for future load/store support. It is not connected to the CPU core yet.
+
+Interface summary:
+
+- `clk`: clock input.
+- `rst`: active-high synchronous reset.
+- `mem_read`: enables combinational read data output.
+- `mem_write`: enables synchronous write on the rising clock edge.
+- `addr`: 32-bit byte address input.
+- `write_data`: 32-bit write data input.
+- `read_data`: 32-bit read data output.
+- `DEPTH`: parameter for the number of 32-bit memory words, defaulting to 256.
+
+Behaviour:
+
+- Internally stores words as `logic [31:0] mem [0:DEPTH-1]`.
+- Uses `addr[31:2]` as the word address, matching the instruction memory address convention.
+- On reset, all memory words are cleared to `32'h0000_0000`.
+- Writes are synchronous and only occur when `mem_write` is high and the word address is in range.
+- Reads are combinational and return the selected word only when `mem_read` is high and the word address is in range.
+- Disabled reads and out-of-range reads return `32'h0000_0000`.
+- Out-of-range writes are ignored.
 
 ## Fetch Unit
 

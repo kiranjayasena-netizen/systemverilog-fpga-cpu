@@ -166,6 +166,56 @@ Conclusion:
 
 Initial instruction memory functional simulation passed.
 
+## Data Memory Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/data_memory.sv`
+- `tb/data_memory_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Reset clears memory words.
+- Write and read word 0.
+- Write and read word 1.
+- Word 0 remains unchanged after writing word 1.
+- Overwrite of word 0.
+- Unaligned byte address `1` maps to word 0.
+- Unaligned byte address `5` maps to word 1.
+- `mem_read = 0` returns zero.
+- Disabled write does not update memory.
+- Out-of-range read returns zero.
+- Out-of-range write does not corrupt valid memory.
+
+Result:
+
+- Console output included: "DATA MEMORY TEST PASSED."
+- Testbench summary reported 13 tests run and 0 tests failed.
+- Simulation completed at 201 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/data_memory.sv tb/data_memory_tb.sv
+xelab data_memory_tb -s data_memory_tb_sim
+xsim data_memory_tb_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `data_memory_tb.vcd`.
+
+Conclusion:
+
+Initial data memory functional simulation passed.
+
 ## Fetch Unit Functional Simulation
 
 Status: passed.

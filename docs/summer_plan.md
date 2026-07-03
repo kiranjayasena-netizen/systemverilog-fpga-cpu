@@ -31,7 +31,6 @@
 
 ## Later Weeks
 
-- Data memory or RAM interface.
 - FPGA top-level wrapper.
 - Constraints and board bring-up.
 - Timing, utilisation, power and maximum clock frequency analysis.
@@ -60,6 +59,17 @@
 - [x] Confirm byte-address to word-address mapping.
 - [x] Confirm unaligned, unwritten and out-of-range read behaviour.
 - [x] Save waveform image under `docs/images/`.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 Data Memory Completed
+
+- [x] Create `rtl/data_memory.sv`.
+- [x] Create `tb/data_memory_tb.sv`.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm reset clears memory.
+- [x] Confirm aligned and unaligned word-address mapping.
+- [x] Confirm disabled reads, disabled writes and out-of-range accesses behave safely.
+- [x] Generate `data_memory_tb.vcd`.
 - [x] Update verification and architecture documentation.
 
 ## Phase 2 Fetch Unit Completed

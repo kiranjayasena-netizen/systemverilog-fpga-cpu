@@ -26,6 +26,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_memory.sv` contains the combinational instruction memory.
 - `tb/instruction_memory_tb.sv` contains a self-checking instruction memory testbench.
 - The instruction memory simulation has passed in Vivado XSim.
+- `rtl/data_memory.sv` contains the standalone data memory block for future load/store support.
+- `tb/data_memory_tb.sv` contains a self-checking data memory testbench.
+- The data memory simulation has passed in Vivado XSim.
 - `rtl/fetch_unit.sv` integrates the program counter and instruction memory.
 - `tb/fetch_unit_tb.sv` contains a self-checking fetch unit testbench.
 - The fetch unit simulation has passed in Vivado XSim.
@@ -48,7 +51,6 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Program counter
 - Instruction memory or ROM
 - Fetch unit
-- Data memory or RAM interface
 - FPGA top-level wrapper
 - Constraint files for the target FPGA board
 - Small assembly or machine-code test programs
