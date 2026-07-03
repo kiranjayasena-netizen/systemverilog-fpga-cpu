@@ -35,12 +35,12 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/instruction_decoder.sv` decodes the 32-bit instruction fields for opcode, register indexes and signed immediate values.
 - `tb/instruction_decoder_tb.sv` contains a self-checking instruction decoder testbench.
 - The instruction decoder simulation has passed in Vivado XSim.
-- `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation and validity control signals.
+- `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation, memory access and validity control signals.
 - `tb/control_unit_tb.sv` contains a self-checking control unit testbench.
 - The control unit simulation has passed in Vivado XSim.
-- `rtl/cpu_core.sv` integrates fetch, decode, control, register file and ALU blocks into the first simple CPU core.
+- `rtl/cpu_core.sv` integrates fetch, decode, control, register file, ALU and data memory blocks into the first simple CPU core.
 - `tb/cpu_core_tb.sv` contains a strengthened self-checking CPU core integration testbench.
-- The CPU core simulation has passed in Vivado XSim.
+- The CPU core simulation has passed in Vivado XSim, including LOAD and STORE integration.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 

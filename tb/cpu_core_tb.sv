@@ -127,11 +127,114 @@ module cpu_core_tb;
         end
     endtask
 
+    task automatic check_mem_word(
+        input string       case_name,
+        input int unsigned word_index,
+        input logic [31:0] expected
+    );
+        logic [31:0] actual;
+        begin
+            actual = dut.data_mem_inst.mem[word_index];
+            tests_run++;
+
+            if (actual !== expected) begin
+                tests_failed++;
+                $error(
+                    "FAIL: %s | mem[%0d] expected=0x%08h got=0x%08h",
+                    case_name,
+                    word_index,
+                    expected,
+                    actual
+                );
+            end else begin
+                $display(
+                    "PASS: %s | mem[%0d]=0x%08h",
+                    case_name,
+                    word_index,
+                    actual
+                );
+            end
+        end
+    endtask
+
+    task automatic run_program(input int unsigned instruction_count);
+        begin
+            @(negedge clk);
+            rst    = 1'b1;
+            enable = 1'b0;
+            clock_tick();
+
+            @(negedge clk);
+            rst    = 1'b0;
+            enable = 1'b1;
+
+            repeat (instruction_count) begin
+                clock_tick();
+            end
+
+            @(negedge clk);
+            enable = 1'b0;
+            #1;
+        end
+    endtask
+
+    task automatic preload_strengthened_alu_program;
+        begin
+            // ADDI x1, x0, 15      -> x1 = 15
+            // ADDI x2, x0, 10      -> x2 = 10
+            // ADD  x3, x1, x2      -> x3 = 25
+            // SUB  x4, x1, x2      -> x4 = 5
+            // AND  x5, x1, x2      -> x5 = 10
+            // OR   x6, x1, x2      -> x6 = 15
+            // XOR  x7, x1, x2      -> x7 = 5
+            // ADDI x8, x0, -1      -> x8 = 0xFFFF_FFFF
+            // ADDI x0, x0, 99      -> x0 should remain 0
+            // INVALID x9, x1, x2   -> x9 should remain 0
+            // NOP
+            dut.fetch_inst.imem.mem[0]  = build_instruction(4'h6, 5'd1, 5'd0, 5'd0, 13'd15);
+            dut.fetch_inst.imem.mem[1]  = build_instruction(4'h6, 5'd2, 5'd0, 5'd0, 13'd10);
+            dut.fetch_inst.imem.mem[2]  = build_instruction(4'h1, 5'd3, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[3]  = build_instruction(4'h2, 5'd4, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[4]  = build_instruction(4'h3, 5'd5, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[5]  = build_instruction(4'h4, 5'd6, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[6]  = build_instruction(4'h5, 5'd7, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[7]  = build_instruction(4'h6, 5'd8, 5'd0, 5'd0, 13'h1fff);
+            dut.fetch_inst.imem.mem[8]  = build_instruction(4'h6, 5'd0, 5'd0, 5'd0, 13'd99);
+            dut.fetch_inst.imem.mem[9]  = build_instruction(4'hf, 5'd9, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[10] = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+        end
+    endtask
+
+    task automatic preload_load_store_program;
+        begin
+            // ADDI  x1, x0, 64
+            // ADDI  x2, x0, 123
+            // STORE x2, [x1 + 0]
+            // LOAD  x3, [x1 + 0]
+            // ADDI  x4, x0, 68
+            // LOAD  x5, [x4 - 4]
+            // STORE x3, [x1 + 4]
+            // LOAD  x6, [x1 + 4]
+            // NOP
+            dut.fetch_inst.imem.mem[0]  = build_instruction(4'h6, 5'd1, 5'd0, 5'd0, 13'd64);
+            dut.fetch_inst.imem.mem[1]  = build_instruction(4'h6, 5'd2, 5'd0, 5'd0, 13'd123);
+            dut.fetch_inst.imem.mem[2]  = build_instruction(4'h8, 5'd0, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[3]  = build_instruction(4'h7, 5'd3, 5'd1, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[4]  = build_instruction(4'h6, 5'd4, 5'd0, 5'd0, 13'd68);
+            dut.fetch_inst.imem.mem[5]  = build_instruction(4'h7, 5'd5, 5'd4, 5'd0, 13'h1ffc);
+            dut.fetch_inst.imem.mem[6]  = build_instruction(4'h8, 5'd0, 5'd1, 5'd3, 13'd4);
+            dut.fetch_inst.imem.mem[7]  = build_instruction(4'h7, 5'd6, 5'd1, 5'd0, 13'd4);
+            dut.fetch_inst.imem.mem[8]  = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[9]  = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[10] = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+        end
+    endtask
+
     initial begin
         $dumpfile("cpu_core_tb.vcd");
         $dumpvars(0, cpu_core_tb);
 
-        $display("Starting strengthened CPU core simulation...");
+        $display("Starting CPU core LOAD/STORE integration simulation...");
 
         rst          = 1'b0;
         enable       = 1'b0;
@@ -141,53 +244,10 @@ module cpu_core_tb;
         // Allow DUT initial blocks to run.
         #1;
 
-        // Program:
-        //
-        // ADDI x1, x0, 15      -> x1 = 15
-        // ADDI x2, x0, 10      -> x2 = 10
-        // ADD  x3, x1, x2      -> x3 = 25
-        // SUB  x4, x1, x2      -> x4 = 5
-        // AND  x5, x1, x2      -> x5 = 10
-        // OR   x6, x1, x2      -> x6 = 15
-        // XOR  x7, x1, x2      -> x7 = 5
-        // ADDI x8, x0, -1      -> x8 = 0xFFFF_FFFF
-        // ADDI x0, x0, 99      -> x0 should remain 0
-        // INVALID x9, x1, x2   -> x9 should remain 0
-        // NOP
-        dut.fetch_inst.imem.mem[0]  = build_instruction(4'h6, 5'd1, 5'd0, 5'd0, 13'd15);
-        dut.fetch_inst.imem.mem[1]  = build_instruction(4'h6, 5'd2, 5'd0, 5'd0, 13'd10);
-        dut.fetch_inst.imem.mem[2]  = build_instruction(4'h1, 5'd3, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[3]  = build_instruction(4'h2, 5'd4, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[4]  = build_instruction(4'h3, 5'd5, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[5]  = build_instruction(4'h4, 5'd6, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[6]  = build_instruction(4'h5, 5'd7, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[7]  = build_instruction(4'h6, 5'd8, 5'd0, 5'd0, 13'h1fff);
-        dut.fetch_inst.imem.mem[8]  = build_instruction(4'h6, 5'd0, 5'd0, 5'd0, 13'd99);
-        dut.fetch_inst.imem.mem[9]  = build_instruction(4'hf, 5'd9, 5'd1, 5'd2, 13'd0);
-        dut.fetch_inst.imem.mem[10] = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+        $display("Running strengthened ALU/register program...");
+        preload_strengthened_alu_program();
+        run_program(11);
 
-        // Apply synchronous reset.
-        @(negedge clk);
-        rst    = 1'b1;
-        enable = 1'b0;
-        clock_tick();
-
-        // Start CPU execution.
-        @(negedge clk);
-        rst    = 1'b0;
-        enable = 1'b1;
-
-        // Execute all 11 instructions.
-        repeat (11) begin
-            clock_tick();
-        end
-
-        // Stop fetching so final debug signals are stable.
-        @(negedge clk);
-        enable = 1'b0;
-        #1;
-
-        // Final register checks.
         check_reg("x0 remains hardwired to zero",      5'd0, 32'h0000_0000);
         check_reg("ADDI x1, x0, 15",                  5'd1, 32'h0000_000f);
         check_reg("ADDI x2, x0, 10",                  5'd2, 32'h0000_000a);
@@ -201,6 +261,19 @@ module cpu_core_tb;
 
         // Optional final sanity check: after 11 instructions, PC should have advanced to 44.
         check_signal("PC advanced after strengthened program", pc, 32'h0000_002c);
+
+        $display("Running LOAD/STORE program...");
+        preload_load_store_program();
+        run_program(9);
+
+        check_reg("LOAD/STORE x1 base address",        5'd1, 32'd64);
+        check_reg("LOAD/STORE x2 store data",          5'd2, 32'd123);
+        check_reg("LOAD x3 from [x1 + 0]",             5'd3, 32'd123);
+        check_reg("ADDI x4, x0, 68",                  5'd4, 32'd68);
+        check_reg("LOAD x5 from [x4 - 4]",             5'd5, 32'd123);
+        check_reg("LOAD x6 from [x1 + 4]",             5'd6, 32'd123);
+        check_mem_word("STORE wrote word 16", 16, 32'd123);
+        check_mem_word("STORE wrote word 17", 17, 32'd123);
 
         $display("----------------------------------");
         $display("Tests run:    %0d", tests_run);

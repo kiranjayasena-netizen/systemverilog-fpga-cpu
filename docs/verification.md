@@ -320,21 +320,23 @@ Tests covered:
 - NOP control outputs.
 - ADD, SUB, AND, OR and XOR register-register ALU control outputs.
 - ADDI immediate-operand control outputs.
-- Invalid opcode defaults for `4'h7` and `4'hf`.
+- LOAD memory-read and memory-to-register control outputs.
+- STORE memory-write control outputs.
+- Invalid opcode defaults for `4'h9` and `4'hf`.
 
 Result:
 
 - Console output included: "CONTROL UNIT TEST PASSED."
-- Testbench summary reported 9 tests run and 0 tests failed.
-- Simulation completed at 9 ns.
+- Testbench summary reported 11 tests run and 0 tests failed.
+- Simulation completed at 11 ns.
 - A VCD waveform was generated.
 
 Commands run from the repository root:
 
 ```powershell
 xvlog -sv rtl/control_unit.sv tb/control_unit_tb.sv
-xelab control_unit_tb -s control_unit_tb_sim
-xsim control_unit_tb_sim -runall
+xelab control_unit_tb -s control_unit_load_store_sim
+xsim control_unit_load_store_sim -runall
 ```
 
 Waveform notes:
@@ -343,7 +345,7 @@ Waveform notes:
 
 Conclusion:
 
-Initial control unit functional simulation passed.
+Control unit LOAD/STORE functional simulation passed.
 
 ## CPU Core Functional Simulation
 
@@ -355,6 +357,7 @@ Files tested:
 - `rtl/register_file.sv`
 - `rtl/program_counter.sv`
 - `rtl/instruction_memory.sv`
+- `rtl/data_memory.sv`
 - `rtl/fetch_unit.sv`
 - `rtl/instruction_decoder.sv`
 - `rtl/control_unit.sv`
@@ -368,6 +371,7 @@ Simulator:
 Tests covered:
 
 - Integrated fetch, decode, control, register read, ALU execution and register writeback.
+- Integrated data memory read, data memory write and memory-to-register writeback.
 - Program preload through `dut.fetch_inst.imem.mem`.
 - ADDI immediate path.
 - ADD register-register path.
@@ -380,9 +384,15 @@ Tests covered:
 - Invalid opcode protection through disabled register writeback.
 - NOP execution without state corruption.
 - Final PC check after 11 instructions.
+- LOAD from `[rs1 + imm13]`.
+- STORE to `[rs1 + imm13]`.
+- LOAD using negative sign-extended offset `imm13 = 13'h1ffc`.
+- Final data memory checks through `dut.data_mem_inst.mem`.
 - Final register checks through `dut.reg_file_inst.regs`.
 
-Program tested:
+Programs tested:
+
+Strengthened ALU/register program:
 
 - `ADDI x1, x0, 15`
 - `ADDI x2, x0, 10`
@@ -396,11 +406,23 @@ Program tested:
 - Invalid opcode `4'hf` writing `x9`
 - `NOP`
 
+LOAD/STORE program:
+
+- `ADDI  x1, x0, 64`
+- `ADDI  x2, x0, 123`
+- `STORE x2, [x1 + 0]`
+- `LOAD  x3, [x1 + 0]`
+- `ADDI  x4, x0, 68`
+- `LOAD  x5, [x4 - 4]`
+- `STORE x3, [x1 + 4]`
+- `LOAD  x6, [x1 + 4]`
+- `NOP`
+
 Result:
 
 - Console output included: "CPU CORE TEST PASSED."
-- Testbench summary reported 11 tests run and 0 tests failed.
-- Final register values matched expectations:
+- Testbench summary reported 19 tests run and 0 tests failed.
+- Strengthened ALU/register final values matched expectations:
   - `x0 = 32'h0000_0000`
   - `x1 = 32'h0000_000f`
   - `x2 = 32'h0000_000a`
@@ -412,18 +434,25 @@ Result:
   - `x8 = 32'hffff_ffff`
   - `x9 = 32'h0000_0000`
 - Final PC matched `32'h0000_002c`.
-- Simulation completed at 131 ns.
+- LOAD/STORE final values matched expectations:
+  - `x1 = 32'd64`
+  - `x2 = 32'd123`
+  - `x3 = 32'd123`
+  - `x4 = 32'd68`
+  - `x5 = 32'd123`
+  - `x6 = 32'd123`
+  - `data_mem_inst.mem[16] = 32'd123`
+  - `data_mem_inst.mem[17] = 32'd123`
+- Simulation completed at 241 ns.
 - A VCD waveform was generated.
 
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
-xelab cpu_core_tb -s cpu_core_tb_strong_sim
-xsim cpu_core_tb_strong_sim -runall
+xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
+xelab cpu_core_tb -s cpu_core_load_store_sim
+xsim cpu_core_load_store_sim -runall
 ```
-
-The requested snapshot name `cpu_core_tb_sim` was locked by an open Vivado/XSim process in this session, so the strengthened test was elaborated and run with the fresh snapshot name `cpu_core_tb_strong_sim`.
 
 Waveform notes:
 
@@ -431,7 +460,7 @@ Waveform notes:
 
 Conclusion:
 
-Strengthened CPU core integration simulation passed.
+CPU core LOAD/STORE integration simulation passed.
 
 ## Future Verification Work
 

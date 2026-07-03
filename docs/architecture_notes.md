@@ -37,7 +37,7 @@ The first integrated CPU should stay simple. A likely starting point is a single
 - A program counter.
 - Instruction memory.
 - Basic arithmetic and logic instructions.
-- Load/store support if data memory is added early.
+- Standalone data memory and initial LOAD/STORE support.
 - Existing decoder and control unit blocks that start to drive the datapath.
 
 ## Register File
@@ -207,14 +207,16 @@ Initial opcode map:
 | `4'h4` | OR |
 | `4'h5` | XOR |
 | `4'h6` | ADDI |
+| `4'h7` | LOAD |
+| `4'h8` | STORE |
 
-This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic such as ADDI.
+This decoder format keeps the fetched 32-bit instruction aligned with the 32-bit datapath and the 32-register register file. The signed immediate path supports immediate arithmetic such as ADDI and base-plus-offset addressing for LOAD and STORE.
 
 ## Control Unit
 
 File: `rtl/control_unit.sv`
 
-The control unit is a purely combinational block that maps the decoded 4-bit instruction opcode to the first set of datapath control signals. It does not handle branches, memory access or status flags yet.
+The control unit is a purely combinational block that maps the decoded 4-bit instruction opcode to datapath control signals. It does not handle branches or status flags yet.
 
 Interface summary:
 
@@ -223,27 +225,32 @@ Interface summary:
 - `use_imm`: selects the sign-extended immediate as the second ALU operand instead of `rs2` data.
 - `alu_op`: 3-bit ALU operation code.
 - `valid_instr`: marks recognised instruction opcodes.
+- `mem_read`: enables data memory read for LOAD.
+- `mem_write`: enables data memory write for STORE.
+- `mem_to_reg`: selects data memory read data for register writeback.
 
 Control signal table:
 
-| Instruction | Opcode | `reg_write` | `use_imm` | `alu_op` | `valid_instr` |
-| --- | --- | --- | --- | --- | --- |
-| NOP | `4'h0` | `0` | `0` | `3'b000` ADD | `1` |
-| ADD | `4'h1` | `1` | `0` | `3'b000` ADD | `1` |
-| SUB | `4'h2` | `1` | `0` | `3'b001` SUB | `1` |
-| AND | `4'h3` | `1` | `0` | `3'b010` AND | `1` |
-| OR | `4'h4` | `1` | `0` | `3'b011` OR | `1` |
-| XOR | `4'h5` | `1` | `0` | `3'b100` XOR | `1` |
-| ADDI | `4'h6` | `1` | `1` | `3'b000` ADD | `1` |
-| Invalid | Other | `0` | `0` | `3'b000` ADD | `0` |
+| Instruction | Opcode | `reg_write` | `use_imm` | `alu_op` | `mem_read` | `mem_write` | `mem_to_reg` | `valid_instr` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| NOP | `4'h0` | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `1` |
+| ADD | `4'h1` | `1` | `0` | `3'b000` ADD | `0` | `0` | `0` | `1` |
+| SUB | `4'h2` | `1` | `0` | `3'b001` SUB | `0` | `0` | `0` | `1` |
+| AND | `4'h3` | `1` | `0` | `3'b010` AND | `0` | `0` | `0` | `1` |
+| OR | `4'h4` | `1` | `0` | `3'b011` OR | `0` | `0` | `0` | `1` |
+| XOR | `4'h5` | `1` | `0` | `3'b100` XOR | `0` | `0` | `0` | `1` |
+| ADDI | `4'h6` | `1` | `1` | `3'b000` ADD | `0` | `0` | `0` | `1` |
+| LOAD | `4'h7` | `1` | `1` | `3'b000` ADD | `1` | `0` | `1` | `1` |
+| STORE | `4'h8` | `0` | `1` | `3'b000` ADD | `0` | `1` | `0` | `1` |
+| Invalid | Other | `0` | `0` | `3'b000` ADD | `0` | `0` | `0` | `0` |
 
-The default control outputs are safe for invalid instructions: register writeback is disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
+The default control outputs are safe for invalid instructions: register writeback and memory access are disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
 
 ## CPU Core
 
 File: `rtl/cpu_core.sv`
 
-The CPU core is the first integrated datapath. It connects the fetch unit, instruction decoder, control unit, register file and 32-bit ALU into a simple single-cycle execution path.
+The CPU core is the first integrated datapath. It connects the fetch unit, instruction decoder, control unit, register file, 32-bit ALU and data memory into a simple single-cycle execution path.
 
 Interface summary:
 
@@ -264,10 +271,14 @@ Datapath behaviour:
 - `register_file` reads `rs1` and `rs2`.
 - ALU input A is register file read port A.
 - ALU input B is either register file read port B or `imm_ext`, selected by `use_imm`.
-- The ALU result is connected to register file writeback data.
+- The ALU result is used directly for arithmetic/logical writeback and as the data memory address for LOAD and STORE.
+- `data_memory` reads or writes using the ALU result address.
+- STORE writes register file read port B data to data memory.
+- LOAD selects data memory read data for register writeback through `mem_to_reg`.
+- Non-memory ALU instructions select the ALU result for register writeback.
 - Register file write enable is `reg_write && valid_instr`.
 
-This first core supports NOP, ADD, SUB, AND, OR, XOR and ADDI using the existing instruction format. Invalid opcodes are blocked from register writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include data memory, branching, hazards, stalls or pipelining yet.
+This first core supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD and STORE using the existing instruction format. Invalid opcodes are blocked from register and memory writeback by `valid_instr`, and writes to `x0` remain blocked inside the register file. The core does not include branching, hazards, stalls or pipelining yet.
 
 ## Open Architecture Decisions
 

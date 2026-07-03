@@ -98,9 +98,9 @@
 
 - [x] Create `rtl/control_unit.sv`.
 - [x] Create `tb/control_unit_tb.sv`.
-- [x] Map instruction opcodes to register write, immediate select, ALU operation and valid-instruction control signals.
+- [x] Map instruction opcodes to register write, immediate select, ALU operation, memory access and valid-instruction control signals.
 - [x] Run Vivado XSim simulation.
-- [x] Confirm NOP, ADD, SUB, AND, OR, XOR and ADDI control behaviour.
+- [x] Confirm NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD and STORE control behaviour.
 - [x] Confirm invalid opcode defaults.
 - [x] Update verification and architecture documentation.
 
@@ -108,9 +108,21 @@
 
 - [x] Create `rtl/cpu_core.sv`.
 - [x] Create `tb/cpu_core_tb.sv`.
-- [x] Integrate fetch unit, instruction decoder, control unit, register file and ALU.
+- [x] Integrate fetch unit, instruction decoder, control unit, register file, ALU and data memory.
 - [x] Run Vivado XSim simulation.
 - [x] Confirm ADDI, ADD, SUB and XOR execution through final register checks.
 - [x] Strengthen CPU core test coverage for AND, OR, negative immediates, `x0` protection, invalid opcode protection and NOP.
 - [x] Generate `cpu_core_tb.vcd`.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 LOAD/STORE Integration Completed
+
+- [x] Add LOAD and STORE opcodes to the control unit.
+- [x] Add data memory read, write and memory-to-register control signals.
+- [x] Integrate `data_memory` into `rtl/cpu_core.sv`.
+- [x] Route LOAD data through the register file writeback path.
+- [x] Route STORE data from register file read port B into data memory.
+- [x] Run Vivado XSim control unit simulation.
+- [x] Run Vivado XSim CPU core LOAD/STORE integration simulation.
+- [x] Confirm LOAD/STORE base-plus-offset addressing and data memory contents.
 - [x] Update verification and architecture documentation.
