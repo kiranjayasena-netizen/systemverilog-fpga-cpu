@@ -32,7 +32,6 @@
 ## Later Weeks
 
 - Data memory or RAM interface.
-- CPU core integration.
 - FPGA top-level wrapper.
 - Constraints and board bring-up.
 - Timing, utilisation, power and maximum clock frequency analysis.
@@ -93,4 +92,14 @@
 - [x] Run Vivado XSim simulation.
 - [x] Confirm NOP, ADD, SUB, AND, OR, XOR and ADDI control behaviour.
 - [x] Confirm invalid opcode defaults.
+- [x] Update verification and architecture documentation.
+
+## Phase 2 CPU Core Completed
+
+- [x] Create `rtl/cpu_core.sv`.
+- [x] Create `tb/cpu_core_tb.sv`.
+- [x] Integrate fetch unit, instruction decoder, control unit, register file and ALU.
+- [x] Run Vivado XSim simulation.
+- [x] Confirm ADDI, ADD, SUB and XOR execution through final register checks.
+- [x] Generate `cpu_core_tb.vcd`.
 - [x] Update verification and architecture documentation.

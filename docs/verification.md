@@ -295,6 +295,73 @@ Conclusion:
 
 Initial control unit functional simulation passed.
 
+## CPU Core Functional Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/alu.sv`
+- `rtl/register_file.sv`
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/fetch_unit.sv`
+- `rtl/instruction_decoder.sv`
+- `rtl/control_unit.sv`
+- `rtl/cpu_core.sv`
+- `tb/cpu_core_tb.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Integrated fetch, decode, control, register read, ALU execution and register writeback.
+- Program preload through `dut.fetch_inst.imem.mem`.
+- ADDI writeback to `x1` and `x2`.
+- ADD using `x1` and `x2`.
+- SUB using `x3` and `x1`.
+- XOR using `x1` and `x2`.
+- Final register checks through `dut.reg_file_inst.regs`.
+
+Program tested:
+
+- `ADDI x1, x0, 5`
+- `ADDI x2, x0, 7`
+- `ADD  x3, x1, x2`
+- `SUB  x4, x3, x1`
+- `XOR  x5, x1, x2`
+
+Result:
+
+- Console output included: "CPU CORE TEST PASSED."
+- Testbench summary reported 5 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x1 = 32'h0000_0005`
+  - `x2 = 32'h0000_0007`
+  - `x3 = 32'h0000_000c`
+  - `x4 = 32'h0000_0007`
+  - `x5 = 32'h0000_0002`
+- Simulation completed at 66 ns.
+- A VCD waveform was generated.
+
+Commands run from the repository root:
+
+```powershell
+xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
+xelab cpu_core_tb -s cpu_core_tb_sim
+xsim cpu_core_tb_sim -runall
+```
+
+Waveform notes:
+
+- The generated waveform file is `cpu_core_tb.vcd`.
+
+Conclusion:
+
+Initial CPU core integration simulation passed.
+
 ## Future Verification Work
 
 - Add verification entries for each new RTL module.

@@ -35,6 +35,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `rtl/control_unit.sv` maps decoded instruction opcodes to register write, immediate select, ALU operation and validity control signals.
 - `tb/control_unit_tb.sv` contains a self-checking control unit testbench.
 - The control unit simulation has passed in Vivado XSim.
+- `rtl/cpu_core.sv` integrates fetch, decode, control, register file and ALU blocks into the first simple CPU core.
+- `tb/cpu_core_tb.sv` contains a self-checking CPU core integration testbench.
+- The CPU core simulation has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -46,7 +49,6 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Instruction memory or ROM
 - Fetch unit
 - Data memory or RAM interface
-- CPU core integration module
 - FPGA top-level wrapper
 - Constraint files for the target FPGA board
 - Small assembly or machine-code test programs

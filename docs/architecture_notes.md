@@ -2,7 +2,7 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit.
+The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and first simple CPU core.
 
 ## ALU
 
@@ -211,6 +211,36 @@ Control signal table:
 | Invalid | Other | `0` | `0` | `3'b000` ADD | `0` |
 
 The default control outputs are safe for invalid instructions: register writeback is disabled, immediate selection is disabled, the ALU operation defaults to ADD and `valid_instr` is low.
+
+## CPU Core
+
+File: `rtl/cpu_core.sv`
+
+The CPU core is the first integrated datapath. It connects the fetch unit, instruction decoder, control unit, register file and 32-bit ALU into a simple single-cycle execution path.
+
+Interface summary:
+
+- `clk`: clock input.
+- `rst`: active-high synchronous reset passed to the fetch unit and register file.
+- `enable`: enables instruction fetch and PC advance.
+- `pc`: current 32-bit program counter debug output.
+- `instruction`: fetched 32-bit instruction debug output.
+- `opcode`, `rd`, `rs1`, `rs2`, `imm_ext`: decoded instruction debug outputs.
+- `reg_write`, `use_imm`, `alu_op`, `valid_instr`: control debug outputs.
+- `alu_result`: 32-bit ALU result debug output.
+
+Datapath behaviour:
+
+- `fetch_unit` supplies `pc` and `instruction`.
+- `instruction_decoder` extracts opcode, register fields and sign-extended immediate.
+- `control_unit` maps opcode to register write, immediate select, ALU operation and valid-instruction control signals.
+- `register_file` reads `rs1` and `rs2`.
+- ALU input A is register file read port A.
+- ALU input B is either register file read port B or `imm_ext`, selected by `use_imm`.
+- The ALU result is connected to register file writeback data.
+- Register file write enable is `reg_write && valid_instr`.
+
+This first core supports NOP, ADD, SUB, AND, OR, XOR and ADDI using the existing instruction format. It does not include data memory, branching, hazards, stalls or pipelining yet.
 
 ## Open Architecture Decisions
 
