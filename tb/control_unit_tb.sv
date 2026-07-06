@@ -2,11 +2,7 @@
 
 module control_unit_tb;
 
-    localparam logic [2:0] ALU_ADD = 3'b000;
-    localparam logic [2:0] ALU_SUB = 3'b001;
-    localparam logic [2:0] ALU_AND = 3'b010;
-    localparam logic [2:0] ALU_OR  = 3'b011;
-    localparam logic [2:0] ALU_XOR = 3'b100;
+    import cpu_defs_pkg::*;
 
     logic [3:0] opcode;
     logic       reg_write;
@@ -115,17 +111,17 @@ module control_unit_tb;
         tests_run    = 0;
         tests_failed = 0;
 
-        check_control("NOP",   4'h0, 1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("ADD",   4'h1, 1'b1, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("SUB",   4'h2, 1'b1, 1'b0, ALU_SUB, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("AND",   4'h3, 1'b1, 1'b0, ALU_AND, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("OR",    4'h4, 1'b1, 1'b0, ALU_OR,  1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("XOR",   4'h5, 1'b1, 1'b0, ALU_XOR, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("ADDI",  4'h6, 1'b1, 1'b1, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
-        check_control("LOAD",  4'h7, 1'b1, 1'b1, ALU_ADD, 1'b1, 1'b1, 1'b0, 1'b1, 1'b0, 1'b0);
-        check_control("STORE", 4'h8, 1'b0, 1'b1, ALU_ADD, 1'b1, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0);
-        check_control("BEQ",   4'h9, 1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0);
-        check_control("JUMP",  4'ha, 1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1);
+        check_control("NOP",   OP_NOP,   1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("ADD",   OP_ADD,   1'b1, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("SUB",   OP_SUB,   1'b1, 1'b0, ALU_SUB, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("AND",   OP_AND,   1'b1, 1'b0, ALU_AND, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("OR",    OP_OR,    1'b1, 1'b0, ALU_OR,  1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("XOR",   OP_XOR,   1'b1, 1'b0, ALU_XOR, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("ADDI",  OP_ADDI,  1'b1, 1'b1, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
+        check_control("LOAD",  OP_LOAD,  1'b1, 1'b1, ALU_ADD, 1'b1, 1'b1, 1'b0, 1'b1, 1'b0, 1'b0);
+        check_control("STORE", OP_STORE, 1'b0, 1'b1, ALU_ADD, 1'b1, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0);
+        check_control("BEQ",   OP_BEQ,   1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0);
+        check_control("JUMP",  OP_JUMP,  1'b0, 1'b0, ALU_ADD, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1);
 
         check_control("INVALID opcode b", 4'hb, 1'b0, 1'b0, ALU_ADD, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);
         check_control("INVALID opcode f", 4'hf, 1'b0, 1'b0, ALU_ADD, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0);

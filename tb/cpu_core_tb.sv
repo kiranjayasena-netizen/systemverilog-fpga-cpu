@@ -2,6 +2,8 @@
 
 module cpu_core_tb;
 
+    import cpu_defs_pkg::*;
+
     logic        clk;
     logic        rst;
     logic        enable;
@@ -191,17 +193,17 @@ module cpu_core_tb;
             // ADDI x0, x0, 99      -> x0 should remain 0
             // INVALID x9, x1, x2   -> x9 should remain 0
             // NOP
-            dut.fetch_inst.imem.mem[0]  = build_instruction(4'h6, 5'd1, 5'd0, 5'd0, 13'd15);
-            dut.fetch_inst.imem.mem[1]  = build_instruction(4'h6, 5'd2, 5'd0, 5'd0, 13'd10);
-            dut.fetch_inst.imem.mem[2]  = build_instruction(4'h1, 5'd3, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[3]  = build_instruction(4'h2, 5'd4, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[4]  = build_instruction(4'h3, 5'd5, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[5]  = build_instruction(4'h4, 5'd6, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[6]  = build_instruction(4'h5, 5'd7, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[7]  = build_instruction(4'h6, 5'd8, 5'd0, 5'd0, 13'h1fff);
-            dut.fetch_inst.imem.mem[8]  = build_instruction(4'h6, 5'd0, 5'd0, 5'd0, 13'd99);
+            dut.fetch_inst.imem.mem[0]  = build_instruction(OP_ADDI, 5'd1, 5'd0, 5'd0, 13'd15);
+            dut.fetch_inst.imem.mem[1]  = build_instruction(OP_ADDI, 5'd2, 5'd0, 5'd0, 13'd10);
+            dut.fetch_inst.imem.mem[2]  = build_instruction(OP_ADD, 5'd3, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[3]  = build_instruction(OP_SUB, 5'd4, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[4]  = build_instruction(OP_AND, 5'd5, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[5]  = build_instruction(OP_OR, 5'd6, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[6]  = build_instruction(OP_XOR, 5'd7, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[7]  = build_instruction(OP_ADDI, 5'd8, 5'd0, 5'd0, 13'h1fff);
+            dut.fetch_inst.imem.mem[8]  = build_instruction(OP_ADDI, 5'd0, 5'd0, 5'd0, 13'd99);
             dut.fetch_inst.imem.mem[9]  = build_instruction(4'hf, 5'd9, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[10] = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[10] = build_instruction(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
         end
     endtask
 
@@ -216,17 +218,17 @@ module cpu_core_tb;
             // STORE x3, [x1 + 4]
             // LOAD  x6, [x1 + 4]
             // NOP
-            dut.fetch_inst.imem.mem[0]  = build_instruction(4'h6, 5'd1, 5'd0, 5'd0, 13'd64);
-            dut.fetch_inst.imem.mem[1]  = build_instruction(4'h6, 5'd2, 5'd0, 5'd0, 13'd123);
-            dut.fetch_inst.imem.mem[2]  = build_instruction(4'h8, 5'd0, 5'd1, 5'd2, 13'd0);
-            dut.fetch_inst.imem.mem[3]  = build_instruction(4'h7, 5'd3, 5'd1, 5'd0, 13'd0);
-            dut.fetch_inst.imem.mem[4]  = build_instruction(4'h6, 5'd4, 5'd0, 5'd0, 13'd68);
-            dut.fetch_inst.imem.mem[5]  = build_instruction(4'h7, 5'd5, 5'd4, 5'd0, 13'h1ffc);
-            dut.fetch_inst.imem.mem[6]  = build_instruction(4'h8, 5'd0, 5'd1, 5'd3, 13'd4);
-            dut.fetch_inst.imem.mem[7]  = build_instruction(4'h7, 5'd6, 5'd1, 5'd0, 13'd4);
-            dut.fetch_inst.imem.mem[8]  = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
-            dut.fetch_inst.imem.mem[9]  = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
-            dut.fetch_inst.imem.mem[10] = build_instruction(4'h0, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[0]  = build_instruction(OP_ADDI, 5'd1, 5'd0, 5'd0, 13'd64);
+            dut.fetch_inst.imem.mem[1]  = build_instruction(OP_ADDI, 5'd2, 5'd0, 5'd0, 13'd123);
+            dut.fetch_inst.imem.mem[2]  = build_instruction(OP_STORE, 5'd0, 5'd1, 5'd2, 13'd0);
+            dut.fetch_inst.imem.mem[3]  = build_instruction(OP_LOAD, 5'd3, 5'd1, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[4]  = build_instruction(OP_ADDI, 5'd4, 5'd0, 5'd0, 13'd68);
+            dut.fetch_inst.imem.mem[5]  = build_instruction(OP_LOAD, 5'd5, 5'd4, 5'd0, 13'h1ffc);
+            dut.fetch_inst.imem.mem[6]  = build_instruction(OP_STORE, 5'd0, 5'd1, 5'd3, 13'd4);
+            dut.fetch_inst.imem.mem[7]  = build_instruction(OP_LOAD, 5'd6, 5'd1, 5'd0, 13'd4);
+            dut.fetch_inst.imem.mem[8]  = build_instruction(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[9]  = build_instruction(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
+            dut.fetch_inst.imem.mem[10] = build_instruction(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
         end
     endtask
 

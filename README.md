@@ -14,6 +14,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Vivado XSim is the main simulator.
 - GitHub is connected to ChatGPT.
 - Codex CLI is installed.
+- `rtl/cpu_defs_pkg.sv` defines shared opcode and ALU operation constants without changing the instruction encodings.
 - `rtl/alu.sv` contains the first RTL module: a parameterised combinational ALU that defaults to the 32-bit CPU datapath width.
 - `tb/alu_tb.sv` contains a self-checking 32-bit ALU testbench.
 - The parameterised 32-bit ALU simulation has passed in Vivado XSim.
@@ -49,6 +50,23 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - The branch/jump CPU core simulations have passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
+
+## Documentation
+
+- [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
+- [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
+- [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
+- [Verification notes](docs/verification.md) record XSim results and coverage points.
+
+## How To Run Regression Tests
+
+Open a Vivado-enabled PowerShell from the repository root and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+The script runs the current Vivado XSim testbenches for the RTL modules and CPU integration programs. It is intended for local developer use; CI is not assumed yet.
 
 ## Planned Modules
 

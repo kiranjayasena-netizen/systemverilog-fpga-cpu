@@ -298,7 +298,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/instruction_decoder.sv tb/instruction_decoder_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/instruction_decoder.sv tb/instruction_decoder_tb.sv
 xelab instruction_decoder_tb -s instruction_decoder_tb_sim
 xsim instruction_decoder_tb_sim -runall
 ```
@@ -345,7 +345,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/control_unit.sv tb/control_unit_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/control_unit.sv tb/control_unit_tb.sv
 xelab control_unit_tb -s control_unit_branch_sim
 xsim control_unit_branch_sim -runall
 ```
@@ -460,7 +460,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_tb.sv
 xelab cpu_core_tb -s cpu_core_regression_sim
 xsim cpu_core_regression_sim -runall
 ```
@@ -528,7 +528,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_program_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_program_tb.sv
 xelab cpu_core_program_tb -s cpu_core_program_regression_sim
 xsim cpu_core_program_regression_sim -runall
 ```
@@ -606,7 +606,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_tb.sv
 xelab cpu_core_branch_tb -s cpu_core_branch_sim
 xsim cpu_core_branch_sim -runall
 ```
@@ -667,7 +667,7 @@ Result:
 Commands run from the repository root:
 
 ```powershell
-xvlog -sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_program_tb.sv
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/alu.sv rtl/register_file.sv rtl/program_counter.sv rtl/instruction_memory.sv rtl/data_memory.sv rtl/fetch_unit.sv rtl/instruction_decoder.sv rtl/control_unit.sv rtl/cpu_core.sv tb/cpu_core_branch_program_tb.sv
 xelab cpu_core_branch_program_tb -s cpu_core_branch_program_sim
 xsim cpu_core_branch_program_sim -runall
 ```

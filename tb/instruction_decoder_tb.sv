@@ -2,6 +2,8 @@
 
 module instruction_decoder_tb;
 
+    import cpu_defs_pkg::*;
+
     logic [31:0] instruction;
     logic [3:0]  opcode;
     logic [4:0]  rd;
@@ -119,15 +121,15 @@ module instruction_decoder_tb;
         tests_run    = 0;
         tests_failed = 0;
 
-        check_instruction("NOP", 4'h0, 5'd0, 5'd0, 5'd0, 13'h0000);
-        check_instruction("ADD", 4'h1, 5'd1, 5'd2, 5'd3, 13'h0000);
-        check_instruction("SUB", 4'h2, 5'd4, 5'd5, 5'd6, 13'h0000);
-        check_instruction("AND", 4'h3, 5'd7, 5'd8, 5'd9, 13'h0000);
-        check_instruction("OR", 4'h4, 5'd10, 5'd11, 5'd12, 13'h0000);
-        check_instruction("XOR", 4'h5, 5'd13, 5'd14, 5'd15, 13'h0000);
-        check_instruction("ADDI positive immediate", 4'h6, 5'd16, 5'd17, 5'd0, 13'h0005);
-        check_instruction("ADDI negative immediate", 4'h6, 5'd18, 5'd19, 5'd0, 13'h1fff);
-        check_instruction("Edge register values", 4'h1, 5'd31, 5'd31, 5'd31, 13'h0000);
+        check_instruction("NOP", OP_NOP, 5'd0, 5'd0, 5'd0, 13'h0000);
+        check_instruction("ADD", OP_ADD, 5'd1, 5'd2, 5'd3, 13'h0000);
+        check_instruction("SUB", OP_SUB, 5'd4, 5'd5, 5'd6, 13'h0000);
+        check_instruction("AND", OP_AND, 5'd7, 5'd8, 5'd9, 13'h0000);
+        check_instruction("OR", OP_OR, 5'd10, 5'd11, 5'd12, 13'h0000);
+        check_instruction("XOR", OP_XOR, 5'd13, 5'd14, 5'd15, 13'h0000);
+        check_instruction("ADDI positive immediate", OP_ADDI, 5'd16, 5'd17, 5'd0, 13'h0005);
+        check_instruction("ADDI negative immediate", OP_ADDI, 5'd18, 5'd19, 5'd0, 13'h1fff);
+        check_instruction("Edge register values", OP_ADD, 5'd31, 5'd31, 5'd31, 13'h0000);
 
         $display("Tests run:    %0d", tests_run);
         $display("Tests failed: %0d", tests_failed);

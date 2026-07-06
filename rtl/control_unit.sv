@@ -11,11 +11,7 @@ module control_unit (
     output logic       jump
 );
 
-    localparam logic [2:0] ALU_ADD = 3'b000;
-    localparam logic [2:0] ALU_SUB = 3'b001;
-    localparam logic [2:0] ALU_AND = 3'b010;
-    localparam logic [2:0] ALU_OR  = 3'b011;
-    localparam logic [2:0] ALU_XOR = 3'b100;
+    import cpu_defs_pkg::*;
 
     always_comb begin
         reg_write   = 1'b0;
@@ -29,48 +25,48 @@ module control_unit (
         jump        = 1'b0;
 
         case (opcode)
-            4'h0: begin
+            OP_NOP: begin
                 valid_instr = 1'b1;
             end
 
-            4'h1: begin
+            OP_ADD: begin
                 reg_write   = 1'b1;
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
             end
 
-            4'h2: begin
+            OP_SUB: begin
                 reg_write   = 1'b1;
                 alu_op      = ALU_SUB;
                 valid_instr = 1'b1;
             end
 
-            4'h3: begin
+            OP_AND: begin
                 reg_write   = 1'b1;
                 alu_op      = ALU_AND;
                 valid_instr = 1'b1;
             end
 
-            4'h4: begin
+            OP_OR: begin
                 reg_write   = 1'b1;
                 alu_op      = ALU_OR;
                 valid_instr = 1'b1;
             end
 
-            4'h5: begin
+            OP_XOR: begin
                 reg_write   = 1'b1;
                 alu_op      = ALU_XOR;
                 valid_instr = 1'b1;
             end
 
-            4'h6: begin
+            OP_ADDI: begin
                 reg_write   = 1'b1;
                 use_imm     = 1'b1;
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
             end
 
-            4'h7: begin
+            OP_LOAD: begin
                 reg_write   = 1'b1;
                 use_imm     = 1'b1;
                 alu_op      = ALU_ADD;
@@ -79,20 +75,20 @@ module control_unit (
                 mem_to_reg  = 1'b1;
             end
 
-            4'h8: begin
+            OP_STORE: begin
                 use_imm     = 1'b1;
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
                 mem_write   = 1'b1;
             end
 
-            4'h9: begin
+            OP_BEQ: begin
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
                 branch      = 1'b1;
             end
 
-            4'ha: begin
+            OP_JUMP: begin
                 alu_op      = ALU_ADD;
                 valid_instr = 1'b1;
                 jump        = 1'b1;
