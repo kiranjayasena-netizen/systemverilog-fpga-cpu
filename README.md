@@ -48,6 +48,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `programs/branch_jump_test.mem` contains a file-loadable BEQ/JUMP CPU test program.
 - `tb/cpu_core_branch_tb.sv` and `tb/cpu_core_branch_program_tb.sv` contain self-checking branch/jump CPU core testbenches.
 - The branch/jump CPU core simulations have passed in Vivado XSim.
+- `rtl/fpga_top.sv` provides the first FPGA-facing wrapper around `cpu_core`.
+- `programs/fpga_led_demo.mem` contains a small instruction program for LED debug bring-up.
+- `scripts/run_vivado_synth.tcl` and `scripts/run_vivado_impl.tcl` provide baseline Vivado build scripts with board-specific placeholders.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -56,6 +59,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
+- [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3A FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Verification notes](docs/verification.md) record XSim results and coverage points.
 
 ## How To Run Regression Tests
@@ -68,6 +72,18 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 
 The script runs the current Vivado XSim testbenches for the RTL modules and CPU integration programs. It is intended for local developer use; CI is not assumed yet.
 
+## Phase 3A FPGA Baseline Build
+
+Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts without changing CPU behaviour.
+
+- `rtl/fpga_top.sv` instantiates `cpu_core` and maps PC, opcode, control and ALU debug signals onto `led[15:0]`.
+- `programs/fpga_led_demo.mem` provides a small looping demo program for LED bring-up.
+- `constraints/README.md` explains how to create a board-specific `.xdc` without inventing pin locations.
+- `scripts/run_vivado_synth.tcl` runs synthesis after setting a real FPGA part.
+- `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after real constraints are supplied.
+
+See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3A checklist and acceptance criteria.
+
 ## Planned Modules
 
 - ALU
@@ -75,8 +91,7 @@ The script runs the current Vivado XSim testbenches for the RTL modules and CPU 
 - Program counter
 - Instruction memory or ROM
 - Fetch unit
-- FPGA top-level wrapper
-- Constraint files for the target FPGA board
+- Board-specific constraint files for the target FPGA board
 - Small assembly or machine-code test programs
 
 ## Repository Structure
