@@ -28,6 +28,7 @@ read_verilog -sv rtl/fetch_unit.sv
 read_verilog -sv rtl/instruction_decoder.sv
 read_verilog -sv rtl/control_unit.sv
 read_verilog -sv rtl/cpu_core.sv
+read_verilog -sv rtl/slow_tick_generator.sv
 read_verilog -sv rtl/fpga_top.sv
 
 if {[file exists $XDC_FILE]} {

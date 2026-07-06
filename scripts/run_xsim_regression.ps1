@@ -116,6 +116,7 @@ $commonCpuSources = @(
 )
 
 $fpgaTopSources = $commonCpuSources + @(
+    "rtl/slow_tick_generator.sv",
     "rtl/fpga_top.sv"
 )
 
@@ -190,6 +191,12 @@ Invoke-XsimTest `
     -Sources ($commonCpuSources + @("tb/cpu_core_branch_program_tb.sv")) `
     -Top "cpu_core_branch_program_tb" `
     -Snapshot "cpu_core_branch_program_tb_sim"
+
+Invoke-XsimTest `
+    -Name "Slow tick generator" `
+    -Sources @("rtl/slow_tick_generator.sv", "tb/slow_tick_generator_tb.sv") `
+    -Top "slow_tick_generator_tb" `
+    -Snapshot "slow_tick_generator_tb_sim"
 
 Invoke-XsimTest `
     -Name "FPGA top wrapper" `

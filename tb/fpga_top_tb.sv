@@ -10,7 +10,9 @@ module fpga_top_tb;
     int unsigned tests_run;
     int unsigned tests_failed;
 
-    fpga_top dut (
+    fpga_top #(
+        .SLOW_TICK_DIVISOR(4)
+    ) dut (
         .clk       (clk),
         .rst_btn   (rst_btn),
         .enable_sw (enable_sw),
@@ -98,7 +100,7 @@ module fpga_top_tb;
         enable_sw    = 1'b1;
         previous_led = led;
 
-        repeat (16) begin
+        repeat (80) begin
             clock_tick();
 
             if (led !== previous_led) begin

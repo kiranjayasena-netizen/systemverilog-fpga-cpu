@@ -86,6 +86,7 @@ Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for th
 - `scripts/run_vivado_synth.tcl` runs synthesis for `xc7a35tcpg236-1`.
 - `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after the Basys 3 constraints are checked.
 - `reports/phase3a_timing_analysis.md` records the baseline post-synthesis timing miss and critical-path analysis.
+- `rtl/slow_tick_generator.sv` adds slow LED-visible CPU stepping while keeping the Basys 3 100 MHz clock as the only clock.
 
 See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3A checklist and acceptance criteria.
 
