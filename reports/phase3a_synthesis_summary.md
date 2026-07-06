@@ -61,6 +61,8 @@ Vivado completed `synth_design`, generated utilisation, timing and power reports
 
 The worst reported setup path is from the program counter to data memory write-enable logic. This is consistent with the current simple single-cycle-style datapath and should be reviewed before final hardware timing closure.
 
+See `reports/phase3a_timing_analysis.md` for the detailed critical-path investigation and recommended next actions.
+
 ## Notes
 
 - The target clock is the Basys 3 100 MHz clock.

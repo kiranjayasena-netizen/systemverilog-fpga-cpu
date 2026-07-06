@@ -38,6 +38,7 @@ synth_design -top $TOP_MODULE -part $FPGA_PART
 
 report_utilization -file reports/utilisation/fpga_top_synth_utilization.rpt
 report_timing_summary -file reports/timing/fpga_top_synth_timing_summary.rpt
+report_timing -max_paths 10 -path_type full -file reports/timing/fpga_top_synth_worst_paths.rpt
 report_power -file reports/power/fpga_top_synth_power.rpt
 
 write_checkpoint -force reports/checkpoints/fpga_top_synth.dcp
