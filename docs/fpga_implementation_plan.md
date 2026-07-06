@@ -54,7 +54,14 @@ The branch is intentionally not taken because `x1` and `x2` contain different va
 
 ## Constraints
 
-The actual `.xdc` file depends on the chosen FPGA board. Do not invent pin locations. Use the board schematic or vendor-provided master constraint file.
+The target board for Phase 3A is the Digilent Basys 3, using FPGA part `xc7a35tcpg236-1`. The board-specific constraints live in `constraints/basys3.xdc` and cover only the current top-level ports:
+
+- `clk`: 100 MHz Basys 3 board clock.
+- `rst_btn`: centre pushbutton reset.
+- `enable_sw`: SW0 CPU enable switch.
+- `led[15:0]`: LD0 through LD15 debug outputs.
+
+Use the board schematic or vendor-provided master constraint file when changing this file. Do not invent pin locations or add unused pins.
 
 See `constraints/README.md` for a placeholder template covering:
 
@@ -65,14 +72,7 @@ See `constraints/README.md` for a placeholder template covering:
 
 ## Running Synthesis
 
-Before running synthesis, edit `scripts/run_vivado_synth.tcl` and set:
-
-```tcl
-set FPGA_PART "<your FPGA part>"
-set XDC_FILE "constraints/<your board>.xdc"
-```
-
-Then run from the repository root:
+Run from the repository root:
 
 ```powershell
 vivado -mode batch -source scripts/run_vivado_synth.tcl
@@ -86,6 +86,8 @@ The script writes reports into:
 
 It also writes a synthesis checkpoint under `reports/checkpoints/`. Generated checkpoints are ignored by Git.
 
+Use `reports/phase3a_synthesis_summary.md` to record the selected synthesis results that are worth keeping for project documentation.
+
 ## Running Implementation
 
 Only run implementation after the board-specific constraints are correct:
@@ -96,14 +98,27 @@ vivado -mode batch -source scripts/run_vivado_impl.tcl
 
 The implementation script runs synthesis, optimisation, placement and routing. It writes implementation reports and a bitstream. The bitstream should only be used on hardware after checking the XDC against the actual board.
 
+## Work Completed Without Physical FPGA
+
+The repository can now complete most Phase 3A preparation before the Basys 3 board arrives:
+
+- The FPGA wrapper exists and instantiates the already-tested `cpu_core`.
+- The wrapper has a self-checking simulation in `tb/fpga_top_tb.sv`.
+- The Basys 3 FPGA part is set to `xc7a35tcpg236-1` in the synthesis and implementation scripts.
+- `constraints/basys3.xdc` maps only the required clock, reset button, enable switch and LEDs.
+- Vivado synthesis and implementation can be run before hardware arrives to check RTL compile, constraints parsing, resource usage and timing.
+- `reports/phase3a_synthesis_summary.md` provides a place to record selected text results.
+
+Physical LED behaviour still must wait until the Basys 3 board arrives. Before using the bitstream on hardware, check the XDC against the Basys 3 schematic and the Digilent master XDC.
+
 ## Acceptance Criteria
 
 Phase 3A is complete when:
 
 - `rtl/fpga_top.sv` instantiates `cpu_core` without modifying CPU behaviour.
 - `programs/fpga_led_demo.mem` exists and is documented.
-- A board-specific constraints plan exists without fake pin assignments.
-- Vivado synthesis can be launched after setting a real FPGA part.
+- Basys 3 constraints exist for the clock, reset button, enable switch and LEDs.
+- Vivado synthesis can be launched for `xc7a35tcpg236-1`.
 - Utilisation, timing and power report paths are defined.
 - Implementation and bitstream generation are scripted, with clear warnings about requiring correct constraints.
 - No generated Vivado output folders or large binary files are committed.

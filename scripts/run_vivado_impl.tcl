@@ -3,16 +3,13 @@
 # Run from the repository root in Vivado Tcl mode:
 #   vivado -mode batch -source scripts/run_vivado_impl.tcl
 #
-# Before running, replace FPGA_PART with the part for your chosen board.
-# A real XDC file is required before using the generated bitstream on hardware.
+# Target board: Digilent Basys 3, Artix-7 xc7a35tcpg236-1.
+# The generated bitstream must only be used after the board constraints
+# have been checked against the actual Basys 3 schematic and master XDC.
 
-set FPGA_PART "TODO_SET_FPGA_PART"
-set XDC_FILE "constraints/board.xdc"
+set FPGA_PART "xc7a35tcpg236-1"
+set XDC_FILE "constraints/basys3.xdc"
 set TOP_MODULE "fpga_top"
-
-if {$FPGA_PART eq "TODO_SET_FPGA_PART"} {
-    error "Set FPGA_PART in scripts/run_vivado_impl.tcl before running implementation."
-}
 
 file mkdir reports
 file mkdir reports/utilisation

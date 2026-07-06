@@ -3,16 +3,12 @@
 # Run from the repository root in Vivado Tcl mode:
 #   vivado -mode batch -source scripts/run_vivado_synth.tcl
 #
-# Before running, replace FPGA_PART with the part for your chosen board.
-# If you have a real board constraint file, set XDC_FILE to that path.
+# Target board: Digilent Basys 3, Artix-7 xc7a35tcpg236-1.
+# The XDC is based on the Basys 3 master XDC pin names used by this project.
 
-set FPGA_PART "TODO_SET_FPGA_PART"
-set XDC_FILE "constraints/board.xdc"
+set FPGA_PART "xc7a35tcpg236-1"
+set XDC_FILE "constraints/basys3.xdc"
 set TOP_MODULE "fpga_top"
-
-if {$FPGA_PART eq "TODO_SET_FPGA_PART"} {
-    error "Set FPGA_PART in scripts/run_vivado_synth.tcl before running synthesis."
-}
 
 file mkdir reports
 file mkdir reports/utilisation

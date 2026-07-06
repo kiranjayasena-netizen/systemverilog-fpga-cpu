@@ -11,6 +11,49 @@
 $ErrorActionPreference = "Stop"
 $RunSuffix = Get-Date -Format "yyyyMMdd_HHmmss"
 
+function Resolve-VivadoTool {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $ToolName
+    )
+
+    $toolCommand = Get-Command $ToolName -ErrorAction SilentlyContinue
+    if ($null -ne $toolCommand) {
+        return $toolCommand.Source
+    }
+
+    $candidateRoots = @()
+
+    if ($env:VIVADO_BIN) {
+        $candidateRoots += $env:VIVADO_BIN
+    }
+
+    if ($env:XILINX_VIVADO) {
+        $candidateRoots += (Join-Path $env:XILINX_VIVADO "bin")
+    }
+
+    $candidateRoots += "C:\AMDDesignTools\2026.1\Vivado\bin"
+    $candidateRoots += "C:\Xilinx\Vivado\2026.1\bin"
+
+    foreach ($root in $candidateRoots) {
+        $candidate = Join-Path $root "$ToolName.bat"
+        if (Test-Path $candidate) {
+            return $candidate
+        }
+
+        $candidate = Join-Path $root "$ToolName.exe"
+        if (Test-Path $candidate) {
+            return $candidate
+        }
+    }
+
+    throw "Could not find $ToolName. Open a Vivado-enabled PowerShell or set VIVADO_BIN to the Vivado bin directory."
+}
+
+$Xvlog = Resolve-VivadoTool "xvlog"
+$Xelab = Resolve-VivadoTool "xelab"
+$Xsim  = Resolve-VivadoTool "xsim"
+
 function Invoke-XsimTest {
     param(
         [Parameter(Mandatory = $true)]
@@ -31,19 +74,19 @@ function Invoke-XsimTest {
     Write-Host "Running $Name"
     Write-Host "============================================================"
 
-    & xvlog -sv $Sources
+    & $Xvlog -sv $Sources
     if ($LASTEXITCODE -ne 0) {
         throw "xvlog failed for $Name with exit code $LASTEXITCODE"
     }
 
     $snapshotName = "${Snapshot}_${RunSuffix}"
 
-    & xelab $Top -s $snapshotName
+    & $Xelab $Top -s $snapshotName
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "xelab returned exit code $LASTEXITCODE for $Name. If the snapshot was built and only an obj cleanup warning was reported, xsim may still run successfully."
     }
 
-    $xsimOutput = & xsim $snapshotName -runall 2>&1
+    $xsimOutput = & $Xsim $snapshotName -runall 2>&1
     $xsimOutput | ForEach-Object { Write-Host $_ }
     if ($LASTEXITCODE -ne 0) {
         throw "xsim failed for $Name with exit code $LASTEXITCODE"
@@ -70,6 +113,10 @@ $commonCpuSources = @(
     "rtl/instruction_decoder.sv",
     "rtl/control_unit.sv",
     "rtl/cpu_core.sv"
+)
+
+$fpgaTopSources = $commonCpuSources + @(
+    "rtl/fpga_top.sv"
 )
 
 Invoke-XsimTest `
@@ -143,6 +190,12 @@ Invoke-XsimTest `
     -Sources ($commonCpuSources + @("tb/cpu_core_branch_program_tb.sv")) `
     -Top "cpu_core_branch_program_tb" `
     -Snapshot "cpu_core_branch_program_tb_sim"
+
+Invoke-XsimTest `
+    -Name "FPGA top wrapper" `
+    -Sources ($fpgaTopSources + @("tb/fpga_top_tb.sv")) `
+    -Top "fpga_top_tb" `
+    -Snapshot "fpga_top_tb_sim"
 
 Write-Host ""
 Write-Host "All XSim regression tests completed."

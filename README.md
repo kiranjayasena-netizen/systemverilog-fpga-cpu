@@ -50,7 +50,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - The branch/jump CPU core simulations have passed in Vivado XSim.
 - `rtl/fpga_top.sv` provides the first FPGA-facing wrapper around `cpu_core`.
 - `programs/fpga_led_demo.mem` contains a small instruction program for LED debug bring-up.
-- `scripts/run_vivado_synth.tcl` and `scripts/run_vivado_impl.tcl` provide baseline Vivado build scripts with board-specific placeholders.
+- Phase 3A targets the Digilent Basys 3 board with FPGA part `xc7a35tcpg236-1`.
+- `constraints/basys3.xdc` maps the current wrapper ports to the Basys 3 clock, reset button, enable switch and LEDs.
+- `tb/fpga_top_tb.sv` contains a self-checking simulation for the FPGA wrapper LED debug outputs.
+- `scripts/run_vivado_synth.tcl` and `scripts/run_vivado_impl.tcl` provide baseline Vivado build scripts for the Basys 3 target.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -74,13 +77,14 @@ The script runs the current Vivado XSim testbenches for the RTL modules and CPU 
 
 ## Phase 3A FPGA Baseline Build
 
-Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts without changing CPU behaviour.
+Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for the Digilent Basys 3 without changing CPU behaviour.
 
 - `rtl/fpga_top.sv` instantiates `cpu_core` and maps PC, opcode, control and ALU debug signals onto `led[15:0]`.
 - `programs/fpga_led_demo.mem` provides a small looping demo program for LED bring-up.
-- `constraints/README.md` explains how to create a board-specific `.xdc` without inventing pin locations.
-- `scripts/run_vivado_synth.tcl` runs synthesis after setting a real FPGA part.
-- `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after real constraints are supplied.
+- `constraints/basys3.xdc` targets the Basys 3 100 MHz clock, one reset button, one enable switch and all 16 LEDs.
+- `tb/fpga_top_tb.sv` checks that the wrapper exposes changing CPU debug state on the LEDs.
+- `scripts/run_vivado_synth.tcl` runs synthesis for `xc7a35tcpg236-1`.
+- `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after the Basys 3 constraints are checked.
 
 See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3A checklist and acceptance criteria.
 
@@ -91,7 +95,7 @@ See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detaile
 - Program counter
 - Instruction memory or ROM
 - Fetch unit
-- Board-specific constraint files for the target FPGA board
+- Basys 3 synthesis, implementation and hardware LED bring-up
 - Small assembly or machine-code test programs
 
 ## Repository Structure
