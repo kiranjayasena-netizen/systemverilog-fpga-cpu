@@ -117,6 +117,8 @@ Phase 3B adds a slow CPU clock-enable path for board observation without changin
 
 This keeps the design synchronous to one clock while allowing the LED debug mapping to change slowly enough to observe on hardware. The divider is parameterised so testbenches can use a small value for fast simulation while the FPGA default remains suitable for visible LED stepping.
 
+The Phase 3B slow-tick wrapper synthesis result is recorded in `reports/phase3b_slow_tick_synthesis_summary.md`.
+
 ## Acceptance Criteria
 
 Phase 3A is complete when:
