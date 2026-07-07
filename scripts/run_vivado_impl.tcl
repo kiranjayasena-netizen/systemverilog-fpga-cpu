@@ -44,6 +44,7 @@ route_design
 
 report_utilization -file reports/utilisation/fpga_top_impl_utilization.rpt
 report_timing_summary -file reports/timing/fpga_top_impl_timing_summary.rpt
+report_timing -max_paths 10 -path_type full -file reports/timing/fpga_top_impl_worst_paths.rpt
 report_power -file reports/power/fpga_top_impl_power.rpt
 
 write_checkpoint -force reports/checkpoints/fpga_top_impl.dcp

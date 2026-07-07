@@ -119,6 +119,8 @@ This keeps the design synchronous to one clock while allowing the LED debug mapp
 
 The Phase 3B slow-tick wrapper synthesis result is recorded in `reports/phase3b_slow_tick_synthesis_summary.md`.
 
+The Phase 3C routed implementation and bitstream-generation result is recorded in `reports/phase3c_implementation_summary.md`.
+
 ## Acceptance Criteria
 
 Phase 3A is complete when:
