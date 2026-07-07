@@ -65,6 +65,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3A FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Basys 3 bring-up checklist](docs/basys3_bringup_checklist.md) gives the step-by-step first-board programming and evidence checklist.
 - [FPGA LED expected sequence](docs/fpga_led_expected_sequence.md) describes the expected Basys 3 LED pattern for the demo program before hardware testing.
+- [Vivado script review](reports/phase3_vivado_script_review.md) confirms the Phase 3 synthesis and implementation scripts are complete for pre-hardware use.
 - [Verification notes](docs/verification.md) record XSim results and coverage points.
 
 ## How To Run Regression Tests
