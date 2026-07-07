@@ -52,6 +52,8 @@ A0001FFA  JUMP -6            ; loop back to the first instruction
 
 The branch is intentionally not taken because `x1` and `x2` contain different values. The JUMP loops back to the start so the demo keeps cycling.
 
+The expected LED sequence for this program is documented in [FPGA LED expected sequence](fpga_led_expected_sequence.md).
+
 ## Constraints
 
 The target board for Phase 3A is the Digilent Basys 3, using FPGA part `xc7a35tcpg236-1`. The board-specific constraints live in `constraints/basys3.xdc` and cover only the current top-level ports:

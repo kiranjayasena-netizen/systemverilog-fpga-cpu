@@ -63,6 +63,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3A FPGA wrapper, LED debug mapping and Vivado build scripts.
+- [FPGA LED expected sequence](docs/fpga_led_expected_sequence.md) describes the expected Basys 3 LED pattern for the demo program before hardware testing.
 - [Verification notes](docs/verification.md) record XSim results and coverage points.
 
 ## How To Run Regression Tests
@@ -87,6 +88,7 @@ Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for th
 - `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after the Basys 3 constraints are checked.
 - `reports/phase3a_timing_analysis.md` records the baseline post-synthesis timing miss and critical-path analysis.
 - `rtl/slow_tick_generator.sv` adds slow LED-visible CPU stepping while keeping the Basys 3 100 MHz clock as the only clock.
+- `docs/fpga_led_expected_sequence.md` provides a pre-hardware LED checklist for the demo program.
 - `reports/phase3b_slow_tick_synthesis_summary.md` records the slow-tick wrapper synthesis result.
 - `reports/phase3c_implementation_summary.md` records the first routed implementation and bitstream-generation result.
 - `reports/phase3_prehardware_validation.md` separates completed pre-board evidence from pending physical hardware validation.
