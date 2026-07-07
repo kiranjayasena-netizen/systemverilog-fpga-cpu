@@ -113,6 +113,8 @@ The repository can now complete most Phase 3A preparation before the Basys 3 boa
 
 Physical LED behaviour still must wait until the Basys 3 board arrives. Before using the bitstream on hardware, check the XDC against the Basys 3 schematic and the Digilent master XDC.
 
+Use the [Basys 3 bring-up checklist](basys3_bringup_checklist.md) for the first physical board programming and evidence capture.
+
 ## Phase 3B Board Bring-Up Preparation
 
 Phase 3B adds a slow CPU clock-enable path for board observation without changing `cpu_core` behaviour. The FPGA still uses the real 100 MHz Basys 3 clock. A `slow_tick_generator` creates a single-cycle enable pulse at a human-visible rate, and `fpga_top` advances the CPU only when both `enable_sw` and the slow tick are high.

@@ -63,6 +63,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3A FPGA wrapper, LED debug mapping and Vivado build scripts.
+- [Basys 3 bring-up checklist](docs/basys3_bringup_checklist.md) gives the step-by-step first-board programming and evidence checklist.
 - [FPGA LED expected sequence](docs/fpga_led_expected_sequence.md) describes the expected Basys 3 LED pattern for the demo program before hardware testing.
 - [Verification notes](docs/verification.md) record XSim results and coverage points.
 
@@ -84,6 +85,7 @@ Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for th
 - `programs/fpga_led_demo.mem` provides a small looping demo program for LED bring-up.
 - `constraints/basys3.xdc` targets the Basys 3 100 MHz clock, one reset button, one enable switch and all 16 LEDs.
 - `tb/fpga_top_tb.sv` checks that the wrapper exposes changing CPU debug state on the LEDs.
+- `docs/basys3_bringup_checklist.md` provides the practical first-board programming and validation checklist.
 - `scripts/run_vivado_synth.tcl` runs synthesis for `xc7a35tcpg236-1`.
 - `scripts/run_vivado_impl.tcl` runs implementation and writes a bitstream only after the Basys 3 constraints are checked.
 - `reports/phase3a_timing_analysis.md` records the baseline post-synthesis timing miss and critical-path analysis.
