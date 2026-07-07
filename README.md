@@ -50,7 +50,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - The branch/jump CPU core simulations have passed in Vivado XSim.
 - `rtl/fpga_top.sv` provides the first FPGA-facing wrapper around `cpu_core`.
 - `programs/fpga_led_demo.mem` contains a small instruction program for LED debug bring-up.
-- Phase 3A targets the Digilent Basys 3 board with FPGA part `xc7a35tcpg236-1`.
+- Phase 3 targets the Digilent Basys 3 board with FPGA part `xc7a35tcpg236-1`.
 - `constraints/basys3.xdc` maps the current wrapper ports to the Basys 3 clock, reset button, enable switch and LEDs.
 - `tb/fpga_top_tb.sv` contains a self-checking simulation for the FPGA wrapper LED debug outputs.
 - `scripts/run_vivado_synth.tcl` and `scripts/run_vivado_impl.tcl` provide baseline Vivado build scripts for the Basys 3 target.
@@ -62,9 +62,14 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
-- [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3A FPGA wrapper, LED debug mapping and Vivado build scripts.
+- [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
+- [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
+- [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
 - [Basys 3 bring-up checklist](docs/basys3_bringup_checklist.md) gives the step-by-step first-board programming and evidence checklist.
 - [FPGA LED expected sequence](docs/fpga_led_expected_sequence.md) describes the expected Basys 3 LED pattern for the demo program before hardware testing.
+- [Basys 3 XDC review](reports/basys3_xdc_review.md) reviews the current board constraints against the wrapper ports.
+- [Phase 3 build reproducibility](reports/phase3_build_reproducibility.md) records the Vivado version, target, build commands and expected outputs.
+- [Phase 3D hardware bring-up template](reports/phase3d_hardware_bringup_template.md) is the fill-in report for the first physical board session.
 - [Vivado script review](reports/phase3_vivado_script_review.md) confirms the Phase 3 synthesis and implementation scripts are complete for pre-hardware use.
 - [Verification notes](docs/verification.md) record XSim results and coverage points.
 
@@ -78,9 +83,9 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 
 The script runs the current Vivado XSim testbenches for the RTL modules and CPU integration programs. It is intended for local developer use; CI is not assumed yet.
 
-## Phase 3A FPGA Baseline Build
+## Phase 3 FPGA Implementation Preparation
 
-Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for the Digilent Basys 3 without changing CPU behaviour.
+Phase 3 prepares the CPU for the Digilent Basys 3 without changing CPU behaviour. Phase 3A covers the FPGA wrapper and constraints, Phase 3B covers slow LED-visible stepping and pre-hardware synthesis, Phase 3C covers routed implementation and bitstream generation, and Phase 3D is hardware bring-up, pending until the physical board arrives.
 
 - `rtl/fpga_top.sv` instantiates `cpu_core` and maps PC, opcode, control and ALU debug signals onto `led[15:0]`.
 - `programs/fpga_led_demo.mem` provides a small looping demo program for LED bring-up.
@@ -95,18 +100,33 @@ Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for th
 - `reports/phase3b_slow_tick_synthesis_summary.md` records the slow-tick wrapper synthesis result.
 - `reports/phase3c_implementation_summary.md` records the first routed implementation and bitstream-generation result.
 - `reports/phase3_prehardware_validation.md` separates completed pre-board evidence from pending physical hardware validation.
+- `docs/phase3_checklist.md` tracks completed pre-hardware tasks and Phase 3D hardware tasks that remain blocked until the board arrives.
+- `reports/phase3_build_reproducibility.md` records the commands and generated outputs needed to reproduce the Phase 3 builds.
 
-See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3A checklist and acceptance criteria.
+Hardware validation has not been completed yet. The board still needs to be programmed and observed before reset, enable switch and LED behaviour can be claimed on real hardware.
 
-## Planned Modules
+See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3 checklist and acceptance criteria.
+
+## Completed Modules And Next Work
+
+Completed work:
 
 - ALU
 - Register file
 - Program counter
-- Instruction memory or ROM
+- Instruction memory and data memory
 - Fetch unit
-- Basys 3 synthesis, implementation and hardware LED bring-up
-- Small assembly or machine-code test programs
+- Instruction decoder and control unit
+- Integrated CPU core with ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and JUMP support
+- File-loaded CPU test programs
+- Basys 3 FPGA wrapper, constraints, synthesis, routed implementation and bitstream generation
+
+Next planned work:
+
+- Phase 3D physical Basys 3 programming and evidence capture
+- Reset, enable switch and LED sequence validation on the real board
+- Timing closure investigation for the documented 100 MHz setup timing miss
+- Possible multi-cycle redesign, registered memory outputs or pipelining
 
 ## Repository Structure
 

@@ -55,7 +55,7 @@ Control LED shorthand:
 | 2 | `0x00000008` | `11844000` | `ADD x3, x1, x2` | `0x2` | `0x1` | `V=1, W=1, I=0, ALU=000` | Writes `x3 = 3`; ALU low bits should reflect result `3`. |
 | 3 | `0x0000000C` | `52044000` | `XOR x4, x1, x2` | `0x3` | `0x5` | `V=1, W=1, I=0, ALU=100` | Writes `x4 = 3`; ALU low bits should reflect result `3`. |
 | 4 | `0x00000010` | `90044002` | `BEQ x1, x2, +2` | `0x4` | `0x9` | `V=1, W=0, I=0, ALU=000` | Branch should not be taken because `x1 != x2`; next PC should be word index 5. |
-| 5 | `0x00000014` | `62800007` | `ADDI x5, x0, 7` | `0x5` | `0x6` | `V=1, W=1, I=1, ALU=000` | Writes `x5 = 7`; ALU low bits should reflect result `3` because `7[1:0] = 2'b11`. |
+| 5 | `0x00000014` | `62800007` | `ADDI x5, x0, 7` | `0x5` | `0x6` | `V=1, W=1, I=1, ALU=000` | Writes `x5 = 7`; ALU low two bits should be `2'b11`. |
 | 6 | `0x00000018` | `A0001FFA` | `JUMP -6` | `0x6` | `0xA` | `V=1, W=0, I=0, ALU=000` | Jump target is word index 0; next visible instruction should return to step 0. |
 | Spare | `0x0000001C` | `00000000` | `NOP` | `0x7` | `0x0` | `V=1, W=0, I=0, ALU=000` | Spare word. It should only be seen if the loop control flow is not operating as expected. |
 

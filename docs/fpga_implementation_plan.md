@@ -2,7 +2,16 @@
 
 ## Goal
 
-Phase 3A prepares the simulated CPU core for a first FPGA build. The goal is not to add new CPU instructions or change behaviour. The goal is to wrap the existing CPU core in a board-facing top level, define the expected constraint structure, and provide simple Vivado scripts for synthesis and implementation.
+Phase 3 prepares the simulated CPU core for a first FPGA build. The goal is not to add new CPU instructions or change behaviour. The goal is to wrap the existing CPU core in a board-facing top level, define the expected constraint structure, provide Vivado scripts for synthesis and implementation, and prepare a clear hardware bring-up checklist.
+
+## Phase 3 Naming
+
+| Phase | Name | Status |
+| --- | --- | --- |
+| Phase 3A | FPGA wrapper and constraints | Complete at pre-hardware level |
+| Phase 3B | Slow tick and pre-hardware synthesis | Complete at pre-hardware level |
+| Phase 3C | Routed implementation and bitstream generation | Complete at pre-hardware level |
+| Phase 3D | Hardware bring-up | Pending until the Basys 3 board arrives |
 
 ## FPGA Top-Level Wrapper
 
@@ -56,7 +65,7 @@ The expected LED sequence for this program is documented in [FPGA LED expected s
 
 ## Constraints
 
-The target board for Phase 3A is the Digilent Basys 3, using FPGA part `xc7a35tcpg236-1`. The board-specific constraints live in `constraints/basys3.xdc` and cover only the current top-level ports:
+The target board for Phase 3 is the Digilent Basys 3, using FPGA part `xc7a35tcpg236-1`. The board-specific constraints live in `constraints/basys3.xdc` and cover only the current top-level ports:
 
 - `clk`: 100 MHz Basys 3 board clock.
 - `rst_btn`: centre pushbutton reset.
@@ -102,20 +111,28 @@ The implementation script runs synthesis, optimisation, placement and routing. I
 
 ## Work Completed Without Physical FPGA
 
-The repository can now complete most Phase 3A preparation before the Basys 3 board arrives:
+The repository can now complete Phase 3A, Phase 3B and Phase 3C preparation before the Basys 3 board arrives:
 
 - The FPGA wrapper exists and instantiates the already-tested `cpu_core`.
 - The wrapper has a self-checking simulation in `tb/fpga_top_tb.sv`.
 - The Basys 3 FPGA part is set to `xc7a35tcpg236-1` in the synthesis and implementation scripts.
 - `constraints/basys3.xdc` maps only the required clock, reset button, enable switch and LEDs.
 - Vivado synthesis and implementation can be run before hardware arrives to check RTL compile, constraints parsing, resource usage and timing.
-- `reports/phase3a_synthesis_summary.md` provides a place to record selected text results.
+- `reports/phase3a_synthesis_summary.md` records selected synthesis results.
+- `reports/phase3c_implementation_summary.md` records routed implementation and bitstream-generation results.
 
 Physical LED behaviour still must wait until the Basys 3 board arrives. Before using the bitstream on hardware, check the XDC against the Basys 3 schematic and the Digilent master XDC.
 
 Use the [Basys 3 bring-up checklist](basys3_bringup_checklist.md) for the first physical board programming and evidence capture.
 
-## Phase 3B Board Bring-Up Preparation
+Additional Phase 3 references:
+
+- [Phase 3 checklist](phase3_checklist.md)
+- [Basys 3 XDC review](../reports/basys3_xdc_review.md)
+- [Phase 3 build reproducibility](../reports/phase3_build_reproducibility.md)
+- [Phase 3D hardware bring-up template](../reports/phase3d_hardware_bringup_template.md)
+
+## Phase 3B Slow Tick And Pre-Hardware Synthesis
 
 Phase 3B adds a slow CPU clock-enable path for board observation without changing `cpu_core` behaviour. The FPGA still uses the real 100 MHz Basys 3 clock. A `slow_tick_generator` creates a single-cycle enable pulse at a human-visible rate, and `fpga_top` advances the CPU only when both `enable_sw` and the slow tick are high.
 
@@ -123,11 +140,15 @@ This keeps the design synchronous to one clock while allowing the LED debug mapp
 
 The Phase 3B slow-tick wrapper synthesis result is recorded in `reports/phase3b_slow_tick_synthesis_summary.md`.
 
-The Phase 3C routed implementation and bitstream-generation result is recorded in `reports/phase3c_implementation_summary.md`.
+The Phase 3C routed implementation and bitstream-generation result is recorded in `reports/phase3c_implementation_summary.md`. The current implementation generates a bitstream, but 100 MHz setup timing is not met, so the result is an implementation baseline rather than final timing closure.
+
+## Phase 3D Hardware Bring-Up
+
+Phase 3D is pending until the physical Basys 3 board arrives. It covers programming the board, pressing reset, toggling the enable switch, observing LEDs, comparing the sequence with [FPGA LED expected sequence](fpga_led_expected_sequence.md), and recording evidence in `reports/phase3d_hardware_bringup_template.md`.
 
 ## Acceptance Criteria
 
-Phase 3A is complete when:
+Phase 3 pre-hardware preparation is complete when:
 
 - `rtl/fpga_top.sv` instantiates `cpu_core` without modifying CPU behaviour.
 - `programs/fpga_led_demo.mem` exists and is documented.
@@ -136,3 +157,4 @@ Phase 3A is complete when:
 - Utilisation, timing and power report paths are defined.
 - Implementation and bitstream generation are scripted, with clear warnings about requiring correct constraints.
 - No generated Vivado output folders or large binary files are committed.
+- Phase 3D hardware bring-up remains explicitly pending until the physical Basys 3 board is programmed and observed.
