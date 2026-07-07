@@ -89,6 +89,7 @@ Phase 3A adds a simple FPGA top-level wrapper and baseline Vivado scripts for th
 - `rtl/slow_tick_generator.sv` adds slow LED-visible CPU stepping while keeping the Basys 3 100 MHz clock as the only clock.
 - `reports/phase3b_slow_tick_synthesis_summary.md` records the slow-tick wrapper synthesis result.
 - `reports/phase3c_implementation_summary.md` records the first routed implementation and bitstream-generation result.
+- `reports/phase3_prehardware_validation.md` separates completed pre-board evidence from pending physical hardware validation.
 
 See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3A checklist and acceptance criteria.
 
