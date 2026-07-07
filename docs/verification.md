@@ -738,6 +738,10 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 Waveform notes:
 
 - The generated waveform files are `tb_instr_mem.vcd`, `tb_data_mem.vcd` and `tb_program_execution.vcd`.
+- Phase 5 waveform images generated from the VCD files are saved as:
+  - `docs/images/phase5_instr_mem_waveform.png`
+  - `docs/images/phase5_data_mem_waveform.png`
+  - `docs/images/phase5_program_execution_waveform.png`
 
 Conclusion:
 
