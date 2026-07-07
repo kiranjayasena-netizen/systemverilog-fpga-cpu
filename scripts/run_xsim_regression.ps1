@@ -226,5 +226,11 @@ Invoke-XsimTest `
     -Top "tb_program_execution" `
     -Snapshot "tb_program_execution_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 6 arithmetic edge program" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_phase6_arithmetic_edge.sv")) `
+    -Top "tb_phase6_arithmetic_edge" `
+    -Snapshot "tb_phase6_arithmetic_edge_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."

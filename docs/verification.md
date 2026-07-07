@@ -747,6 +747,75 @@ Conclusion:
 
 Phase 5 program execution simulation passed. The CPU ran a small multi-instruction custom-ISA program and stored the expected result, `12`, in data memory word 0.
 
+## Phase 6 Arithmetic Edge Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/arithmetic_edge_test.mem`
+- `tb/tb_phase6_arithmetic_edge.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- ADDI with positive immediates.
+- ADD register-register execution.
+- SUB register-register execution.
+- Negative immediate sign extension with `imm13 = 13'h1fff`.
+- Arithmetic wraparound from adding `32'hffff_ffff` and `10`.
+- SUB underflow from `x0 - x1`.
+- Register `x0` write protection after an attempted `ADDI x0, x0, 123`.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI x1, x0, 10`
+- `ADDI x2, x0, 20`
+- `ADD  x3, x1, x2`
+- `SUB  x4, x2, x1`
+- `ADDI x5, x0, -1`
+- `ADD  x6, x5, x1`
+- `SUB  x7, x0, x1`
+- `ADDI x0, x0, 123`
+- `ADD  x8, x0, x3`
+- `NOP`
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_arithmetic_edge` reported 9 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x0 = 32'h0000_0000`
+  - `x1 = 32'd10`
+  - `x2 = 32'd20`
+  - `x3 = 32'd30`
+  - `x4 = 32'd10`
+  - `x5 = 32'hffff_ffff`
+  - `x6 = 32'd9`
+  - `x7 = 32'hffff_fff6`
+  - `x8 = 32'd30`
+- Console output included `PHASE 6 ARITHMETIC EDGE TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_arithmetic_edge.vcd`.
+
+Conclusion:
+
+The first Phase 6 custom-ISA program test passed. It extends program-level verification beyond the Phase 5 add/store demo by checking arithmetic edge cases, negative immediate sign extension and `x0` write protection.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
