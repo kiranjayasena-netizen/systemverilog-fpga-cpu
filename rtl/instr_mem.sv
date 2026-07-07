@@ -7,6 +7,7 @@ module instr_mem #(
 );
 
     logic [31:0] mem [0:DEPTH-1];
+    // Current Phase 5 memory is 256 words, so addr[9:2] selects the word.
     logic [7:0]  word_addr;
     logic        addr_in_range;
 
@@ -32,4 +33,3 @@ module instr_mem #(
     end
 
 endmodule
-

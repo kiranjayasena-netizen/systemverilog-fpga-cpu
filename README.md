@@ -54,7 +54,13 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `constraints/basys3.xdc` maps the current wrapper ports to the Basys 3 clock, reset button, enable switch and LEDs.
 - `tb/fpga_top_tb.sv` contains a self-checking simulation for the FPGA wrapper LED debug outputs.
 - `scripts/run_vivado_synth.tcl` and `scripts/run_vivado_impl.tcl` provide baseline Vivado build scripts for the Basys 3 target.
-- ALU, register file, program counter, instruction memory, fetch unit, instruction decoder and control unit waveform images have been generated.
+- Phase 5 memory system and program execution support is complete in simulation.
+- `rtl/instr_mem.sv` and `rtl/data_mem.sv` provide standalone Phase 5 instruction and data memory modules.
+- `rtl/cpu_top.sv` provides a runnable CPU system wrapper around the existing integrated `cpu_core`.
+- `programs/add_test.mem` contains a file-loaded custom-ISA program that computes `5 + 7` and stores the result in data memory.
+- `tb/tb_instr_mem.sv`, `tb/tb_data_mem.sv` and `tb/tb_program_execution.sv` contain self-checking Phase 5 testbenches.
+- The Phase 5 program execution simulation has passed in Vivado XSim.
+- ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Documentation
@@ -62,6 +68,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
+- [Phase 5 plan](docs/phase5_plan.md) explains the memory system and program execution simulation.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -107,6 +114,41 @@ Hardware validation has not been completed yet. The board still needs to be prog
 
 See [FPGA implementation plan](docs/fpga_implementation_plan.md) for the detailed Phase 3 checklist and acceptance criteria.
 
+## Phase 5: Memory System and Program Execution
+
+Phase 5 turns the integrated CPU work into a runnable processor system in simulation. It adds:
+
+- `rtl/instr_mem.sv`: standalone 256-word instruction memory with byte addressing and `$readmemh` program loading.
+- `rtl/data_mem.sv`: standalone 256-word data memory with synchronous writes and combinational reads.
+- `rtl/cpu_top.sv`: runnable CPU system wrapper for program execution simulations.
+- `programs/add_test.mem`: file-loaded custom-ISA test program.
+- `tb/tb_instr_mem.sv`, `tb/tb_data_mem.sv` and `tb/tb_program_execution.sv`: self-checking Phase 5 testbenches.
+
+The Phase 5 demo program is:
+
+```text
+ADDI  x1, x0, 5
+ADDI  x2, x0, 7
+ADD   x3, x1, x2
+STORE x3, [x0 + 0]
+NOP
+```
+
+Expected final result:
+
+- `x1 = 5`
+- `x2 = 7`
+- `x3 = 12`
+- data memory word 0 = `32'd12`
+
+The design choice is intentionally conservative. `cpu_top.sv` wraps the existing integrated `cpu_core`; the existing core already contains the fetch, instruction-memory and data-memory path through the earlier `fetch_unit`, `instruction_memory` and `data_memory` modules. The new `instr_mem.sv` and `data_mem.sv` modules are standalone Phase 5 memory blocks tested independently. This documents and verifies the memory-system concepts without refactoring working CPU behaviour.
+
+The Phase 5 XSim regression passed, and waveform evidence is saved under `docs/images/`:
+
+- `docs/images/phase5_instr_mem_waveform.png`
+- `docs/images/phase5_data_mem_waveform.png`
+- `docs/images/phase5_program_execution_waveform.png`
+
 ## Completed Modules And Next Work
 
 Completed work:
@@ -120,6 +162,10 @@ Completed work:
 - Integrated CPU core with ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and JUMP support
 - File-loaded CPU test programs
 - Basys 3 FPGA wrapper, constraints, synthesis, routed implementation and bitstream generation
+- Phase 5 memory system
+- CPU top-level program execution wrapper
+- File-loaded Phase 5 program execution test
+- Phase 5 waveform evidence
 
 Next planned work:
 
