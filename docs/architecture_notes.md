@@ -163,6 +163,161 @@ The core is intentionally minimal:
 
 These limits are acceptable for the current phase because the main goal is to build and verify the datapath one piece at a time.
 
+## Phase 3 FPGA Top-Level Architecture
+
+Phase 3 adds a Basys 3-facing wrapper around the already integrated CPU core. The CPU instruction encoding and `cpu_core` behaviour are unchanged. The FPGA wrapper exists so the current simulated CPU can be built in Vivado and observed through simple board-level I/O.
+
+### Target Board And Build Configuration
+
+The current FPGA target is:
+
+- Board: Digilent Basys 3.
+- FPGA part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top`.
+- Constraints file: `constraints/basys3.xdc`.
+- Synthesis script: `scripts/run_vivado_synth.tcl`.
+- Implementation script: `scripts/run_vivado_impl.tcl`.
+
+The Basys 3 constraints currently map only the board signals needed by `fpga_top`:
+
+- `clk`: 100 MHz Basys 3 board clock.
+- `rst_btn`: reset pushbutton.
+- `enable_sw`: SW0 CPU enable switch.
+- `led[15:0]`: LD0 through LD15 debug outputs.
+
+No unused pins are intentionally constrained in the current wrapper.
+
+### FPGA Top Wrapper
+
+File: `rtl/fpga_top.sv`
+
+The wrapper instantiates `cpu_core` and exposes a small board-facing interface:
+
+- `clk`: real 100 MHz Basys 3 clock.
+- `rst_btn`: active-high reset input.
+- `enable_sw`: user switch used to allow CPU stepping.
+- `led[15:0]`: CPU debug state for first hardware bring-up.
+
+The wrapper loads the LED demo program through the CPU instruction memory init-file path:
+
+```text
+IMEM_INIT_FILE = "programs/fpga_led_demo.mem"
+```
+
+This keeps the CPU core reusable while allowing the FPGA top-level to choose a program image for board bring-up.
+
+### Slow CPU Stepping
+
+File: `rtl/slow_tick_generator.sv`
+
+The Basys 3 design still uses the real 100 MHz board clock. A divided clock is not created. Instead, `slow_tick_generator` creates a single-cycle `tick` pulse using a configurable `DIVISOR` parameter.
+
+The FPGA wrapper gates the CPU enable input with the switch and the slow tick:
+
+```text
+cpu_enable = enable_sw && slow_tick
+```
+
+This means all CPU registers remain clocked by the same 100 MHz clock, while the CPU state only advances on slow enable pulses. The default divider is intended for human-visible LED stepping. Testbenches override the divider with a small value so simulation remains fast.
+
+### LED Debug Mapping
+
+The 16 LEDs expose a compact view of the CPU state:
+
+| LED bits | Signal | Purpose |
+| --- | --- | --- |
+| `led[3:0]` | `pc[5:2]` | Low instruction-word address bits |
+| `led[7:4]` | `opcode` | Current instruction opcode |
+| `led[8]` | `valid_instr` | Recognised instruction indicator |
+| `led[9]` | `reg_write` | Register writeback indicator |
+| `led[10]` | `use_imm` | Immediate operand select indicator |
+| `led[13:11]` | `alu_op` | ALU operation select |
+| `led[15:14]` | `alu_result[1:0]` | Low ALU result bits |
+
+This mapping is intentionally simple. It is useful for early board bring-up because the PC and opcode fields should visibly step through the demo program. The ALU result LEDs are secondary indicators because they depend on current register state and the active instruction.
+
+The expected LED sequence is documented separately in [FPGA LED expected sequence](fpga_led_expected_sequence.md). That document is design-derived and has not yet been confirmed on physical hardware.
+
+### FPGA LED Demo Program
+
+File: `programs/fpga_led_demo.mem`
+
+The demo program is:
+
+```text
+60800001  ADDI x1, x0, 1
+61000002  ADDI x2, x0, 2
+11844000  ADD  x3, x1, x2
+52044000  XOR  x4, x1, x2
+90044002  BEQ  x1, x2, +2
+62800007  ADDI x5, x0, 7
+A0001FFA  JUMP -6
+00000000  NOP
+```
+
+The BEQ is intentionally not taken because `x1` and `x2` contain different values. The JUMP at word index 6 returns to word index 0. During normal operation the visible PC word index should loop:
+
+```text
+0, 1, 2, 3, 4, 5, 6, 0, ...
+```
+
+The spare NOP at word index 7 should not normally be reached.
+
+### Phase 3 Verification And Build Evidence
+
+Phase 3 evidence is separated into simulation, synthesis/implementation, and pending hardware evidence.
+
+Simulation evidence:
+
+- `tb/fpga_top_tb.sv` checks that `fpga_top` drives known LED values and exposes changing CPU debug state while enabled.
+- `tb/slow_tick_generator_tb.sv` checks the one-cycle slow tick behaviour with a small simulation divisor.
+- The full XSim regression has passed with the FPGA wrapper and slow tick tests included.
+
+Synthesis and implementation evidence:
+
+- Vivado synthesis passes for `fpga_top` targeting `xc7a35tcpg236-1`.
+- Vivado implementation completes optimisation, placement and routing.
+- Bitstream generation completes locally as `reports/bitstreams/fpga_top.bit`.
+- The generated bitstream is a local build artifact and should not be committed.
+
+Pre-hardware evidence is summarised in `reports/phase3_prehardware_validation.md`. The key limitation is that none of this is physical board validation yet.
+
+### Phase 3 Resource And Timing Status
+
+The Phase 3C routed implementation summary records:
+
+- Slice LUTs: 2,983 / 20,800, 14.34%.
+- Slice registers: 8,314 / 41,600, 19.99%.
+- Block RAM tiles: 0 / 50, 0.00%.
+- DSPs: 0 / 90, 0.00%.
+- Total on-chip power estimate: 0.081 W.
+- Target clock: 10.000 ns, 100 MHz.
+- Post-route WNS: -1.551 ns.
+- Post-route TNS: -5707.315 ns.
+- Worst hold slack: 0.075 ns.
+
+The routed design does not meet the 100 MHz setup timing constraint. The worst reported post-route path runs from the program counter through the single-cycle-style CPU datapath into register file writeback:
+
+```text
+cpu_inst/fetch_inst/pc_inst/pc_reg[30]/C
+to
+cpu_inst/reg_file_inst/regs_reg[2][12]/D
+```
+
+This timing miss is consistent with the current simple single-cycle-style architecture. The slow tick makes state changes human-visible, but it does not close the internal 100 MHz timing path because all registers are still clocked by the real 100 MHz clock.
+
+### Pending Hardware Validation
+
+The project cannot yet claim:
+
+- The Basys 3 has been programmed.
+- The LEDs show the expected pattern on the real board.
+- The reset button has been validated on the real board.
+- The enable switch has been validated on the real board.
+- The CPU has executed correctly in physical FPGA hardware.
+
+The next hardware step is to program the Basys 3, use SW0 as `enable_sw`, use the mapped reset button, and compare the real LED pattern against the expected sequence document. Any observed behaviour should be recorded in a hardware bring-up report.
+
 ## ALU
 
 File: `rtl/alu.sv`
@@ -463,4 +618,5 @@ The `programs/branch_jump_test.mem` program image exercises BEQ, JUMP and not-ta
 - Memory map.
 - Single-cycle versus multi-cycle CPU structure.
 - Whether status flags are needed.
-- Target FPGA board and clock frequency target.
+- Whether the first hardware demo should accept a lower effective stepping rate while documenting the 100 MHz timing miss.
+- Whether to improve timing later using a multi-cycle CPU, registered memory outputs or a pipelined datapath.
