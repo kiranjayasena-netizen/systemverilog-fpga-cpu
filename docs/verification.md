@@ -680,9 +680,72 @@ Conclusion:
 
 CPU core file-loaded BEQ/JUMP program simulation passed.
 
+## Phase 5 Program Execution Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/instr_mem.sv`
+- `rtl/data_mem.sv`
+- `rtl/cpu_top.sv`
+- `programs/add_test.mem`
+- `tb/tb_instr_mem.sv`
+- `tb/tb_data_mem.sv`
+- `tb/tb_program_execution.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Phase 5 instruction memory `$readmemh` loading from `programs/add_test.mem`.
+- Byte-address to word-index mapping using `addr[9:2]`.
+- Instruction memory out-of-range reads returning zero.
+- Phase 5 data memory reset, synchronous write and combinational read behaviour.
+- Data memory `mem_read = 0` returning zero.
+- Data memory out-of-range writes being ignored.
+- Full program execution through `cpu_top`.
+- Final register checks for `x1 = 5`, `x2 = 7` and `x3 = 12`.
+- Final data memory check that word 0 contains `32'd12`.
+
+Program tested:
+
+- `ADDI x1, x0, 5`
+- `ADDI x2, x0, 7`
+- `ADD  x3, x1, x2`
+- `STORE x3, [x0 + 0]`
+- `NOP`
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_instr_mem` reported 7 tests run and 0 tests failed.
+- `tb_data_mem` reported 6 tests run and 0 tests failed.
+- `tb_program_execution` reported 4 tests run and 0 tests failed.
+- Console output included:
+  - `PHASE 5 INSTRUCTION MEMORY TEST PASSED`
+  - `PHASE 5 DATA MEMORY TEST PASSED`
+  - `PHASE 5 PROGRAM EXECUTION TEST PASSED`
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Waveform notes:
+
+- The generated waveform files are `tb_instr_mem.vcd`, `tb_data_mem.vcd` and `tb_program_execution.vcd`.
+
+Conclusion:
+
+Phase 5 program execution simulation passed. The CPU ran a small multi-instruction custom-ISA program and stored the expected result, `12`, in data memory word 0.
+
 ## Future Verification Work
 
-- Add verification entries for each new RTL module.
+- Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
 - Use `$fatal` or an equivalent failure mechanism when checks fail.

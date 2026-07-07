@@ -115,6 +115,10 @@ $commonCpuSources = @(
     "rtl/cpu_core.sv"
 )
 
+$phase5CpuTopSources = $commonCpuSources + @(
+    "rtl/cpu_top.sv"
+)
+
 $fpgaTopSources = $commonCpuSources + @(
     "rtl/slow_tick_generator.sv",
     "rtl/fpga_top.sv"
@@ -203,6 +207,24 @@ Invoke-XsimTest `
     -Sources ($fpgaTopSources + @("tb/fpga_top_tb.sv")) `
     -Top "fpga_top_tb" `
     -Snapshot "fpga_top_tb_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 5 instruction memory" `
+    -Sources @("rtl/instr_mem.sv", "tb/tb_instr_mem.sv") `
+    -Top "tb_instr_mem" `
+    -Snapshot "tb_instr_mem_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 5 data memory" `
+    -Sources @("rtl/data_mem.sv", "tb/tb_data_mem.sv") `
+    -Top "tb_data_mem" `
+    -Snapshot "tb_data_mem_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 5 program execution" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
+    -Top "tb_program_execution" `
+    -Snapshot "tb_program_execution_sim"
 
 Write-Host ""
 Write-Host "All XSim regression tests completed."

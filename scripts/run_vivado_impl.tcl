@@ -24,10 +24,13 @@ read_verilog -sv rtl/register_file.sv
 read_verilog -sv rtl/program_counter.sv
 read_verilog -sv rtl/instruction_memory.sv
 read_verilog -sv rtl/data_memory.sv
+read_verilog -sv rtl/instr_mem.sv
+read_verilog -sv rtl/data_mem.sv
 read_verilog -sv rtl/fetch_unit.sv
 read_verilog -sv rtl/instruction_decoder.sv
 read_verilog -sv rtl/control_unit.sv
 read_verilog -sv rtl/cpu_core.sv
+read_verilog -sv rtl/cpu_top.sv
 read_verilog -sv rtl/slow_tick_generator.sv
 read_verilog -sv rtl/fpga_top.sv
 
