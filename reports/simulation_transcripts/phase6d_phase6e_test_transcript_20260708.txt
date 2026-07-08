@@ -1,0 +1,182 @@
+Phase 6D and Phase 6E XSim Test Transcript
+Generated from saved Vivado XSim regression transcripts.
+
+Source transcripts:
+- reports\simulation_transcripts\phase6d_jump_control_xsim_regression_20260708_114112.txt
+- reports\simulation_transcripts\phase6e_simple_loop_xsim_regression_20260708_115055.txt
+
+============================================================
+Phase 6D: Jump Control Program
+============================================================
+Running Phase 6D jump control program
+============================================================
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_defs_pkg.sv" into library work
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/alu.sv" into library work
+INFO: [VRFC 10-311] analyzing module alu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/register_file.sv" into library work
+INFO: [VRFC 10-311] analyzing module register_file
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/program_counter.sv" into library work
+INFO: [VRFC 10-311] analyzing module program_counter
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/instruction_memory.sv" into library work
+INFO: [VRFC 10-311] analyzing module instruction_memory
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/data_memory.sv" into library work
+INFO: [VRFC 10-311] analyzing module data_memory
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/fetch_unit.sv" into library work
+INFO: [VRFC 10-311] analyzing module fetch_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/instruction_decoder.sv" into library work
+INFO: [VRFC 10-311] analyzing module instruction_decoder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/control_unit.sv" into library work
+INFO: [VRFC 10-311] analyzing module control_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_core.sv" into library work
+INFO: [VRFC 10-311] analyzing module cpu_core
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_top.sv" into library work
+INFO: [VRFC 10-311] analyzing module cpu_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/tb/tb_phase6_jump_control.sv" into library work
+INFO: [VRFC 10-311] analyzing module tb_phase6_jump_control
+Vivado Simulator v2026.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: C:/AMDDesignTools/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe tb_phase6_jump_control -s tb_phase6_jump_control_sim_20260708_114113 
+Multi-threading is on. Using 20 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package work.cpu_defs_pkg
+Compiling module work.program_counter
+Compiling module work.instruction_memory(INIT_FILE="pr...
+Compiling module work.fetch_unit(IMEM_INIT_FILE="progr...
+Compiling module work.instruction_decoder
+Compiling module work.control_unit
+Compiling module work.register_file
+Compiling module work.alu
+Compiling module work.data_memory
+Compiling module work.cpu_core(IMEM_INIT_FILE="program...
+Compiling module work.cpu_top(PROGRAM_FILE="programs/j...
+Compiling module work.tb_phase6_jump_control
+Built simulation snapshot tb_phase6_jump_control_sim_20260708_114113
+Could not remove the obj directory: boost::filesystem::remove: Access is denied: "xsim.dir/tb_phase6_jump_control_sim_20260708_114113/obj\xsim_0.win64.obj"
+
+WARNING: xelab returned exit code 1 for Phase 6D jump control program. If the snapshot was built and only an obj 
+cleanup warning was reported, xsim may still run successfully.
+
+****** xsim v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Wed Jul  8 11:43:04 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_phase6_jump_control_sim_20260708_114113/xsim_script.tcl
+# xsim {tb_phase6_jump_control_sim_20260708_114113} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+Starting Phase 6D jump control program simulation...
+Program: JUMP skips x2=99 and x4=99
+PASS: x0 remains hardwired to zero | x0=0x00000000
+PASS: ADDI x1, x0, 11 | x1=0x0000000b
+PASS: First JUMP skips x2=99 | x2=0x00000016
+PASS: ADDI x3, x0, 33 | x3=0x00000021
+PASS: Second JUMP skips x4=99 | x4=0x0000002c
+PASS: x2 is not skipped value 99 | x2=0x00000016
+PASS: x4 is not skipped value 99 | x4=0x0000002c
+----------------------------------
+Tests run:    7
+Tests failed: 0
+----------------------------------
+PHASE 6D JUMP CONTROL TEST PASSED
+$finish called at time : 111 ns : File "C:/FPGA/systemverilog-fpga-cpu/tb/tb_phase6_jump_control.sv" Line 158
+exit
+INFO: [Common 17-206] Exiting xsim at Wed Jul  8 11:43:06 2026...
+
+All XSim regression tests completed.
+
+============================================================
+Phase 6E: Simple Loop Program
+============================================================
+Running Phase 6E simple loop program
+============================================================
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_defs_pkg.sv" into library work
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/alu.sv" into library work
+INFO: [VRFC 10-311] analyzing module alu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/register_file.sv" into library work
+INFO: [VRFC 10-311] analyzing module register_file
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/program_counter.sv" into library work
+INFO: [VRFC 10-311] analyzing module program_counter
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/instruction_memory.sv" into library work
+INFO: [VRFC 10-311] analyzing module instruction_memory
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/data_memory.sv" into library work
+INFO: [VRFC 10-311] analyzing module data_memory
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/fetch_unit.sv" into library work
+INFO: [VRFC 10-311] analyzing module fetch_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/instruction_decoder.sv" into library work
+INFO: [VRFC 10-311] analyzing module instruction_decoder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/control_unit.sv" into library work
+INFO: [VRFC 10-311] analyzing module control_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_core.sv" into library work
+INFO: [VRFC 10-311] analyzing module cpu_core
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_top.sv" into library work
+INFO: [VRFC 10-311] analyzing module cpu_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/tb/tb_phase6_simple_loop.sv" into library work
+INFO: [VRFC 10-311] analyzing module tb_phase6_simple_loop
+Vivado Simulator v2026.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: C:/AMDDesignTools/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe tb_phase6_simple_loop -s tb_phase6_simple_loop_sim_20260708_115056 
+Multi-threading is on. Using 20 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package work.cpu_defs_pkg
+Compiling module work.program_counter
+Compiling module work.instruction_memory(INIT_FILE="pr...
+Compiling module work.fetch_unit(IMEM_INIT_FILE="progr...
+Compiling module work.instruction_decoder
+Compiling module work.control_unit
+Compiling module work.register_file
+Compiling module work.alu
+Compiling module work.data_memory
+Compiling module work.cpu_core(IMEM_INIT_FILE="program...
+Compiling module work.cpu_top(PROGRAM_FILE="programs/s...
+Compiling module work.tb_phase6_simple_loop
+Built simulation snapshot tb_phase6_simple_loop_sim_20260708_115056
+Could not remove the obj directory: boost::filesystem::remove: Access is denied: "xsim.dir/tb_phase6_simple_loop_sim_20260708_115056/obj\xsim_0.win64.obj"
+
+WARNING: xelab returned exit code 1 for Phase 6E simple loop program. If the snapshot was built and only an obj cleanup
+ warning was reported, xsim may still run successfully.
+
+****** xsim v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Wed Jul  8 11:52:37 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_phase6_simple_loop_sim_20260708_115056/xsim_script.tcl
+# xsim {tb_phase6_simple_loop_sim_20260708_115056} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+Starting Phase 6E simple loop program simulation...
+Program: increment x1 and decrement x2 until x2 reaches zero
+PASS: x0 remains hardwired to zero | x0=0x00000000
+PASS: Loop accumulator x1 | x1=0x00000003
+PASS: Loop counter x2 reaches zero | x2=0x00000000
+PASS: Loop step x3 remains one | x3=0x00000001
+PASS: STORE writes result to data memory word 0 | mem[0]=0x00000003
+----------------------------------
+Tests run:    5
+Tests failed: 0
+----------------------------------
+PHASE 6E SIMPLE LOOP TEST PASSED
+$finish called at time : 261 ns : File "C:/FPGA/systemverilog-fpga-cpu/tb/tb_phase6_simple_loop.sv" Line 160
+exit
+INFO: [Common 17-206] Exiting xsim at Wed Jul  8 11:52:39 2026...
+
+All XSim regression tests completed.
