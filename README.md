@@ -60,6 +60,10 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - `programs/add_test.mem` contains a file-loaded custom-ISA program that computes `5 + 7` and stores the result in data memory.
 - `tb/tb_instr_mem.sv`, `tb/tb_data_mem.sv` and `tb/tb_program_execution.sv` contain self-checking Phase 5 testbenches.
 - The Phase 5 program execution simulation has passed in Vivado XSim.
+- Phase 6 expanded custom-ISA program verification is complete through Phase 6F.
+- The full local Vivado XSim regression passes through Phase 6F.
+- Phase 6 program-level tests cover arithmetic edge cases, memory offsets, branch taken/not-taken control flow, jump control, simple loop execution and invalid opcode safety.
+- The next major work is Phase 7 FPGA implementation and timing-closure preparation.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -69,6 +73,8 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
 - [Phase 5 plan](docs/phase5_plan.md) explains the memory system and program execution simulation.
+- [Phase 6 plan](docs/phase6_plan.md) explains the expanded custom-ISA program verification suite.
+- [Phase 7 plan](docs/phase7_plan.md) defines the simulation baseline freeze, FPGA implementation plan, timing analysis plan and Basys 3 bring-up plan.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -149,6 +155,23 @@ The Phase 5 XSim regression passed, and waveform evidence is saved under `docs/i
 - `docs/images/phase5_data_mem_waveform.png`
 - `docs/images/phase5_program_execution_waveform.png`
 
+## Phase 6: Expanded ISA Verification
+
+Phase 6 extends program-level verification beyond the Phase 5 add/store demo. It keeps the existing custom ISA and CPU RTL unchanged, then runs a wider set of file-loaded programs through the same `cpu_top` execution path.
+
+Completed Phase 6 tests:
+
+- Phase 6A arithmetic edge program: ADDI, ADD, SUB, negative immediate sign extension and `x0` write protection.
+- Phase 6B memory offset program: LOAD/STORE base-plus-offset addressing and negative offset load.
+- Phase 6C branch control program: BEQ taken and BEQ not-taken behaviour.
+- Phase 6D jump control program: unconditional JUMP skipping unwanted instructions.
+- Phase 6E simple loop program: ADDI, ADD, SUB, BEQ, JUMP, STORE and NOP loop execution.
+- Phase 6F invalid opcode safety program: invalid opcodes are marked invalid and do not write registers or data memory.
+
+The full local Vivado XSim regression passes through Phase 6F. This is the frozen simulation baseline for starting Phase 7 FPGA implementation and timing-closure preparation.
+
+See [Phase 6 plan](docs/phase6_plan.md) and [verification notes](docs/verification.md) for the tested programs, encoded instruction words, transcript paths and pass/fail results.
+
 ## Completed Modules And Next Work
 
 Completed work:
@@ -166,9 +189,12 @@ Completed work:
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
 - Phase 5 waveform evidence
+- Phase 6 expanded custom-ISA program-level verification through Phase 6F
+- Frozen simulation baseline ready for Phase 7 FPGA implementation work
 
 Next planned work:
 
+- Phase 7 synthesis, implementation, timing analysis and Basys 3 bring-up preparation
 - Phase 3D physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Timing closure investigation for the documented 100 MHz setup timing miss
