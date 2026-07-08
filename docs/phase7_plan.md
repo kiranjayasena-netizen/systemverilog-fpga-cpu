@@ -48,6 +48,8 @@ Real compile errors, elaboration errors, simulation runtime errors or self-check
 
 Purpose: synthesize the frozen CPU/FPGA wrapper baseline for the Basys 3 target.
 
+Status: completed for the Phase 7A baseline. See `reports/phase7b_synthesis_summary.md`.
+
 Planned actions:
 
 - Use Vivado 2026.1.
@@ -64,6 +66,17 @@ Acceptance criteria:
 - Utilisation, timing summary, worst-path timing and power reports are generated.
 - Any warnings are reviewed and documented.
 - No physical hardware behaviour is claimed.
+
+Phase 7B result:
+
+- Date run: July 8, 2026
+- Result: synthesis passed.
+- Target part: `xc7a35tcpg236-1`
+- Top module: `fpga_top`
+- Utilisation: 2,915 LUTs, 8,314 flip-flops, 0 BRAM tiles, 0 DSPs.
+- Post-synthesis timing: 100 MHz setup timing not met, WNS -0.600 ns, TNS -3879.171 ns, hold timing met.
+- Summary report: `reports/phase7b_synthesis_summary.md`
+- CPU RTL/testbench/program changes in Phase 7B: none.
 
 ## Phase 7C: Implementation And Bitstream Plan
 

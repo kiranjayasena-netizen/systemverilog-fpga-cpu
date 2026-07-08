@@ -63,7 +63,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 6 expanded custom-ISA program verification is complete through Phase 6F.
 - The full local Vivado XSim regression passes through Phase 6F.
 - Phase 6 program-level tests cover arithmetic edge cases, memory offsets, branch taken/not-taken control flow, jump control, simple loop execution and invalid opcode safety.
-- The next major work is Phase 7 FPGA implementation and timing-closure preparation.
+- Phase 7A simulation baseline freeze is complete.
+- Phase 7B synthesis evidence has been captured for the Basys 3 target.
+- The next major work is Phase 7C implementation and bitstream generation, followed by timing-closure analysis.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -75,6 +77,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 5 plan](docs/phase5_plan.md) explains the memory system and program execution simulation.
 - [Phase 6 plan](docs/phase6_plan.md) explains the expanded custom-ISA program verification suite.
 - [Phase 7 plan](docs/phase7_plan.md) defines the simulation baseline freeze, FPGA implementation plan, timing analysis plan and Basys 3 bring-up plan.
+- [Phase 7B synthesis summary](reports/phase7b_synthesis_summary.md) records the Basys 3 synthesis result, utilisation, timing and warnings.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -195,6 +198,7 @@ Completed work:
 Next planned work:
 
 - Phase 7 synthesis, implementation, timing analysis and Basys 3 bring-up preparation
+- Phase 7C implementation and bitstream generation using the frozen Phase 7A baseline
 - Phase 3D physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Timing closure investigation for the documented 100 MHz setup timing miss
