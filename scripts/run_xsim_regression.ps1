@@ -268,5 +268,11 @@ Invoke-XsimTest `
     -Top "tb_cpu_core_multicycle_fsm" `
     -Snapshot "tb_cpu_core_multicycle_fsm_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 8C multi-cycle CPU arithmetic" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_arithmetic.sv") `
+    -Top "tb_cpu_core_multicycle_arithmetic" `
+    -Snapshot "tb_cpu_core_multicycle_arithmetic_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."

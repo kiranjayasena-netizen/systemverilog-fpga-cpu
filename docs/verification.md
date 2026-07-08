@@ -1244,6 +1244,67 @@ Conclusion:
 
 The Phase 8B multi-cycle CPU skeleton passed its focused FSM safety test. It verifies reset, NOP decode, invalid-opcode safety and sequential PC stepping without changing the existing working CPU core or instruction encodings.
 
+## Phase 8C Multi-Cycle CPU Arithmetic Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_arithmetic.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic multi-cycle sequence `FETCH -> DECODE -> EXECUTE -> WRITEBACK -> FETCH`.
+- Register operand capture during `DECODE`.
+- ALU result capture during `EXECUTE`.
+- Register writeback during `WRITEBACK`.
+- `ADDI`, `ADD`, `SUB`, `AND`, `OR` and `XOR`.
+- Negative immediate sign extension using `ADDI x8, x0, -1`.
+- `x0` write protection using `ADDI x0, x0, 123`.
+- `reg_write` pulses only during arithmetic `WRITEBACK` cycles that write a non-zero destination register.
+- `mem_write` remains low throughout the arithmetic program.
+
+Result:
+
+- Standalone Phase 8C XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 8C test.
+- Testbench summary reported 13 tests run and 0 tests failed.
+- Console output included `PHASE 8C MULTI-CYCLE ARITHMETIC TEST PASSED`.
+- The existing `rtl/cpu_core.sv` implementation was not replaced or modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_arithmetic.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_arithmetic -s tb_cpu_core_multicycle_arithmetic_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_arithmetic_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after some snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_arithmetic.vcd`.
+
+Conclusion:
+
+The Phase 8C multi-cycle CPU arithmetic test passed. It verifies arithmetic execution, signed immediate handling, writeback timing, `x0` protection and memory-write safety in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
