@@ -152,6 +152,8 @@ Phase 7D result:
 
 Purpose: use the physical Basys 3 board to validate basic programming, reset, enable and LED-observable CPU behaviour.
 
+Status: planned. Evidence-capture report prepared at `reports/phase7e_basys3_bringup.md`; physical board testing is not recorded yet.
+
 Planned actions:
 
 - Use the generated `fpga_top` bitstream after constraints have been reviewed.
@@ -163,7 +165,7 @@ Planned actions:
 - Observe `led[15:0]`.
 - Compare observed LED behaviour with `docs/fpga_led_expected_sequence.md`.
 - Capture photos, short video, date/time, commit hash and notes.
-- Fill in `reports/phase3d_hardware_bringup_template.md` or a Phase 7 equivalent report.
+- Fill in `reports/phase7e_basys3_bringup.md`.
 
 Acceptance criteria:
 
@@ -173,6 +175,15 @@ Acceptance criteria:
 - LED sequence evidence is compared with the expected sequence.
 - Any mismatch is documented with enough detail to reproduce.
 - No hardware validation is claimed before the physical board is actually tested.
+
+Phase 7E planning result:
+
+- Bring-up report template: `reports/phase7e_basys3_bringup.md`
+- Expected LED reference: `docs/fpga_led_expected_sequence.md`
+- Bitstream path to use: `reports/bitstreams/fpga_top.bit`
+- Known limitation: Phase 7D shows 100 MHz setup timing is not met, so Phase 7E must not claim timing closure.
+- Hardware result status: not tested yet.
+- CPU RTL/testbench/program changes in Phase 7E planning: none.
 
 ## Phase 7F: Supervisor-Facing Implementation Summary Plan
 
