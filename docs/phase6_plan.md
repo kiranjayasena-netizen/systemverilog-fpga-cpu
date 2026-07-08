@@ -302,3 +302,55 @@ The testbench instantiates `cpu_top` with:
 ```
 
 It resets the CPU, runs with a fixed maximum cycle count so a bad loop cannot hang simulation, checks the final register and data memory values, generates `tb_phase6_simple_loop.vcd`, and calls `$fatal` if any check fails.
+
+## Phase 6F Test: Invalid Opcode Safety Program
+
+File: `programs/invalid_opcode_test.mem`
+
+Status: added and passed in Vivado XSim.
+
+The Phase 6F program verifies that invalid opcodes are safely ignored at program level. Valid instructions before and after the invalid instructions must still execute:
+
+```text
+ADDI    x1, x0, 10       ; valid setup before invalid opcode
+INVALID opcode 0xb       ; attempts to target x10
+ADDI    x2, x0, 20       ; valid instruction after invalid opcode
+INVALID opcode 0xf       ; attempts to target x11
+STORE   x2, [x0 + 0]     ; data memory word 0 = 20
+INVALID opcode 0xb       ; attempts to target x12
+NOP
+```
+
+Encoded program words:
+
+```text
+6080000A
+B5002000
+61000014
+F5844000
+80004000
+B6004004
+00000000
+```
+
+Expected final state:
+
+- `x0 = 32'd0`
+- `x1 = 32'd10`
+- `x2 = 32'd20`
+- `x10 = 32'd0`
+- `x11 = 32'd0`
+- `x12 = 32'd0`
+- `data_mem_inst.mem[0] = 32'd20`
+- `data_mem_inst.mem[1] = 32'd0`
+- `data_mem_inst.mem[5] = 32'd0`
+
+Testbench: `tb/tb_phase6_invalid_opcode.sv`
+
+The testbench instantiates `cpu_top` with:
+
+```systemverilog
+.PROGRAM_FILE("programs/invalid_opcode_test.mem")
+```
+
+It resets the CPU, runs the file-loaded program, checks that invalid opcodes do not write their target registers or corrupt checked data memory words, generates `tb_phase6_invalid_opcode.vcd`, and calls `$fatal` if any check fails.

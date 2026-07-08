@@ -1099,6 +1099,88 @@ Conclusion:
 
 The Phase 6E custom-ISA program test passed. It verifies simple loop execution using ADDI, ADD, SUB, BEQ, JUMP, STORE and NOP through a file-loaded CPU program without changing CPU RTL or instruction encodings.
 
+## Phase 6F Invalid Opcode Safety Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/invalid_opcode_test.mem`
+- `tb/tb_phase6_invalid_opcode.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- Valid ADDI instructions before and after invalid opcodes.
+- Invalid opcode `4'hb` does not write target register `x10`.
+- Invalid opcode `4'hf` does not write target register `x11`.
+- A second invalid opcode `4'hb` does not write target register `x12`.
+- Valid STORE still writes data memory word 0.
+- Invalid opcodes do not corrupt checked data memory words 1 or 5.
+- Register `x0` remains zero.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI x1, x0, 10`
+- `INVALID opcode 4'hb, target x10`
+- `ADDI x2, x0, 20`
+- `INVALID opcode 4'hf, target x11`
+- `STORE x2, [x0 + 0]`
+- `INVALID opcode 4'hb, target x12`
+- `NOP`
+
+Encoded program words:
+
+```text
+6080000A
+B5002000
+61000014
+F5844000
+80004000
+B6004004
+00000000
+```
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_invalid_opcode` reported 9 tests run and 0 tests failed.
+- Final register and memory values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd10`
+  - `x2 = 32'd20`
+  - `x10 = 32'd0`
+  - `x11 = 32'd0`
+  - `x12 = 32'd0`
+  - `data_mem_inst.mem[0] = 32'd20`
+  - `data_mem_inst.mem[1] = 32'd0`
+  - `data_mem_inst.mem[5] = 32'd0`
+- Console output included `PHASE 6F INVALID OPCODE TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase6f_invalid_opcode_xsim_regression_20260708_122920.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_invalid_opcode.vcd`.
+
+Conclusion:
+
+The Phase 6F custom-ISA program test passed. It verifies that invalid opcodes are safely ignored at program level without changing CPU RTL or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

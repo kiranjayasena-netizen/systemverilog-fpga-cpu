@@ -256,5 +256,11 @@ Invoke-XsimTest `
     -Top "tb_phase6_simple_loop" `
     -Snapshot "tb_phase6_simple_loop_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 6F invalid opcode program" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_phase6_invalid_opcode.sv")) `
+    -Top "tb_phase6_invalid_opcode" `
+    -Snapshot "tb_phase6_invalid_opcode_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."
