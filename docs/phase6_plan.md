@@ -191,3 +191,114 @@ The testbench instantiates `cpu_top` with:
 ```
 
 It resets the CPU, runs the program, checks the final register values, explicitly checks that the skipped `x3 = 99` write did not remain, generates `tb_phase6_branch_control.vcd`, and calls `$fatal` if any check fails.
+
+## Phase 6D Test: Jump Control Program
+
+File: `programs/jump_test.mem`
+
+Status: added and passed in Vivado XSim.
+
+The Phase 6D program focuses on unconditional JUMP control-flow behaviour:
+
+```text
+ADDI x1, x0, 11       ; x1 = 11
+JUMP +2               ; skips the next instruction
+ADDI x2, x0, 99       ; skipped
+ADDI x2, x0, 22       ; x2 = 22
+ADDI x3, x0, 33       ; x3 = 33
+JUMP +2               ; skips the next instruction
+ADDI x4, x0, 99       ; skipped
+ADDI x4, x0, 44       ; x4 = 44
+NOP
+```
+
+Encoded program words:
+
+```text
+6080000B
+A0000002
+61000063
+61000016
+61800021
+A0000002
+62000063
+6200002C
+00000000
+```
+
+Expected final state:
+
+- `x0 = 32'd0`
+- `x1 = 32'd11`
+- `x2 = 32'd22`
+- `x3 = 32'd33`
+- `x4 = 32'd44`
+- `x2 != 32'd99`
+- `x4 != 32'd99`
+
+Testbench: `tb/tb_phase6_jump_control.sv`
+
+The testbench instantiates `cpu_top` with:
+
+```systemverilog
+.PROGRAM_FILE("programs/jump_test.mem")
+```
+
+It resets the CPU, runs the program, checks the final register values, explicitly checks that the skipped `x2 = 99` and `x4 = 99` writes did not remain, generates `tb_phase6_jump_control.vcd`, and calls `$fatal` if any check fails.
+
+## Phase 6E Test: Simple Loop Program
+
+File: `programs/simple_loop_test.mem`
+
+Status: added and passed in Vivado XSim.
+
+The Phase 6E program verifies a small loop using ADDI, ADD, SUB, BEQ, JUMP, STORE and NOP:
+
+```text
+ADDI x1, x0, 0        ; accumulator x1 = 0
+ADDI x2, x0, 3        ; loop counter x2 = 3
+ADDI x3, x0, 1        ; loop step x3 = 1
+ADD  x1, x1, x3       ; x1 = x1 + 1
+SUB  x2, x2, x3       ; x2 = x2 - 1
+BEQ  x2, x0, +2       ; exit when x2 == 0
+JUMP -3               ; return to ADD instruction
+STORE x1, [x0 + 0]    ; data memory word 0 = 3
+NOP
+```
+
+Encoded program words:
+
+```text
+60800000
+61000003
+61800001
+10846000
+21086000
+90080002
+A0001FFD
+80002000
+00000000
+```
+
+Offset notes:
+
+- The BEQ at word 5 uses `+2`, so when `x2 == 0` the PC targets word 7 and skips the loop-back JUMP.
+- The JUMP at word 6 uses `13'h1ffd`, which sign-extends to `-3`, so the PC returns to word 3.
+
+Expected final state:
+
+- `x0 = 32'd0`
+- `x1 = 32'd3`
+- `x2 = 32'd0`
+- `x3 = 32'd1`
+- `data_mem_inst.mem[0] = 32'd3`
+
+Testbench: `tb/tb_phase6_simple_loop.sv`
+
+The testbench instantiates `cpu_top` with:
+
+```systemverilog
+.PROGRAM_FILE("programs/simple_loop_test.mem")
+```
+
+It resets the CPU, runs with a fixed maximum cycle count so a bad loop cannot hang simulation, checks the final register and data memory values, generates `tb_phase6_simple_loop.vcd`, and calls `$fatal` if any check fails.

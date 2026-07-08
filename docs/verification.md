@@ -960,6 +960,145 @@ Conclusion:
 
 The Phase 6C custom-ISA program test passed. It verifies both taken and not-taken BEQ control flow through a file-loaded CPU program without changing CPU RTL or instruction encodings.
 
+## Phase 6D Jump Control Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/jump_test.mem`
+- `tb/tb_phase6_jump_control.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- Unconditional JUMP with positive PC-relative offset.
+- First JUMP skips `ADDI x2, x0, 99`.
+- Second JUMP skips `ADDI x4, x0, 99`.
+- Register `x0` remains zero.
+- Explicit checks that skipped values `99` did not remain in `x2` or `x4`.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI x1, x0, 11`
+- `JUMP +2`
+- `ADDI x2, x0, 99`
+- `ADDI x2, x0, 22`
+- `ADDI x3, x0, 33`
+- `JUMP +2`
+- `ADDI x4, x0, 99`
+- `ADDI x4, x0, 44`
+- `NOP`
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_jump_control` reported 7 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd11`
+  - `x2 = 32'd22`
+  - `x3 = 32'd33`
+  - `x4 = 32'd44`
+- Console output included `PHASE 6D JUMP CONTROL TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase6d_jump_control_xsim_regression_20260708_114112.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_jump_control.vcd`.
+
+Conclusion:
+
+The Phase 6D custom-ISA program test passed. It verifies unconditional JUMP control flow through a file-loaded CPU program without changing CPU RTL or instruction encodings.
+
+## Phase 6E Simple Loop Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/simple_loop_test.mem`
+- `tb/tb_phase6_simple_loop.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- ADDI setup for loop accumulator, counter and step registers.
+- ADD and SUB loop body execution.
+- BEQ loop exit when the counter reaches zero.
+- JUMP loop-back using a negative PC-relative offset.
+- STORE final loop result to data memory word 0.
+- Register `x0` remains zero.
+- Fixed maximum cycle count to prevent a bad loop from hanging simulation.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI x1, x0, 0`
+- `ADDI x2, x0, 3`
+- `ADDI x3, x0, 1`
+- `ADD x1, x1, x3`
+- `SUB x2, x2, x3`
+- `BEQ x2, x0, +2`
+- `JUMP -3`
+- `STORE x1, [x0 + 0]`
+- `NOP`
+
+Offset notes:
+
+- The BEQ at word 5 uses `+2`, so when `x2 == 0` the PC targets word 7 and skips the loop-back JUMP.
+- The JUMP at word 6 uses `13'h1ffd`, which sign-extends to `-3`, so the PC returns to word 3.
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_simple_loop` reported 5 tests run and 0 tests failed.
+- Final register and memory values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd3`
+  - `x2 = 32'd0`
+  - `x3 = 32'd1`
+  - `data_mem_inst.mem[0] = 32'd3`
+- Console output included `PHASE 6E SIMPLE LOOP TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase6e_simple_loop_xsim_regression_20260708_115055.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_simple_loop.vcd`.
+
+Conclusion:
+
+The Phase 6E custom-ISA program test passed. It verifies simple loop execution using ADDI, ADD, SUB, BEQ, JUMP, STORE and NOP through a file-loaded CPU program without changing CPU RTL or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

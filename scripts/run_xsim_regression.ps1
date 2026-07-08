@@ -244,5 +244,17 @@ Invoke-XsimTest `
     -Top "tb_phase6_branch_control" `
     -Snapshot "tb_phase6_branch_control_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 6D jump control program" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_phase6_jump_control.sv")) `
+    -Top "tb_phase6_jump_control" `
+    -Snapshot "tb_phase6_jump_control_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 6E simple loop program" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_phase6_simple_loop.sv")) `
+    -Top "tb_phase6_simple_loop" `
+    -Snapshot "tb_phase6_simple_loop_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."
