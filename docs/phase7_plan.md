@@ -82,6 +82,8 @@ Phase 7B result:
 
 Purpose: place, route and generate a bitstream for the Basys 3 wrapper.
 
+Status: completed for the Phase 7A baseline. See `reports/phase7c_implementation_summary.md`.
+
 Planned actions:
 
 - Run `scripts/run_vivado_impl.tcl`.
@@ -97,6 +99,18 @@ Acceptance criteria:
 - Bitstream generation status is recorded.
 - Resource and timing results are documented.
 - The repository does not commit generated Vivado output folders or large binary artifacts.
+
+Phase 7C result:
+
+- Date run: July 8, 2026
+- Result: implementation passed.
+- Bitstream generation: passed.
+- Target part: `xc7a35tcpg236-1`
+- Top module: `fpga_top`
+- Utilisation: 2,983 LUTs, 8,314 flip-flops, 0 BRAM tiles, 0 DSPs.
+- Post-route timing: 100 MHz setup timing not met, WNS -1.551 ns, TNS -5707.315 ns, hold timing met with WHS 0.075 ns.
+- Summary report: `reports/phase7c_implementation_summary.md`
+- CPU RTL/testbench/program changes in Phase 7C: none.
 
 ## Phase 7D: Timing Analysis Plan
 

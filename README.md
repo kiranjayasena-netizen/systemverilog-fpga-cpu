@@ -65,7 +65,8 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 6 program-level tests cover arithmetic edge cases, memory offsets, branch taken/not-taken control flow, jump control, simple loop execution and invalid opcode safety.
 - Phase 7A simulation baseline freeze is complete.
 - Phase 7B synthesis evidence has been captured for the Basys 3 target.
-- The next major work is Phase 7C implementation and bitstream generation, followed by timing-closure analysis.
+- Phase 7C implementation and bitstream evidence has been captured for the Basys 3 target.
+- The next major work is Phase 7D post-route timing analysis.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -78,6 +79,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 6 plan](docs/phase6_plan.md) explains the expanded custom-ISA program verification suite.
 - [Phase 7 plan](docs/phase7_plan.md) defines the simulation baseline freeze, FPGA implementation plan, timing analysis plan and Basys 3 bring-up plan.
 - [Phase 7B synthesis summary](reports/phase7b_synthesis_summary.md) records the Basys 3 synthesis result, utilisation, timing and warnings.
+- [Phase 7C implementation summary](reports/phase7c_implementation_summary.md) records the Basys 3 implementation result, bitstream status, post-route timing and warnings.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -188,6 +190,7 @@ Completed work:
 - Integrated CPU core with ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and JUMP support
 - File-loaded CPU test programs
 - Basys 3 FPGA wrapper, constraints, synthesis, routed implementation and bitstream generation
+- Phase 7C implementation and bitstream evidence for the frozen simulation baseline
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -197,8 +200,7 @@ Completed work:
 
 Next planned work:
 
-- Phase 7 synthesis, implementation, timing analysis and Basys 3 bring-up preparation
-- Phase 7C implementation and bitstream generation using the frozen Phase 7A baseline
+- Phase 7D post-route timing analysis
 - Phase 3D physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Timing closure investigation for the documented 100 MHz setup timing miss
