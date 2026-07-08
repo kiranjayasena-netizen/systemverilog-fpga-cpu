@@ -66,7 +66,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 7A simulation baseline freeze is complete.
 - Phase 7B synthesis evidence has been captured for the Basys 3 target.
 - Phase 7C implementation and bitstream evidence has been captured for the Basys 3 target.
-- The next major work is Phase 7D post-route timing analysis.
+- Phase 7D post-route timing analysis is documented; the design fits in the Basys 3 but does not meet 100 MHz setup timing.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -80,6 +80,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 7 plan](docs/phase7_plan.md) defines the simulation baseline freeze, FPGA implementation plan, timing analysis plan and Basys 3 bring-up plan.
 - [Phase 7B synthesis summary](reports/phase7b_synthesis_summary.md) records the Basys 3 synthesis result, utilisation, timing and warnings.
 - [Phase 7C implementation summary](reports/phase7c_implementation_summary.md) records the Basys 3 implementation result, bitstream status, post-route timing and warnings.
+- [Phase 7D timing analysis](reports/phase7d_timing_analysis.md) explains the 100 MHz setup timing miss and critical path.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -191,6 +192,7 @@ Completed work:
 - File-loaded CPU test programs
 - Basys 3 FPGA wrapper, constraints, synthesis, routed implementation and bitstream generation
 - Phase 7C implementation and bitstream evidence for the frozen simulation baseline
+- Phase 7D post-route timing analysis and critical-path investigation
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -200,7 +202,6 @@ Completed work:
 
 Next planned work:
 
-- Phase 7D post-route timing analysis
 - Phase 3D physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Timing closure investigation for the documented 100 MHz setup timing miss

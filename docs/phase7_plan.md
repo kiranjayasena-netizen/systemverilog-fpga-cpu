@@ -116,6 +116,8 @@ Phase 7C result:
 
 Purpose: analyse whether the implemented design meets the 100 MHz Basys 3 clock target and identify the critical path.
 
+Status: completed for the Phase 7C routed implementation. See `reports/phase7d_timing_analysis.md`.
+
 Planned actions:
 
 - Review post-route timing summary.
@@ -132,6 +134,19 @@ Acceptance criteria:
 - Worst path startpoint, endpoint and likely datapath category are recorded.
 - The report distinguishes simulation correctness from hardware timing closure.
 - Recommended timing-closure next steps are documented.
+
+Phase 7D result:
+
+- Date documented: July 8, 2026
+- Result: post-route 100 MHz setup timing is not met.
+- Hold timing: met.
+- Worst setup slack: WNS -1.551 ns.
+- Total setup violation: TNS -5707.315 ns.
+- Estimated maximum frequency from worst slack: approximately 86.6 MHz.
+- Critical path: `cpu_inst/fetch_inst/pc_inst/pc_reg[30]/C` to `cpu_inst/reg_file_inst/regs_reg[2][12]/D`.
+- Path classification: single-cycle-style PC/fetch/decode/execute/writeback path.
+- Timing report: `reports/phase7d_timing_analysis.md`
+- CPU RTL/testbench/program changes in Phase 7D: none.
 
 ## Phase 7E: Basys 3 Hardware Bring-Up Plan
 
