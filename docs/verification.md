@@ -1181,6 +1181,69 @@ Conclusion:
 
 The Phase 6F custom-ISA program test passed. It verifies that invalid opcodes are safely ignored at program level without changing CPU RTL or instruction encodings.
 
+## Phase 8B Multi-Cycle CPU FSM Skeleton Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_fsm.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Reset returns the multi-cycle skeleton to `FETCH`.
+- Reset returns PC to `32'h0000_0000`.
+- Reset clears the instruction register to NOP.
+- Reset deasserts `reg_write` and `mem_write`.
+- `FETCH` captures a NOP instruction into `instruction_reg`.
+- `FETCH` captures the current instruction PC.
+- Sequential PC advance by 4.
+- `DECODE` extracts opcode, `rd`, `rs1`, `rs2`, `imm13` and sign-extended immediate fields.
+- NOP is recognised as valid and returns safely to `FETCH`.
+- Invalid opcode `4'hb` is marked invalid.
+- Invalid opcode does not assert register or memory write enables.
+
+Result:
+
+- Standalone XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 8B test.
+- Testbench summary reported 34 tests run and 0 tests failed.
+- Console output included `PHASE 8B MULTI-CYCLE FSM TEST PASSED`.
+- The existing `rtl/cpu_core.sv` implementation was not replaced or modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_fsm.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_fsm -s tb_cpu_core_multicycle_fsm_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_fsm_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after the snapshot was built.
+- `xsim` still ran successfully and the self-checking testbench reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_fsm.vcd`.
+
+Conclusion:
+
+The Phase 8B multi-cycle CPU skeleton passed its focused FSM safety test. It verifies reset, NOP decode, invalid-opcode safety and sequential PC stepping without changing the existing working CPU core or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

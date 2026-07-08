@@ -69,6 +69,8 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 7D post-route timing analysis is documented; the design fits in the Basys 3 but does not meet 100 MHz setup timing.
 - Phase 7E Basys 3 bring-up planning is prepared; physical board testing has not been recorded yet.
 - Phase 8A multi-cycle CPU redesign planning is documented as the recommended timing-improvement direction.
+- Phase 8B has started with a separate multi-cycle CPU FSM skeleton; the existing `rtl/cpu_core.sv` baseline has not been replaced.
+- The Phase 8B FSM skeleton simulation has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -199,6 +201,7 @@ Completed work:
 - Phase 7D post-route timing analysis and critical-path investigation
 - Phase 7E Basys 3 bring-up planning and evidence-capture template
 - Phase 8A multi-cycle CPU redesign planning
+- Phase 8B separate multi-cycle CPU FSM skeleton and focused FSM testbench
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -210,7 +213,7 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Phase 8B multi-cycle CPU skeleton planning/implementation, after review
+- Phase 8C arithmetic support for the multi-cycle skeleton, after review
 - Timing-closure comparison between the Phase 7 baseline and a future Phase 8 multi-cycle design
 
 ## Repository Structure

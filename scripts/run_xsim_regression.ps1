@@ -262,5 +262,11 @@ Invoke-XsimTest `
     -Top "tb_phase6_invalid_opcode" `
     -Snapshot "tb_phase6_invalid_opcode_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 8B multi-cycle CPU FSM skeleton" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_fsm.sv") `
+    -Top "tb_cpu_core_multicycle_fsm" `
+    -Snapshot "tb_cpu_core_multicycle_fsm_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."
