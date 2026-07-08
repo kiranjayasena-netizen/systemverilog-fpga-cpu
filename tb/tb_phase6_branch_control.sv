@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module tb_phase6_memory_offset;
+module tb_phase6_branch_control;
 
     logic        clk;
     logic        rst;
@@ -15,7 +15,7 @@ module tb_phase6_memory_offset;
     int unsigned tests_failed;
 
     cpu_top #(
-        .PROGRAM_FILE("programs/memory_offset_test.mem")
+        .PROGRAM_FILE("programs/branch_taken_not_taken_test.mem")
     ) dut (
         .clk(clk),
         .rst(rst),
@@ -69,30 +69,29 @@ module tb_phase6_memory_offset;
         end
     endtask
 
-    task automatic check_mem_word(
+    task automatic check_reg_not(
         input string       case_name,
-        input int unsigned word_index,
-        input logic [31:0] expected
+        input logic [4:0]  reg_index,
+        input logic [31:0] unexpected
     );
         logic [31:0] actual;
         begin
-            actual = dut.cpu_inst.data_mem_inst.mem[word_index];
+            actual = dut.cpu_inst.reg_file_inst.regs[reg_index];
             tests_run++;
 
-            if (actual !== expected) begin
+            if (actual === unexpected) begin
                 tests_failed++;
                 $error(
-                    "FAIL: %s | mem[%0d] expected=0x%08h got=0x%08h",
+                    "FAIL: %s | x%0d unexpectedly=0x%08h",
                     case_name,
-                    word_index,
-                    expected,
+                    reg_index,
                     actual
                 );
             end else begin
                 $display(
-                    "PASS: %s | mem[%0d]=0x%08h",
+                    "PASS: %s | x%0d=0x%08h",
                     case_name,
-                    word_index,
+                    reg_index,
                     actual
                 );
             end
@@ -121,11 +120,11 @@ module tb_phase6_memory_offset;
     endtask
 
     initial begin
-        $dumpfile("tb_phase6_memory_offset.vcd");
-        $dumpvars(0, tb_phase6_memory_offset);
+        $dumpfile("tb_phase6_branch_control.vcd");
+        $dumpvars(0, tb_phase6_branch_control);
 
-        $display("Starting Phase 6B memory offset program simulation...");
-        $display("Program: base setup, STORE/LOAD +0, STORE/LOAD +4, LOAD -4");
+        $display("Starting Phase 6C branch control program simulation...");
+        $display("Program: BEQ taken skips x3=99, BEQ not-taken executes x6 and x7");
 
         rst          = 1'b0;
         enable       = 1'b0;
@@ -135,16 +134,17 @@ module tb_phase6_memory_offset;
         // Allow instruction memory $readmemh initialisation to complete.
         #1;
 
-        run_program(9);
+        run_program(11);
 
-        check_reg("ADDI x1, x0, 64 base address", 5'd1, 32'd64);
-        check_reg("ADDI x2, x0, 123 store data",  5'd2, 32'd123);
-        check_reg("LOAD x3 from [x1 + 0]",        5'd3, 32'd123);
-        check_reg("LOAD x4 from [x1 + 4]",        5'd4, 32'd123);
-        check_reg("ADDI x5, x0, 68 base plus 4",  5'd5, 32'd68);
-        check_reg("LOAD x6 from [x5 - 4]",        5'd6, 32'd123);
-        check_mem_word("STORE wrote word 16", 16, 32'd123);
-        check_mem_word("STORE wrote word 17", 17, 32'd123);
+        check_reg("ADDI x1, x0, 5",                 5'd1, 32'd5);
+        check_reg("ADDI x2, x0, 5",                 5'd2, 32'd5);
+        check_reg("Taken BEQ leaves x3 at 42",      5'd3, 32'd42);
+        check_reg("ADDI x4, x0, 1",                 5'd4, 32'd1);
+        check_reg("ADDI x5, x0, 2",                 5'd5, 32'd2);
+        check_reg("Not-taken BEQ executes x6 = 77", 5'd6, 32'd77);
+        check_reg("Fall-through executes x7 = 88",  5'd7, 32'd88);
+        check_reg("x0 remains hardwired to zero",   5'd0, 32'd0);
+        check_reg_not("x3 is not skipped value 99", 5'd3, 32'd99);
 
         $display("----------------------------------");
         $display("Tests run:    %0d", tests_run);
@@ -152,11 +152,11 @@ module tb_phase6_memory_offset;
         $display("----------------------------------");
 
         if (tests_failed != 0) begin
-            $display("PHASE 6B MEMORY OFFSET TEST FAILED");
-            $fatal(1, "%0d of %0d Phase 6B memory offset tests failed.", tests_failed, tests_run);
+            $display("PHASE 6C BRANCH CONTROL TEST FAILED");
+            $fatal(1, "%0d of %0d Phase 6C branch control tests failed.", tests_failed, tests_run);
         end
 
-        $display("PHASE 6B MEMORY OFFSET TEST PASSED");
+        $display("PHASE 6C BRANCH CONTROL TEST PASSED");
         $finish;
     end
 

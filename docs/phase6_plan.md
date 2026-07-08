@@ -77,7 +77,7 @@ The arithmetic edge test passes when:
 
 The test fails if any expected register value is wrong or if `$fatal` is reached.
 
-## Second Phase 6 Test: Memory Offset Program
+## Phase 6B Test: Memory Offset Program
 
 File: `programs/memory_offset_test.mem`
 
@@ -131,3 +131,63 @@ The testbench instantiates `cpu_top` with:
 ```
 
 It resets the CPU, runs the nine-instruction program, checks the final register and memory values, generates `tb_phase6_memory_offset.vcd`, and calls `$fatal` if any check fails.
+
+## Phase 6C Test: Branch Taken/Not-Taken Program
+
+File: `programs/branch_taken_not_taken_test.mem`
+
+Status: added and passed in Vivado XSim.
+
+The Phase 6C program focuses on BEQ control-flow behaviour:
+
+```text
+ADDI x1, x0, 5        ; x1 = 5
+ADDI x2, x0, 5        ; x2 = 5
+BEQ  x1, x2, +2       ; taken, skips the next instruction
+ADDI x3, x0, 99       ; skipped
+ADDI x3, x0, 42       ; x3 = 42
+ADDI x4, x0, 1        ; x4 = 1
+ADDI x5, x0, 2        ; x5 = 2
+BEQ  x4, x5, +2       ; not taken
+ADDI x6, x0, 77       ; x6 = 77
+ADDI x7, x0, 88       ; x7 = 88
+NOP
+```
+
+Encoded program words:
+
+```text
+60800005
+61000005
+90044002
+61800063
+6180002A
+62000001
+62800002
+9010A002
+6300004D
+63800058
+00000000
+```
+
+Expected final state:
+
+- `x0 = 32'd0`
+- `x1 = 32'd5`
+- `x2 = 32'd5`
+- `x3 = 32'd42`
+- `x4 = 32'd1`
+- `x5 = 32'd2`
+- `x6 = 32'd77`
+- `x7 = 32'd88`
+- `x3 != 32'd99`
+
+Testbench: `tb/tb_phase6_branch_control.sv`
+
+The testbench instantiates `cpu_top` with:
+
+```systemverilog
+.PROGRAM_FILE("programs/branch_taken_not_taken_test.mem")
+```
+
+It resets the CPU, runs the program, checks the final register values, explicitly checks that the skipped `x3 = 99` write did not remain, generates `tb_phase6_branch_control.vcd`, and calls `$fatal` if any check fails.

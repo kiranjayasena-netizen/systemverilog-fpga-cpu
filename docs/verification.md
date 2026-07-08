@@ -816,7 +816,7 @@ Conclusion:
 
 The first Phase 6 custom-ISA program test passed. It extends program-level verification beyond the Phase 5 add/store demo by checking arithmetic edge cases, negative immediate sign extension and `x0` write protection.
 
-## Phase 6 Memory Offset Program Simulation
+## Phase 6B Memory Offset Program Simulation
 
 Status: passed.
 
@@ -868,7 +868,7 @@ Result:
 - Final data memory values matched expectations:
   - `data_mem_inst.mem[16] = 32'd123`
   - `data_mem_inst.mem[17] = 32'd123`
-- Console output included `PHASE 6 MEMORY OFFSET TEST PASSED`.
+- Console output included `PHASE 6B MEMORY OFFSET TEST PASSED`.
 
 Commands run from the repository root:
 
@@ -878,7 +878,7 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 
 Transcript:
 
-- `reports/simulation_transcripts/phase6_memory_offset_xsim_regression_20260708_103554.txt`
+- `reports/simulation_transcripts/phase6b_memory_offset_xsim_regression_20260708_104659.txt`
 
 Waveform notes:
 
@@ -887,6 +887,78 @@ Waveform notes:
 Conclusion:
 
 The second Phase 6 custom-ISA program test passed. It verifies LOAD/STORE base-plus-offset addressing, including a negative offset load, using the same file-loaded CPU program path as the Phase 5 and first Phase 6 tests.
+
+## Phase 6C Branch Control Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/branch_taken_not_taken_test.mem`
+- `tb/tb_phase6_branch_control.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- BEQ taken when `rs1 == rs2`.
+- Taken BEQ skips the following instruction.
+- BEQ not taken when `rs1 != rs2`.
+- Fall-through execution after a not-taken BEQ.
+- Register `x0` remains zero.
+- Explicit check that skipped `ADDI x3, x0, 99` did not remain in `x3`.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI x1, x0, 5`
+- `ADDI x2, x0, 5`
+- `BEQ  x1, x2, +2`
+- `ADDI x3, x0, 99`
+- `ADDI x3, x0, 42`
+- `ADDI x4, x0, 1`
+- `ADDI x5, x0, 2`
+- `BEQ  x4, x5, +2`
+- `ADDI x6, x0, 77`
+- `ADDI x7, x0, 88`
+- `NOP`
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_branch_control` reported 9 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x0 = 32'd0`
+  - `x1 = 32'd5`
+  - `x2 = 32'd5`
+  - `x3 = 32'd42`
+  - `x4 = 32'd1`
+  - `x5 = 32'd2`
+  - `x6 = 32'd77`
+  - `x7 = 32'd88`
+- Console output included `PHASE 6C BRANCH CONTROL TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase6c_branch_control_xsim_regression_20260708_112418.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_branch_control.vcd`.
+
+Conclusion:
+
+The Phase 6C custom-ISA program test passed. It verifies both taken and not-taken BEQ control flow through a file-loaded CPU program without changing CPU RTL or instruction encodings.
 
 ## Future Verification Work
 
