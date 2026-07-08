@@ -146,6 +146,7 @@ Phase 7D result:
 - Critical path: `cpu_inst/fetch_inst/pc_inst/pc_reg[30]/C` to `cpu_inst/reg_file_inst/regs_reg[2][12]/D`.
 - Path classification: single-cycle-style PC/fetch/decode/execute/writeback path.
 - Timing report: `reports/phase7d_timing_analysis.md`
+- Follow-on redesign planning: `docs/phase8_multicycle_redesign_plan.md`
 - CPU RTL/testbench/program changes in Phase 7D: none.
 
 ## Phase 7E: Basys 3 Hardware Bring-Up Plan

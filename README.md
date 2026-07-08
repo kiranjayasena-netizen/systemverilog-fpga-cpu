@@ -68,6 +68,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 7C implementation and bitstream evidence has been captured for the Basys 3 target.
 - Phase 7D post-route timing analysis is documented; the design fits in the Basys 3 but does not meet 100 MHz setup timing.
 - Phase 7E Basys 3 bring-up planning is prepared; physical board testing has not been recorded yet.
+- Phase 8A multi-cycle CPU redesign planning is documented as the recommended timing-improvement direction.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -83,6 +84,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 7C implementation summary](reports/phase7c_implementation_summary.md) records the Basys 3 implementation result, bitstream status, post-route timing and warnings.
 - [Phase 7D timing analysis](reports/phase7d_timing_analysis.md) explains the 100 MHz setup timing miss and critical path.
 - [Phase 7E Basys 3 bring-up report](reports/phase7e_basys3_bringup.md) is the planning and evidence-capture report for the first physical board session.
+- [Phase 8 multi-cycle redesign plan](docs/phase8_multicycle_redesign_plan.md) proposes a future FSM-based CPU redesign to improve timing closure while preserving the custom ISA.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -196,6 +198,7 @@ Completed work:
 - Phase 7C implementation and bitstream evidence for the frozen simulation baseline
 - Phase 7D post-route timing analysis and critical-path investigation
 - Phase 7E Basys 3 bring-up planning and evidence-capture template
+- Phase 8A multi-cycle CPU redesign planning
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -207,8 +210,8 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Timing closure investigation for the documented 100 MHz setup timing miss
-- Possible multi-cycle redesign, registered memory outputs or pipelining
+- Phase 8B multi-cycle CPU skeleton planning/implementation, after review
+- Timing-closure comparison between the Phase 7 baseline and a future Phase 8 multi-cycle design
 
 ## Repository Structure
 
