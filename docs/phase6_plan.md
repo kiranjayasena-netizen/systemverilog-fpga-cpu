@@ -77,3 +77,57 @@ The arithmetic edge test passes when:
 
 The test fails if any expected register value is wrong or if `$fatal` is reached.
 
+## Second Phase 6 Test: Memory Offset Program
+
+File: `programs/memory_offset_test.mem`
+
+Status: added and passed in Vivado XSim.
+
+The second Phase 6 program focuses on LOAD/STORE base-plus-offset addressing:
+
+```text
+ADDI  x1, x0, 64       ; x1 = 64, base byte address
+ADDI  x2, x0, 123      ; x2 = 123, store data
+STORE x2, [x1 + 0]     ; data memory word 16 = 123
+LOAD  x3, [x1 + 0]     ; x3 = 123
+STORE x3, [x1 + 4]     ; data memory word 17 = 123
+LOAD  x4, [x1 + 4]     ; x4 = 123
+ADDI  x5, x0, 68       ; x5 = 68
+LOAD  x6, [x5 - 4]     ; x6 = 123 from byte address 64
+NOP
+```
+
+Encoded program words:
+
+```text
+60800040
+6100007B
+80044000
+71840000
+80046004
+72040004
+62800044
+73141FFC
+00000000
+```
+
+Expected final state:
+
+- `x1 = 32'd64`
+- `x2 = 32'd123`
+- `x3 = 32'd123`
+- `x4 = 32'd123`
+- `x5 = 32'd68`
+- `x6 = 32'd123`
+- `data_mem_inst.mem[16] = 32'd123`
+- `data_mem_inst.mem[17] = 32'd123`
+
+Testbench: `tb/tb_phase6_memory_offset.sv`
+
+The testbench instantiates `cpu_top` with:
+
+```systemverilog
+.PROGRAM_FILE("programs/memory_offset_test.mem")
+```
+
+It resets the CPU, runs the nine-instruction program, checks the final register and memory values, generates `tb_phase6_memory_offset.vcd`, and calls `$fatal` if any check fails.

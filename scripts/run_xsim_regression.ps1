@@ -232,5 +232,11 @@ Invoke-XsimTest `
     -Top "tb_phase6_arithmetic_edge" `
     -Snapshot "tb_phase6_arithmetic_edge_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 6 memory offset program" `
+    -Sources ($phase5CpuTopSources + @("tb/tb_phase6_memory_offset.sv")) `
+    -Top "tb_phase6_memory_offset" `
+    -Snapshot "tb_phase6_memory_offset_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."

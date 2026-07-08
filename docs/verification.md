@@ -816,6 +816,78 @@ Conclusion:
 
 The first Phase 6 custom-ISA program test passed. It extends program-level verification beyond the Phase 5 add/store demo by checking arithmetic edge cases, negative immediate sign extension and `x0` write protection.
 
+## Phase 6 Memory Offset Program Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_top.sv`
+- `programs/memory_offset_test.mem`
+- `tb/tb_phase6_memory_offset.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- File-loaded custom-ISA program execution through `cpu_top`.
+- ADDI base-address setup.
+- STORE to `[base + 0]`.
+- LOAD from `[base + 0]`.
+- STORE to `[base + 4]`.
+- LOAD from `[base + 4]`.
+- LOAD using negative sign-extended offset `imm13 = 13'h1ffc`.
+- Final data memory word checks.
+- NOP at the end of the program.
+
+Program tested:
+
+- `ADDI  x1, x0, 64`
+- `ADDI  x2, x0, 123`
+- `STORE x2, [x1 + 0]`
+- `LOAD  x3, [x1 + 0]`
+- `STORE x3, [x1 + 4]`
+- `LOAD  x4, [x1 + 4]`
+- `ADDI  x5, x0, 68`
+- `LOAD  x6, [x5 - 4]`
+- `NOP`
+
+Result:
+
+- Full XSim regression completed successfully.
+- `tb_phase6_memory_offset` reported 8 tests run and 0 tests failed.
+- Final register values matched expectations:
+  - `x1 = 32'd64`
+  - `x2 = 32'd123`
+  - `x3 = 32'd123`
+  - `x4 = 32'd123`
+  - `x5 = 32'd68`
+  - `x6 = 32'd123`
+- Final data memory values matched expectations:
+  - `data_mem_inst.mem[16] = 32'd123`
+  - `data_mem_inst.mem[17] = 32'd123`
+- Console output included `PHASE 6 MEMORY OFFSET TEST PASSED`.
+
+Commands run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase6_memory_offset_xsim_regression_20260708_103554.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_phase6_memory_offset.vcd`.
+
+Conclusion:
+
+The second Phase 6 custom-ISA program test passed. It verifies LOAD/STORE base-plus-offset addressing, including a negative offset load, using the same file-loaded CPU program path as the Phase 5 and first Phase 6 tests.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
