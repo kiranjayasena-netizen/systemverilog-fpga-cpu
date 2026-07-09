@@ -1633,6 +1633,82 @@ Conclusion:
 
 The Phase 10B single-cycle-style performance benchmark passed. It confirms the original CPU path gives CPI 1.000 in simulation for these programs, but the 100 MHz throughput number remains theoretical because the original post-route implementation did not meet 100 MHz setup timing.
 
+## Phase 10C BRAM-Style Memory Prototype Simulations
+
+Status: passed.
+
+Files tested:
+
+- `rtl/bram_instr_mem.sv`
+- `tb/tb_bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `tb/tb_bram_data_mem.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Instruction memory coverage:
+
+- `$readmemh` loading from `programs/add_test.mem`.
+- One-cycle synchronous read latency.
+- Byte-address to word-index mapping.
+- Unaligned address mapping through word addressing.
+- Out-of-range read returning NOP/zero.
+
+Instruction memory result:
+
+- Standalone Phase 10C BRAM instruction memory simulation completed successfully.
+- Testbench summary reported 9 tests run and 0 tests failed.
+- Console output included `PHASE 10C BRAM INSTRUCTION MEMORY TEST PASSED`.
+- Full XSim regression completed successfully after adding the Phase 10C BRAM memory tests.
+
+Data memory coverage:
+
+- One-cycle synchronous read latency.
+- Synchronous write.
+- Write/read word 0.
+- Write/read word 1.
+- Disabled write does not update memory.
+- `mem_read = 0` returns zero after a clock edge.
+- Out-of-range read returns zero.
+- Out-of-range write does not corrupt valid memory.
+
+Data memory result:
+
+- Standalone Phase 10C BRAM data memory simulation completed successfully.
+- Testbench summary reported 13 tests run and 0 tests failed.
+- Console output included `PHASE 10C BRAM DATA MEMORY TEST PASSED`.
+
+Standalone commands run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\bram_instr_mem.sv tb\tb_bram_instr_mem.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_bram_instr_mem -s tb_bram_instr_mem_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_bram_instr_mem_sim -runall
+
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\bram_data_mem.sv tb\tb_bram_data_mem.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_bram_data_mem -s tb_bram_data_mem_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_bram_data_mem_sim -runall
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after each snapshot was built.
+- `xsim` still ran successfully and both self-checking testbenches reported PASS.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase10c_xsim_regression_20260709_200053.txt`
+
+Waveform notes:
+
+- The generated waveform files are `tb_bram_instr_mem.vcd` and `tb_bram_data_mem.vcd`.
+
+Conclusion:
+
+The Phase 10C standalone BRAM-style memory prototype tests passed. They verify synchronous-read instruction and data memory behaviour without modifying the verified CPU cores, existing memory modules or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

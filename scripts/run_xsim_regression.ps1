@@ -223,6 +223,18 @@ Invoke-XsimTest `
     -Snapshot "tb_data_mem_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 10C BRAM-style instruction memory" `
+    -Sources @("rtl/bram_instr_mem.sv", "tb/tb_bram_instr_mem.sv") `
+    -Top "tb_bram_instr_mem" `
+    -Snapshot "tb_bram_instr_mem_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 10C BRAM-style data memory" `
+    -Sources @("rtl/bram_data_mem.sv", "tb/tb_bram_data_mem.sv") `
+    -Top "tb_bram_data_mem" `
+    -Snapshot "tb_bram_data_mem_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `
