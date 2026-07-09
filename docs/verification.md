@@ -1431,6 +1431,68 @@ Conclusion:
 
 The Phase 8E multi-cycle CPU branch/jump test passed. It verifies BEQ taken/not-taken behaviour, forward and backward JUMP behaviour, branch target calculation, loop execution and control-instruction write safety in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
 
+## Phase 8F Multi-Cycle CPU Full-Program Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_full_programs.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic edge program covering ADDI, ADD, SUB, negative immediate sign extension, ADD wraparound, SUB underflow and `x0` protection.
+- Memory offset program covering STORE, LOAD, base + 0 addressing, base + 4 addressing, negative offset load and final data memory contents.
+- Branch control program covering BEQ taken, BEQ not taken, skipped instruction protection and fall-through execution.
+- Jump control program covering forward JUMP and skipped instruction protection.
+- Simple loop program covering repeated ADD/SUB, BEQ loop exit, backward JUMP and final STORE to data memory.
+- Invalid opcode safety program covering `valid_instr` low for invalid opcodes, no invalid register writes, no invalid memory writes and valid instructions before/after invalid opcodes.
+
+Result:
+
+- Standalone Phase 8F XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 8F test.
+- Testbench summary reported 49 tests run and 0 tests failed.
+- Console output included `PHASE 8F MULTI-CYCLE FULL-PROGRAM TEST PASSED`.
+- The existing `rtl/cpu_core.sv`, `rtl/cpu_top.sv`, `rtl/fpga_top.sv` and Phase 6 program files were not modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_full_programs.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_full_programs -s tb_cpu_core_multicycle_full_programs_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_full_programs_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase8f_xsim_regression_20260709_120546.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after some snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_full_programs.vcd`.
+
+Conclusion:
+
+The Phase 8F full-program verification test passed. It confirms that the separate multi-cycle CPU now passes full custom-ISA program verification across arithmetic, memory, branch, jump, loop and invalid-opcode safety scenarios without replacing the original CPU core or changing instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
