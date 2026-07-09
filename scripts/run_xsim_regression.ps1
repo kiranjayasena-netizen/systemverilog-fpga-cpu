@@ -300,5 +300,11 @@ Invoke-XsimTest `
     -Top "tb_cpu_core_multicycle_performance" `
     -Snapshot "tb_cpu_core_multicycle_performance_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 10B single-cycle-style CPU performance" `
+    -Sources ($commonCpuSources + @("tb/tb_cpu_core_singlecycle_performance.sv")) `
+    -Top "tb_cpu_core_singlecycle_performance" `
+    -Snapshot "tb_cpu_core_singlecycle_performance_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."

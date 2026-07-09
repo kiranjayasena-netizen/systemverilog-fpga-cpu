@@ -1559,6 +1559,80 @@ Conclusion:
 
 The Phase 10A performance benchmark test passed. It provides simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU while hardware bring-up remains pending.
 
+## Phase 10B Single-Cycle-Style CPU Performance Benchmarking
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/alu.sv`
+- `rtl/register_file.sv`
+- `rtl/program_counter.sv`
+- `rtl/instruction_memory.sv`
+- `rtl/data_memory.sv`
+- `rtl/fetch_unit.sv`
+- `rtl/instruction_decoder.sv`
+- `rtl/control_unit.sv`
+- `rtl/cpu_core.sv`
+- `tb/tb_cpu_core_singlecycle_performance.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic-heavy benchmark program equivalent to the Phase 10A multi-cycle benchmark.
+- Memory-heavy benchmark program equivalent to the Phase 10A multi-cycle benchmark.
+- Branch/jump benchmark program equivalent to the Phase 10A multi-cycle benchmark.
+- Simple loop benchmark program equivalent to the Phase 10A multi-cycle benchmark.
+- Instruction class counts for arithmetic, LOAD, STORE, BEQ, JUMP, NOP and invalid instructions.
+- CPI and MIPS reporting using the original single-cycle-style estimated Fmax of 86.6 MHz.
+- Theoretical 100 MHz MIPS reporting, marked as not timing-safe because the Phase 7 implementation did not meet 100 MHz timing.
+
+Result:
+
+- Standalone Phase 10B XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 10B test.
+- Testbench summary reported 41 tests run and 0 tests failed.
+- Console output included `PHASE 10B SINGLE-CYCLE-STYLE PERFORMANCE TEST PASSED`.
+- The existing RTL was not modified.
+
+Benchmark summary:
+
+| Benchmark | Cycles | Completed instructions | CPI | MIPS at 86.6 MHz estimated Fmax | Theoretical MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Arithmetic-heavy | 11 | 11 | 1.000 | 86.600 | 100.000, not timing-safe |
+| Memory-heavy | 12 | 12 | 1.000 | 86.600 | 100.000, not timing-safe |
+| Branch/jump | 11 | 11 | 1.000 | 86.600 | 100.000, not timing-safe |
+| Simple loop | 20 | 20 | 1.000 | 86.600 | 100.000, not timing-safe |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\alu.sv rtl\register_file.sv rtl\program_counter.sv rtl\instruction_memory.sv rtl\data_memory.sv rtl\fetch_unit.sv rtl\instruction_decoder.sv rtl\control_unit.sv rtl\cpu_core.sv tb\tb_cpu_core_singlecycle_performance.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_singlecycle_performance -s tb_cpu_core_singlecycle_performance_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_singlecycle_performance_sim -runall
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after the snapshot was built.
+- `xsim` still ran successfully and the self-checking testbench reported PASS.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase10b_xsim_regression_20260709_194210.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_singlecycle_performance.vcd`.
+
+Conclusion:
+
+The Phase 10B single-cycle-style performance benchmark passed. It confirms the original CPU path gives CPI 1.000 in simulation for these programs, but the 100 MHz throughput number remains theoretical because the original post-route implementation did not meet 100 MHz setup timing.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
