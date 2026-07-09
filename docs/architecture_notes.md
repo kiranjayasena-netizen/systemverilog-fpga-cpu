@@ -2,11 +2,33 @@
 
 ## Current Architecture Status
 
-The architecture is still in the early module-building phase. The completed RTL blocks are the ALU, register file, program counter, instruction memory, data memory, fetch unit, instruction decoder, control unit and first simple CPU core.
+The architecture has progressed from individual RTL module bring-up to two verified CPU implementation paths:
 
-The current CPU is a simple educational 32-bit soft-core written in SystemVerilog. It is a single-cycle-style design: for each instruction, the core fetches the instruction, decodes it, reads registers, performs the ALU or memory operation, selects writeback data, and chooses the next PC through one straightforward combinational datapath around synchronous state elements.
+- The original integrated CPU baseline in `rtl/cpu_core.sv`.
+- The separate multi-cycle CPU implementation in `rtl/cpu_core_multicycle.sv`.
 
-The design is intentionally small. It is meant to make the CPU datapath easy to understand before adding more advanced features such as pipelining, hazards, interrupts, caches, or a bus interface.
+The original CPU is a simple educational 32-bit soft-core written in SystemVerilog. It is a single-cycle-style design: for each instruction, the core fetches the instruction, decodes it, reads registers, performs the ALU or memory operation, selects writeback data, and chooses the next PC through one straightforward combinational datapath around synchronous state elements.
+
+The separate multi-cycle CPU keeps the same custom ISA and final architectural behaviour, but splits instruction execution across finite-state-machine states. This was added after Phase 7 timing analysis showed that the single-cycle-style implementation did not meet the 100 MHz Basys 3 timing target after routing.
+
+The design remains intentionally small. It is meant to make the CPU datapath easy to understand before adding more advanced features such as pipelining, hazards, interrupts, caches, or a bus interface.
+
+## Project Progress Summary
+
+The project has reached these architecture milestones:
+
+| Phase | Architecture Progress |
+| --- | --- |
+| Module bring-up | Parameterised 32-bit ALU, register file, program counter, instruction memory, data memory, fetch unit, decoder and control unit. |
+| CPU integration | `cpu_core` integrates fetch, decode, control, register read, ALU, memory, writeback and PC selection. |
+| ISA support | Custom ISA supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and JUMP. |
+| Program execution | File-loaded custom-ISA programs execute through `cpu_top` and the integrated `cpu_core`. |
+| Expanded verification | Phase 6 program tests cover arithmetic edge cases, memory offsets, branches, jumps, loops and invalid opcode safety. |
+| FPGA baseline | `fpga_top` builds for the Digilent Basys 3 and generates a bitstream, but the single-cycle-style path misses 100 MHz post-route timing. |
+| Multi-cycle redesign | `cpu_core_multicycle` preserves the ISA while splitting work across FETCH, DECODE, EXECUTE, MEMORY and WRITEBACK states. |
+| Multi-cycle FPGA path | `fpga_top_multicycle` builds separately for the Basys 3 and meets the 100 MHz post-route timing target in Phase 8G. |
+
+Physical Basys 3 board testing has not been claimed in the architecture notes. Existing FPGA evidence is from simulation, synthesis, implementation, timing reports and bitstream generation.
 
 ## Beginner-Friendly Datapath Overview
 
@@ -21,6 +43,10 @@ The CPU core is built from these RTL modules:
 - `alu`: performs ADD, SUB, AND, OR, and XOR.
 - `data_memory`: stores 32-bit data words for LOAD and STORE.
 - `cpu_core`: wires the blocks together into the current integrated processor.
+- `cpu_top`: wraps the integrated `cpu_core` for Phase 5 file-loaded program execution tests.
+- `cpu_core_multicycle`: separate FSM-based CPU implementation that preserves the custom ISA.
+- `fpga_top`: Basys 3 wrapper for the original integrated CPU baseline.
+- `fpga_top_multicycle`: Basys 3 wrapper for the separate multi-cycle CPU implementation.
 
 ### Fetch
 
@@ -343,17 +369,19 @@ Interface summary:
 
 The ALU currently does not expose flags such as carry, zero, negative or overflow. These can be added later if the CPU instruction set needs them.
 
-## Planned CPU Direction
+## CPU Architecture Direction
 
-The first integrated CPU should stay simple. A likely starting point is a single-cycle or simple multi-cycle design with:
+The first integrated CPU is now complete as a simple single-cycle-style baseline. It includes:
 
-- A small register file.
-- A program counter.
-- Instruction memory.
-- Basic arithmetic and logic instructions.
-- Standalone data memory and LOAD/STORE support.
-- Initial BEQ and JUMP control-flow support.
-- Existing decoder and control unit blocks that drive the datapath.
+- A 32-register register file with `x0` protection.
+- A 32-bit program counter.
+- File-loadable instruction memory.
+- Data memory with LOAD and STORE support.
+- ADD, SUB, AND, OR, XOR and ADDI execution.
+- BEQ and JUMP control flow.
+- Decoder and control unit blocks that drive the datapath.
+
+The separate multi-cycle CPU is now the main timing-improvement path. It preserves the same ISA and final program behaviour while adding explicit FSM state and intermediate registers to shorten the combinational paths seen by Vivado timing analysis.
 
 ## Register File
 
@@ -613,10 +641,310 @@ This first core supports NOP, ADD, SUB, AND, OR, XOR, ADDI, LOAD, STORE, BEQ and
 The `programs/load_store_test.mem` program image exercises the current LOAD/STORE path through the `IMEM_INIT_FILE` parameter path. This allows CPU programs to be kept as standalone hex files instead of being inserted directly into a testbench.
 The `programs/branch_jump_test.mem` program image exercises BEQ, JUMP and not-taken branch behaviour through the same file-loaded instruction path.
 
-## Open Architecture Decisions
+## Phase 5 Program Execution System
 
-- Memory map.
-- Single-cycle versus multi-cycle CPU structure.
-- Whether status flags are needed.
-- Whether the first hardware demo should accept a lower effective stepping rate while documenting the 100 MHz timing miss.
-- Whether to improve timing later using a multi-cycle CPU, registered memory outputs or a pipelined datapath.
+Phase 5 added standalone memory-system modules and a runnable top-level program execution wrapper without refactoring the already working `cpu_core`.
+
+Files:
+
+- `rtl/instr_mem.sv`
+- `rtl/data_mem.sv`
+- `rtl/cpu_top.sv`
+- `programs/add_test.mem`
+- `tb/tb_instr_mem.sv`
+- `tb/tb_data_mem.sv`
+- `tb/tb_program_execution.sv`
+
+The important design choice is that `cpu_top.sv` wraps the existing integrated `cpu_core`. The existing `cpu_core` already contains the fetch, instruction-memory and data-memory path using `fetch_unit`, `instruction_memory` and `data_memory`. The standalone `instr_mem.sv` and `data_mem.sv` modules document and test the memory-system concepts independently.
+
+The Phase 5 program executes:
+
+```text
+ADDI  x1, x0, 5
+ADDI  x2, x0, 7
+ADD   x3, x1, x2
+STORE x3, [x0 + 0]
+NOP
+```
+
+Expected final architectural state:
+
+- `x1 = 5`
+- `x2 = 7`
+- `x3 = 12`
+- data memory word 0 = `32'd12`
+
+This proved that the CPU could execute a small multi-instruction program in simulation.
+
+## Phase 6 Program-Level ISA Verification
+
+Phase 6 expanded verification from individual modules and one program into a broader custom-ISA program suite. The CPU architecture and instruction encodings were kept unchanged.
+
+The Phase 6 program suite covers:
+
+| Phase | Program Focus | Main Architecture Behaviour Verified |
+| --- | --- | --- |
+| 6A | Arithmetic edge cases | ADDI, ADD, SUB, negative immediates, wraparound/underflow and `x0` protection. |
+| 6B | Memory offsets | LOAD/STORE base + 0, base + 4 and negative offset addressing. |
+| 6C | Branch control | BEQ taken and BEQ not-taken behaviour. |
+| 6D | Jump control | Forward JUMP and skipped-instruction protection. |
+| 6E | Simple loop | Repeated ADD/SUB, BEQ loop exit, backward JUMP and final STORE. |
+| 6F | Invalid opcode safety | Invalid opcodes keep `valid_instr` low and do not write registers or data memory. |
+
+This suite became the functional baseline that the later multi-cycle CPU had to preserve.
+
+## Phase 7 FPGA Baseline And Timing Evidence
+
+Phase 7 froze the verified simulation baseline and built the original `fpga_top` path for the Basys 3.
+
+Baseline FPGA configuration:
+
+- Target board: Digilent Basys 3.
+- FPGA part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top`.
+- Constraint file: `constraints/basys3.xdc`.
+- Target clock: 10.000 ns, 100 MHz.
+
+Phase 7C implementation completed and generated a bitstream for the original single-cycle-style CPU path. The design fit comfortably in the device:
+
+| Resource | Phase 7C post-route usage |
+| --- | ---: |
+| LUTs | 2,983 / 20,800, 14.34% |
+| FFs | 8,314 / 41,600, 19.99% |
+| BRAM | 0 / 50, 0.00% |
+| DSP | 0 / 90, 0.00% |
+
+However, Phase 7D timing analysis showed that setup timing did not meet 100 MHz:
+
+| Timing Metric | Phase 7C/7D Result |
+| --- | ---: |
+| WNS | -1.551 ns |
+| TNS | -5707.315 ns |
+| WHS | 0.075 ns |
+| Estimated max frequency | approximately 86.6 MHz |
+
+The worst path was classified as a single-cycle-style PC/fetch/decode/execute/writeback path:
+
+```text
+cpu_inst/fetch_inst/pc_inst/pc_reg[30]/C
+to
+cpu_inst/reg_file_inst/regs_reg[2][12]/D
+```
+
+This result did not mean the simulated CPU behaviour was wrong. It showed that the simple educational single-cycle-style datapath was too long for the 100 MHz FPGA target after routing.
+
+## Phase 8 Multi-Cycle CPU Architecture
+
+Phase 8 introduced a separate multi-cycle CPU rather than replacing the original `cpu_core`.
+
+File:
+
+- `rtl/cpu_core_multicycle.sv`
+
+The multi-cycle CPU preserves:
+
+- The same 32-bit instruction format.
+- The same opcode map.
+- The same `x0` zero-register behaviour.
+- The same signed `imm13` immediate convention.
+- The same branch/jump target convention: `instruction_pc + (imm_ext << 2)`.
+- The same invalid-opcode safety requirement.
+
+It adds internal registers so one instruction can be executed over several shorter cycles:
+
+- `instruction_reg`: stores the fetched instruction.
+- `instruction_pc`: stores the PC of the current instruction.
+- Decoded field registers: `opcode_reg`, `rd_reg`, `rs1_reg`, `rs2_reg`, `imm13_reg`, `imm_ext_reg`.
+- Operand registers: `operand_a_reg`, `operand_b_reg`.
+- `alu_result_reg`: stores arithmetic results or effective addresses.
+- `memory_read_data_reg`: stores loaded data before writeback.
+- `state`: stores the current FSM state.
+- Internal `regs[0:31]`: register file storage.
+- Internal `data_mem[0:255]`: data memory storage.
+
+### Multi-Cycle FSM States
+
+The multi-cycle CPU uses these states:
+
+| State | Purpose |
+| --- | --- |
+| `FETCH` | Capture `fetched_instruction`, capture `instruction_pc`, and advance PC by 4 for the default sequential path. |
+| `DECODE` | Decode instruction fields, sign-extend `imm13`, read source operands and decide the next state. |
+| `EXECUTE` | Perform ALU operation, calculate effective address, or evaluate branch/jump target. |
+| `MEMORY` | Perform LOAD read capture or STORE write. |
+| `WRITEBACK` | Write arithmetic or LOAD result to `rd`, unless `rd` is `x0`. |
+
+Instruction state sequences:
+
+| Instruction | Multi-cycle sequence |
+| --- | --- |
+| NOP | FETCH -> DECODE -> FETCH |
+| ADD/SUB/AND/OR/XOR | FETCH -> DECODE -> EXECUTE -> WRITEBACK -> FETCH |
+| ADDI | FETCH -> DECODE -> EXECUTE -> WRITEBACK -> FETCH |
+| LOAD | FETCH -> DECODE -> EXECUTE -> MEMORY -> WRITEBACK -> FETCH |
+| STORE | FETCH -> DECODE -> EXECUTE -> MEMORY -> FETCH |
+| BEQ | FETCH -> DECODE -> EXECUTE -> FETCH |
+| JUMP | FETCH -> DECODE -> EXECUTE -> FETCH |
+| Invalid opcode | FETCH -> DECODE -> FETCH |
+
+### Multi-Cycle Control Flow
+
+During FETCH, the PC is advanced to `pc + 4` by default. The current instruction's PC is captured separately as `instruction_pc`.
+
+BEQ and JUMP target calculation uses the captured instruction PC:
+
+```text
+pc_target = instruction_pc + (imm_ext_reg << 2)
+```
+
+For BEQ:
+
+```text
+if (operand_a_reg == operand_b_reg)
+    pc = pc_target
+```
+
+For JUMP:
+
+```text
+pc = pc_target
+```
+
+This preserves the original PC-relative branch/jump convention while allowing the default sequential PC update to happen earlier in FETCH.
+
+### Multi-Cycle Verification Progress
+
+The separate multi-cycle CPU was verified incrementally:
+
+| Phase | Verification Scope | Result |
+| --- | --- | --- |
+| 8B | FSM skeleton, reset, NOP, invalid opcode and sequential PC stepping | Passed |
+| 8C | ADD, SUB, AND, OR, XOR, ADDI and `x0` protection | Passed |
+| 8D | LOAD/STORE memory execution and negative offset load | Passed |
+| 8E | BEQ taken/not-taken, forward/backward JUMP and loop execution | Passed |
+| 8F | Full custom-ISA program suite equivalent to Phase 6 behaviours | Passed |
+
+Phase 8F confirmed that the multi-cycle CPU passes full custom-ISA program verification across arithmetic, memory, branch, jump, loop and invalid-opcode safety scenarios.
+
+## Phase 8G Multi-Cycle FPGA Path
+
+Phase 8G added a separate FPGA implementation path for the multi-cycle CPU.
+
+Files:
+
+- `rtl/fpga_top_multicycle.sv`
+- `scripts/run_vivado_synth_multicycle.tcl`
+- `scripts/run_vivado_impl_multicycle.tcl`
+- `reports/phase8g_multicycle_timing_comparison.md`
+
+The new wrapper keeps the same Basys 3 external ports as `fpga_top`:
+
+- `clk`
+- `rst_btn`
+- `enable_sw`
+- `led[15:0]`
+
+It instantiates:
+
+- `slow_tick_generator`
+- `cpu_core_multicycle`
+- a local 256-word instruction memory initialised from `programs/fpga_led_demo.mem`
+
+The multi-cycle FPGA wrapper still uses the real Basys 3 100 MHz clock. It does not create a divided clock. CPU execution is still gated with a slow enable pulse:
+
+```text
+cpu_enable = enable_sw && slow_tick
+```
+
+The multi-cycle LED mapping is:
+
+| LED bits | Signal |
+| --- | --- |
+| `led[3:0]` | `pc[5:2]` |
+| `led[7:4]` | `opcode_reg` |
+| `led[8]` | `valid_instr` |
+| `led[9]` | `reg_write` |
+| `led[10]` | `mem_write` |
+| `led[13:11]` | `state` |
+| `led[15:14]` | `alu_result[1:0]` |
+
+This differs from the original `fpga_top` LED mapping because the multi-cycle CPU has explicit FSM state and does not use the original `use_imm`/`alu_op` debug interface.
+
+### Phase 8G FPGA Result
+
+Phase 8G synthesis and implementation completed for `fpga_top_multicycle` using the same Basys 3 part and constraints.
+
+Post-route utilisation:
+
+| Resource | Phase 8G post-route usage |
+| --- | ---: |
+| LUTs | 3,027 / 20,800, 14.55% |
+| FFs | 8,654 / 41,600, 20.80% |
+| BRAM | 0 / 50, 0.00% |
+| DSP | 0 / 90, 0.00% |
+
+Post-route timing:
+
+| Timing Metric | Phase 8G Result |
+| --- | ---: |
+| WNS | 1.389 ns |
+| TNS | 0.000 ns |
+| WHS | 0.038 ns |
+| THS | 0.000 ns |
+| Estimated max frequency | approximately 116.1 MHz |
+| 100 MHz setup timing | Met |
+
+The worst Phase 8G path is now a multi-cycle memory-read path:
+
+```text
+cpu_inst/alu_result_reg_reg[6]/C
+to
+cpu_inst/memory_read_data_reg_reg[22]/D
+```
+
+This is no longer the full PC/fetch/decode/execute/writeback path from the Phase 7 baseline.
+
+### Phase 7 Versus Phase 8G Comparison
+
+| Metric | Phase 7 single-cycle-style baseline | Phase 8G multi-cycle path |
+| --- | ---: | ---: |
+| LUTs | 2,983 | 3,027 |
+| FFs | 8,314 | 8,654 |
+| BRAM | 0 | 0 |
+| DSP | 0 | 0 |
+| WNS | -1.551 ns | 1.389 ns |
+| TNS | -5707.315 ns | 0.000 ns |
+| 100 MHz setup timing | Not met | Met |
+| Estimated max frequency | ~86.6 MHz | ~116.1 MHz |
+
+The multi-cycle path uses slightly more LUTs and flip-flops, but it meets timing at 100 MHz. This supports the Phase 8 architecture direction as the preferred timing-closure path, subject to supervisor review and later hardware validation.
+
+## Current Architecture Direction
+
+The project now has two useful architecture baselines:
+
+1. Original single-cycle-style baseline
+
+   - Simpler to explain and useful as the first complete CPU integration.
+   - Fully verified in simulation through Phase 6.
+   - Builds to bitstream for Basys 3.
+   - Does not meet 100 MHz post-route timing.
+
+2. Separate multi-cycle implementation
+
+   - Preserves the same custom ISA and program behaviours.
+   - Verified through full Phase 8F program testing.
+   - Builds to bitstream through the separate Phase 8G FPGA path.
+   - Meets 100 MHz post-route timing in the Phase 8G implementation result.
+
+The likely next architecture decision is whether to make the multi-cycle path the preferred FPGA implementation path after supervisor review and, later, physical board bring-up.
+
+## Remaining Architecture Decisions
+
+- Whether to use `fpga_top_multicycle` rather than `fpga_top` for the first timing-clean hardware demonstration.
+- Whether to keep the current register-array memory structures or redesign instruction/data memories to infer FPGA block RAM more cleanly.
+- Whether to add a small assembler or program-generation script to reduce manual `.mem` encoding errors.
+- Whether status flags are needed for future ISA extensions.
+- Whether pipelining is useful as a later extension after the multi-cycle design is documented.
+- Whether to add external bus, UART, memory-mapped I/O or debug interfaces after basic board validation.
+- How to record and compare physical Basys 3 behaviour once the board is available.
