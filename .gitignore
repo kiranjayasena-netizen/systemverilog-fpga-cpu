@@ -18,6 +18,9 @@ vivado*.backup.log
 *.pb
 xsim.dir/
 
+# Java/Vivado crash dumps
+hs_err_pid*.dmp
+
 # Simulation outputs
 obj_dir/
 *.vcd
