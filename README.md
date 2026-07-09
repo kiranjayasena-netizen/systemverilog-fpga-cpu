@@ -73,6 +73,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - The Phase 8B FSM skeleton simulation has passed in Vivado XSim.
 - Phase 8C arithmetic execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8D LOAD/STORE memory execution for the separate multi-cycle CPU has passed in Vivado XSim.
+- Phase 8E BEQ/JUMP control-flow execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -206,6 +207,7 @@ Completed work:
 - Phase 8B separate multi-cycle CPU FSM skeleton and focused FSM testbench
 - Phase 8C arithmetic execution support and focused arithmetic testbench for the separate multi-cycle CPU
 - Phase 8D LOAD/STORE memory execution support and focused memory testbench for the separate multi-cycle CPU
+- Phase 8E BEQ/JUMP control-flow support and focused branch/jump testbench for the separate multi-cycle CPU
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -217,7 +219,7 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Phase 8E branch/jump support for the separate multi-cycle CPU, after review
+- Phase 8F full multi-cycle verification and comparison planning, after review
 - Timing-closure comparison between the Phase 7 baseline and a future Phase 8 multi-cycle design
 
 ## Repository Structure

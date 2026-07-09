@@ -1368,6 +1368,69 @@ Conclusion:
 
 The Phase 8D multi-cycle CPU memory test passed. It verifies LOAD/STORE address calculation, memory access state timing, LOAD writeback, STORE write safety and `x0` protection in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
 
+## Phase 8E Multi-Cycle CPU Branch/Jump Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_branch_jump.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- BEQ sequence `FETCH -> DECODE -> EXECUTE -> FETCH`.
+- JUMP sequence `FETCH -> DECODE -> EXECUTE -> FETCH`.
+- BEQ taken control flow using equal source registers.
+- BEQ not-taken control flow using unequal source registers.
+- Forward JUMP skipping an unwanted instruction.
+- Backward JUMP loop using a negative immediate offset.
+- Branch target calculation using `instruction_pc + (imm_ext_reg << 2)`.
+- BEQ and JUMP do not assert `reg_write`.
+- BEQ and JUMP do not assert `mem_write`.
+- Loop execution with ADD, SUB, BEQ, JUMP and STORE.
+- Final STORE after the loop writes data memory word 0.
+
+Result:
+
+- Standalone Phase 8E XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 8E test.
+- Testbench summary reported 23 tests run and 0 tests failed.
+- Console output included `PHASE 8E MULTI-CYCLE BRANCH/JUMP TEST PASSED`.
+- The existing `rtl/cpu_core.sv` implementation was not replaced or modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_branch_jump.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_branch_jump -s tb_cpu_core_multicycle_branch_jump_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_branch_jump_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after some snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_branch_jump.vcd`.
+
+Conclusion:
+
+The Phase 8E multi-cycle CPU branch/jump test passed. It verifies BEQ taken/not-taken behaviour, forward and backward JUMP behaviour, branch target calculation, loop execution and control-instruction write safety in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

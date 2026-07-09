@@ -274,6 +274,15 @@ module cpu_core_multicycle (
                             );
                         end else if (valid_instr && ((opcode_reg == OP_LOAD) || (opcode_reg == OP_STORE))) begin
                             alu_result_reg <= operand_a_reg + imm_ext_reg;
+                        end else if (valid_instr && (opcode_reg == OP_BEQ)) begin
+                            alu_result_reg <= instruction_pc + (imm_ext_reg << 2);
+
+                            if (operand_a_reg == operand_b_reg) begin
+                                pc <= instruction_pc + (imm_ext_reg << 2);
+                            end
+                        end else if (valid_instr && (opcode_reg == OP_JUMP)) begin
+                            alu_result_reg <= instruction_pc + (imm_ext_reg << 2);
+                            pc             <= instruction_pc + (imm_ext_reg << 2);
                         end else begin
                             alu_result_reg <= 32'h0000_0000;
                         end

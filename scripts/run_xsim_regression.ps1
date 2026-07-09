@@ -1,14 +1,16 @@
-# Run all current Vivado XSim testbenches from the repository root.
+# Run all current Vivado XSim testbenches.
 #
 # Usage:
 #   1. Open a Vivado-enabled PowerShell, for example from the Vivado tools menu
 #      or after sourcing the Vivado environment.
-#   2. From the repo root, run:
+#   2. Run:
 #      powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 #
 # This is a local developer regression script. It does not assume CI yet.
 
 $ErrorActionPreference = "Stop"
+$RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+Set-Location $RepoRoot
 $RunSuffix = Get-Date -Format "yyyyMMdd_HHmmss"
 
 function Resolve-VivadoTool {
@@ -279,6 +281,18 @@ Invoke-XsimTest `
     -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_memory.sv") `
     -Top "tb_cpu_core_multicycle_memory" `
     -Snapshot "tb_cpu_core_multicycle_memory_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 8E multi-cycle CPU branch/jump" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_branch_jump.sv") `
+    -Top "tb_cpu_core_multicycle_branch_jump" `
+    -Snapshot "tb_cpu_core_multicycle_branch_jump_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 8F multi-cycle CPU full programs" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_full_programs.sv") `
+    -Top "tb_cpu_core_multicycle_full_programs" `
+    -Snapshot "tb_cpu_core_multicycle_full_programs_sim"
 
 Write-Host ""
 Write-Host "All XSim regression tests completed."
