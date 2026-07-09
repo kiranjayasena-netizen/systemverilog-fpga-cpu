@@ -19,7 +19,8 @@ module cpu_core_multicycle (
     output logic        valid_instr,
     output logic        reg_write,
     output logic        mem_write,
-    output logic [31:0] alu_result
+    output logic [31:0] alu_result,
+    output logic [31:0] memory_read_data
 );
 
     import cpu_defs_pkg::*;
@@ -35,11 +36,15 @@ module cpu_core_multicycle (
     logic [31:0] operand_a_reg;
     logic [31:0] operand_b_reg;
     logic [31:0] alu_result_reg;
+    logic [31:0] memory_read_data_reg;
+    logic [31:0] data_mem [0:255];
 
     integer reg_index;
+    integer mem_index;
 
     assign instruction_addr = pc;
     assign alu_result       = alu_result_reg;
+    assign memory_read_data = memory_read_data_reg;
 
     function automatic logic opcode_is_valid(input logic [3:0] opcode);
         begin
@@ -209,12 +214,17 @@ module cpu_core_multicycle (
             operand_a_reg   <= 32'h0000_0000;
             operand_b_reg   <= 32'h0000_0000;
             alu_result_reg  <= 32'h0000_0000;
+            memory_read_data_reg <= 32'h0000_0000;
             valid_instr     <= 1'b0;
             reg_write       <= 1'b0;
             mem_write       <= 1'b0;
 
             for (reg_index = 0; reg_index < 32; reg_index = reg_index + 1) begin
                 regs[reg_index] <= 32'h0000_0000;
+            end
+
+            for (mem_index = 0; mem_index < 256; mem_index = mem_index + 1) begin
+                data_mem[mem_index] <= 32'h0000_0000;
             end
         end else begin
             reg_write <= 1'b0;
@@ -262,14 +272,28 @@ module cpu_core_multicycle (
                                 operand_b_reg,
                                 imm_ext_reg
                             );
+                        end else if (valid_instr && ((opcode_reg == OP_LOAD) || (opcode_reg == OP_STORE))) begin
+                            alu_result_reg <= operand_a_reg + imm_ext_reg;
                         end else begin
                             alu_result_reg <= 32'h0000_0000;
+                        end
+                    end
+
+                    STATE_MEMORY: begin
+                        if (valid_instr && (opcode_reg == OP_LOAD)) begin
+                            memory_read_data_reg <= data_mem[alu_result_reg[9:2]];
+                        end else if (valid_instr && (opcode_reg == OP_STORE)) begin
+                            data_mem[alu_result_reg[9:2]] <= operand_b_reg;
+                            mem_write                     <= 1'b1;
                         end
                     end
 
                     STATE_WRITEBACK: begin
                         if (valid_instr && opcode_is_arithmetic(opcode_reg) && (rd_reg != 5'd0)) begin
                             regs[rd_reg] <= alu_result_reg;
+                            reg_write    <= 1'b1;
+                        end else if (valid_instr && (opcode_reg == OP_LOAD) && (rd_reg != 5'd0)) begin
+                            regs[rd_reg] <= memory_read_data_reg;
                             reg_write    <= 1'b1;
                         end
                     end

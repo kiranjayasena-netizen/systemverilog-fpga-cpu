@@ -1305,6 +1305,69 @@ Conclusion:
 
 The Phase 8C multi-cycle CPU arithmetic test passed. It verifies arithmetic execution, signed immediate handling, writeback timing, `x0` protection and memory-write safety in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
 
+## Phase 8D Multi-Cycle CPU Memory Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_memory.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- LOAD sequence `FETCH -> DECODE -> EXECUTE -> MEMORY -> WRITEBACK -> FETCH`.
+- STORE sequence `FETCH -> DECODE -> EXECUTE -> MEMORY -> FETCH`.
+- Base-plus-offset address calculation using `rs1 + sign-extended imm13`.
+- STORE writes `rs2` data to the internal multi-cycle data memory.
+- LOAD reads from the internal multi-cycle data memory and writes to `rd`.
+- LOAD with a negative offset using `LOAD x6, [x5 - 4]`.
+- LOAD to `x0` leaves `x0` unchanged.
+- STORE does not assert `reg_write`.
+- STORE asserts `mem_write` only during the `MEMORY` state.
+- LOAD register writeback occurs only during `WRITEBACK`.
+- Phase 8C arithmetic behaviour remains covered by the full regression.
+
+Result:
+
+- Standalone Phase 8D XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 8D test.
+- Testbench summary reported 14 tests run and 0 tests failed.
+- Console output included `PHASE 8D MULTI-CYCLE MEMORY TEST PASSED`.
+- The existing `rtl/cpu_core.sv` implementation was not replaced or modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_memory.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_memory -s tb_cpu_core_multicycle_memory_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_memory_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after some snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_memory.vcd`.
+
+Conclusion:
+
+The Phase 8D multi-cycle CPU memory test passed. It verifies LOAD/STORE address calculation, memory access state timing, LOAD writeback, STORE write safety and `x0` protection in the separate multi-cycle CPU without changing the existing working CPU core or instruction encodings.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

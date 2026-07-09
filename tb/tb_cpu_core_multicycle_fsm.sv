@@ -26,6 +26,7 @@ module tb_cpu_core_multicycle_fsm;
     logic        reg_write;
     logic        mem_write;
     logic [31:0] alu_result;
+    logic [31:0] memory_read_data;
 
     logic [31:0] imem [0:3];
 
@@ -51,7 +52,8 @@ module tb_cpu_core_multicycle_fsm;
         .valid_instr(valid_instr),
         .reg_write(reg_write),
         .mem_write(mem_write),
-        .alu_result(alu_result)
+        .alu_result(alu_result),
+        .memory_read_data(memory_read_data)
     );
 
     assign fetched_instruction = imem[instruction_addr[5:2]];

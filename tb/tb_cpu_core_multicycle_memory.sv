@@ -1,12 +1,14 @@
 `timescale 1ns / 1ps
 
-module tb_cpu_core_multicycle_arithmetic;
+module tb_cpu_core_multicycle_memory;
 
     import cpu_defs_pkg::*;
 
+    localparam logic [2:0] STATE_MEMORY    = 3'd3;
     localparam logic [2:0] STATE_WRITEBACK = 3'd4;
-    localparam int unsigned PROGRAM_CYCLES = 50;
-    localparam int unsigned EXPECTED_REG_WRITES = 9;
+    localparam int unsigned PROGRAM_CYCLES = 70;
+    localparam int unsigned EXPECTED_MEM_WRITES = 2;
+    localparam int unsigned EXPECTED_LOAD_REG_WRITES = 3;
 
     logic        clk;
     logic        rst;
@@ -33,9 +35,12 @@ module tb_cpu_core_multicycle_arithmetic;
 
     int unsigned tests_run;
     int unsigned tests_failed;
+    int unsigned mem_write_pulses;
+    int unsigned bad_mem_write_pulses;
     int unsigned reg_write_pulses;
     int unsigned bad_reg_write_pulses;
-    int unsigned mem_write_pulses;
+    int unsigned load_reg_write_pulses;
+    int unsigned store_reg_write_pulses;
 
     cpu_core_multicycle dut (
         .clk(clk),
@@ -128,17 +133,25 @@ module tb_cpu_core_multicycle_arithmetic;
             #1;
 
             if (!rst && enable) begin
-                if (mem_write !== 1'b0) begin
+                if (mem_write) begin
                     mem_write_pulses++;
-                    $error("FAIL: mem_write asserted during arithmetic-only test");
+
+                    if ((state_before != STATE_MEMORY) || (opcode_before != OP_STORE)) begin
+                        bad_mem_write_pulses++;
+                        $error(
+                            "FAIL: unexpected mem_write pulse | state_before=%0d opcode=0x%0h",
+                            state_before,
+                            opcode_before
+                        );
+                    end
                 end
 
                 if (reg_write) begin
                     reg_write_pulses++;
 
                     if ((state_before != STATE_WRITEBACK) ||
-                        !opcode_is_arithmetic(opcode_before) ||
-                        (rd_before == 5'd0)) begin
+                        (rd_before == 5'd0) ||
+                        (!opcode_is_arithmetic(opcode_before) && (opcode_before != OP_LOAD))) begin
                         bad_reg_write_pulses++;
                         $error(
                             "FAIL: unexpected reg_write pulse | state_before=%0d opcode=0x%0h rd=%0d",
@@ -146,6 +159,14 @@ module tb_cpu_core_multicycle_arithmetic;
                             opcode_before,
                             rd_before
                         );
+                    end
+
+                    if (opcode_before == OP_LOAD) begin
+                        load_reg_write_pulses++;
+                    end
+
+                    if (opcode_before == OP_STORE) begin
+                        store_reg_write_pulses++;
                     end
                 end
             end
@@ -159,35 +180,37 @@ module tb_cpu_core_multicycle_arithmetic;
                 imem[i] = build_instruction(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
             end
 
-            imem[0]  = build_instruction(OP_ADDI, 5'd1, 5'd0, 5'd0, 13'd10);
-            imem[1]  = build_instruction(OP_ADDI, 5'd2, 5'd0, 5'd0, 13'd20);
-            imem[2]  = build_instruction(OP_ADD,  5'd3, 5'd1, 5'd2, 13'd0);
-            imem[3]  = build_instruction(OP_SUB,  5'd4, 5'd2, 5'd1, 13'd0);
-            imem[4]  = build_instruction(OP_AND,  5'd5, 5'd1, 5'd2, 13'd0);
-            imem[5]  = build_instruction(OP_OR,   5'd6, 5'd1, 5'd2, 13'd0);
-            imem[6]  = build_instruction(OP_XOR,  5'd7, 5'd1, 5'd2, 13'd0);
-            imem[7]  = build_instruction(OP_ADDI, 5'd8, 5'd0, 5'd0, 13'h1fff);
-            imem[8]  = build_instruction(OP_ADD,  5'd9, 5'd8, 5'd1, 13'd0);
-            imem[9]  = build_instruction(OP_ADDI, 5'd0, 5'd0, 5'd0, 13'd123);
-            imem[10] = build_instruction(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0);
+            imem[0] = build_instruction(OP_ADDI,  5'd1, 5'd0, 5'd0, 13'd64);
+            imem[1] = build_instruction(OP_ADDI,  5'd2, 5'd0, 5'd0, 13'd123);
+            imem[2] = build_instruction(OP_STORE, 5'd0, 5'd1, 5'd2, 13'd0);
+            imem[3] = build_instruction(OP_LOAD,  5'd3, 5'd1, 5'd0, 13'd0);
+            imem[4] = build_instruction(OP_STORE, 5'd0, 5'd1, 5'd3, 13'd4);
+            imem[5] = build_instruction(OP_LOAD,  5'd4, 5'd1, 5'd0, 13'd4);
+            imem[6] = build_instruction(OP_ADDI,  5'd5, 5'd0, 5'd0, 13'd68);
+            imem[7] = build_instruction(OP_LOAD,  5'd6, 5'd5, 5'd0, 13'h1ffc);
+            imem[8] = build_instruction(OP_LOAD,  5'd0, 5'd1, 5'd0, 13'd0);
+            imem[9] = build_instruction(OP_NOP,   5'd0, 5'd0, 5'd0, 13'd0);
         end
     endtask
 
     initial begin
-        $dumpfile("tb_cpu_core_multicycle_arithmetic.vcd");
-        $dumpvars(0, tb_cpu_core_multicycle_arithmetic);
+        $dumpfile("tb_cpu_core_multicycle_memory.vcd");
+        $dumpvars(0, tb_cpu_core_multicycle_memory);
 
-        $display("Starting Phase 8C multi-cycle CPU arithmetic simulation...");
+        $display("Starting Phase 8D multi-cycle CPU memory simulation...");
 
         load_program();
 
-        rst                  = 1'b1;
-        enable               = 1'b0;
-        tests_run            = 0;
-        tests_failed         = 0;
-        reg_write_pulses     = 0;
-        bad_reg_write_pulses = 0;
-        mem_write_pulses     = 0;
+        rst                   = 1'b1;
+        enable                = 1'b0;
+        tests_run             = 0;
+        tests_failed          = 0;
+        mem_write_pulses      = 0;
+        bad_mem_write_pulses  = 0;
+        reg_write_pulses      = 0;
+        bad_reg_write_pulses  = 0;
+        load_reg_write_pulses = 0;
+        store_reg_write_pulses = 0;
 
         @(posedge clk);
         #1;
@@ -205,22 +228,19 @@ module tb_cpu_core_multicycle_arithmetic;
         #1;
 
         check_value("x0 remains hardwired to zero", dut.regs[0], 32'd0);
-        check_value("ADDI x1, x0, 10", dut.regs[1], 32'd10);
-        check_value("ADDI x2, x0, 20", dut.regs[2], 32'd20);
-        check_value("ADD x3, x1, x2", dut.regs[3], 32'd30);
-        check_value("SUB x4, x2, x1", dut.regs[4], 32'd10);
-        check_value("AND x5, x1, x2", dut.regs[5], 32'd0);
-        check_value("OR x6, x1, x2", dut.regs[6], 32'd30);
-        check_value("XOR x7, x1, x2", dut.regs[7], 32'd30);
-        check_value("ADDI x8, x0, -1", dut.regs[8], 32'hffff_ffff);
-        check_value("ADD x9, x8, x1", dut.regs[9], 32'd9);
-        check_value(
-            "reg_write pulse count for non-x0 arithmetic writebacks",
-            reg_write_pulses,
-            EXPECTED_REG_WRITES
-        );
-        check_value("reg_write only during arithmetic WRITEBACK", bad_reg_write_pulses, 32'd0);
-        check_value("mem_write never asserted", mem_write_pulses, 32'd0);
+        check_value("ADDI x1, x0, 64", dut.regs[1], 32'd64);
+        check_value("ADDI x2, x0, 123", dut.regs[2], 32'd123);
+        check_value("LOAD x3, [x1 + 0]", dut.regs[3], 32'd123);
+        check_value("LOAD x4, [x1 + 4]", dut.regs[4], 32'd123);
+        check_value("ADDI x5, x0, 68", dut.regs[5], 32'd68);
+        check_value("LOAD x6, [x5 - 4]", dut.regs[6], 32'd123);
+        check_value("data memory word 16", dut.data_mem[16], 32'd123);
+        check_value("data memory word 17", dut.data_mem[17], 32'd123);
+        check_value("STORE mem_write pulse count", mem_write_pulses, EXPECTED_MEM_WRITES);
+        check_value("mem_write only during STORE MEMORY state", bad_mem_write_pulses, 32'd0);
+        check_value("LOAD reg_write pulse count excluding x0", load_reg_write_pulses, EXPECTED_LOAD_REG_WRITES);
+        check_value("STORE never asserts reg_write", store_reg_write_pulses, 32'd0);
+        check_value("reg_write only during valid WRITEBACK", bad_reg_write_pulses, 32'd0);
 
         $display("----------------------------------");
         $display("Tests run:    %0d", tests_run);
@@ -228,11 +248,11 @@ module tb_cpu_core_multicycle_arithmetic;
         $display("----------------------------------");
 
         if (tests_failed != 0) begin
-            $display("PHASE 8C MULTI-CYCLE ARITHMETIC TEST FAILED");
-            $fatal(1, "%0d of %0d Phase 8C arithmetic tests failed.", tests_failed, tests_run);
+            $display("PHASE 8D MULTI-CYCLE MEMORY TEST FAILED");
+            $fatal(1, "%0d of %0d Phase 8D memory tests failed.", tests_failed, tests_run);
         end
 
-        $display("PHASE 8C MULTI-CYCLE ARITHMETIC TEST PASSED");
+        $display("PHASE 8D MULTI-CYCLE MEMORY TEST PASSED");
         $finish;
     end
 
