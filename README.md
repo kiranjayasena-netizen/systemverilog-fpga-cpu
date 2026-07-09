@@ -80,6 +80,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 10A simulation-based performance benchmarking for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 10B single-cycle-style versus multi-cycle architecture trade-off comparison has passed in Vivado XSim.
 - Phase 10C standalone BRAM-style instruction and data memory prototype simulations have passed in Vivado XSim.
+- Phase 10D BRAM integration planning is documented; BRAM integration is not implemented yet.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -100,6 +101,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 10A performance benchmarking](reports/phase10a_performance_benchmarking.md) records simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU.
 - [Phase 10B architecture trade-off comparison](reports/phase10b_architecture_tradeoff_comparison.md) compares the original single-cycle-style CPU with the timing-clean multi-cycle CPU implementation.
 - [Phase 10C BRAM memory study](reports/phase10c_bram_memory_study.md) documents standalone synchronous-read BRAM-style instruction and data memory prototypes.
+- [Phase 10D BRAM integration plan](reports/phase10d_bram_integration_plan.md) defines the future FSM, verification and timing-comparison plan for integrating BRAM-style memories into a separate multi-cycle CPU path.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -223,6 +225,7 @@ Completed work:
 - Phase 10A simulation-based multi-cycle CPU performance benchmarking
 - Phase 10B architecture trade-off comparison between the original single-cycle-style and separate multi-cycle CPU paths
 - Phase 10C standalone BRAM-style memory prototypes and tests
+- Phase 10D BRAM integration planning for a future separate multi-cycle CPU path
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -234,6 +237,7 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
+- Phase 10E BRAM-aware multi-cycle CPU variant or wrapper
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure
