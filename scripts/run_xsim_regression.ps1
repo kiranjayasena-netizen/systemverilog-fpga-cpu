@@ -294,5 +294,11 @@ Invoke-XsimTest `
     -Top "tb_cpu_core_multicycle_full_programs" `
     -Snapshot "tb_cpu_core_multicycle_full_programs_sim"
 
+Invoke-XsimTest `
+    -Name "Phase 10A multi-cycle CPU performance" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/cpu_core_multicycle.sv", "tb/tb_cpu_core_multicycle_performance.sv") `
+    -Top "tb_cpu_core_multicycle_performance" `
+    -Snapshot "tb_cpu_core_multicycle_performance_sim"
+
 Write-Host ""
 Write-Host "All XSim regression tests completed."

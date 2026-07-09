@@ -1493,6 +1493,72 @@ Conclusion:
 
 The Phase 8F full-program verification test passed. It confirms that the separate multi-cycle CPU now passes full custom-ISA program verification across arithmetic, memory, branch, jump, loop and invalid-opcode safety scenarios without replacing the original CPU core or changing instruction encodings.
 
+## Phase 10A Multi-Cycle CPU Performance Benchmarking
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/cpu_core_multicycle.sv`
+- `tb/tb_cpu_core_multicycle_performance.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic-heavy benchmark program.
+- Memory-heavy benchmark program.
+- Branch/jump benchmark program.
+- Simple loop benchmark program.
+- Multi-cycle completion counting for arithmetic, ADDI, LOAD, STORE, BEQ, JUMP, NOP and invalid instruction classes.
+- CPI, estimated MIPS at 100 MHz and estimated runtime reporting.
+- Final architectural state checks for each benchmark.
+
+Result:
+
+- Standalone Phase 10A XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 10A test.
+- Testbench summary reported 41 tests run and 0 tests failed.
+- Console output included `PHASE 10A MULTI-CYCLE PERFORMANCE TEST PASSED`.
+- The existing RTL was not modified.
+
+Benchmark summary:
+
+| Benchmark | Cycles | Completed instructions | CPI | Estimated MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: |
+| Arithmetic-heavy | 42 | 11 | 3.818 | 26.190 |
+| Memory-heavy | 50 | 12 | 4.167 | 24.000 |
+| Branch/jump | 39 | 11 | 3.545 | 28.205 |
+| Simple loop | 71 | 20 | 3.550 | 28.169 |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\cpu_core_multicycle.sv tb\tb_cpu_core_multicycle_performance.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_performance -s tb_cpu_core_multicycle_performance_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_performance_sim -runall
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after the snapshot was built.
+- `xsim` still ran successfully and the self-checking testbench reported PASS.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase10a_xsim_regression_20260709_190808.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_performance.vcd`.
+
+Conclusion:
+
+The Phase 10A performance benchmark test passed. It provides simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU while hardware bring-up remains pending.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

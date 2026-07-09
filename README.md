@@ -75,8 +75,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 8D LOAD/STORE memory execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8E BEQ/JUMP control-flow execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8F full custom-ISA program verification for the separate multi-cycle CPU has passed in Vivado XSim.
-- The full local Vivado XSim regression now passes through Phase 8F.
+- The full local Vivado XSim regression now passes through Phase 10A.
 - Phase 8G synthesis and implementation comparison for the separate multi-cycle FPGA top has passed; the multi-cycle path meets the 100 MHz post-route timing target.
+- Phase 10A simulation-based performance benchmarking for the separate multi-cycle CPU has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -94,6 +95,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 7E Basys 3 bring-up report](reports/phase7e_basys3_bringup.md) is the planning and evidence-capture report for the first physical board session.
 - [Phase 8 multi-cycle redesign plan](docs/phase8_multicycle_redesign_plan.md) proposes a future FSM-based CPU redesign to improve timing closure while preserving the custom ISA.
 - [Phase 8G multi-cycle timing comparison](reports/phase8g_multicycle_timing_comparison.md) compares the Phase 7 single-cycle-style FPGA baseline with the separate multi-cycle FPGA implementation path.
+- [Phase 10A performance benchmarking](reports/phase10a_performance_benchmarking.md) records simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -214,6 +216,7 @@ Completed work:
 - Phase 8E BEQ/JUMP control-flow support and focused branch/jump testbench for the separate multi-cycle CPU
 - Phase 8F full-program custom-ISA verification for the separate multi-cycle CPU
 - Phase 8G separate multi-cycle FPGA top-level wrapper, Vivado build scripts, bitstream generation and timing comparison
+- Phase 10A simulation-based multi-cycle CPU performance benchmarking
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
