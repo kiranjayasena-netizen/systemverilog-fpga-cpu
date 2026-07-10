@@ -1,0 +1,527 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Fri Jul 10 11:11:00 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 10 -path_type full -file reports/phase10h/timing/fpga_top_multicycle_bram_impl_worst_paths.rpt
+| Design       : fpga_top_multicycle_bram
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             3.172ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.739ns  (logic 1.476ns (21.901%)  route 5.263ns (78.099%))
+  Logic Levels:           2  (LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.084ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.787ns = ( 14.787 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[15])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[15]
+                         net (fo=128, routed)         4.638    10.652    cpu_inst/instr_mem_inst/bram_instruction[15]
+    SLICE_X29Y7          MUXF7 (Prop_muxf7_S_O)       0.296    10.948 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[5]_i_2/O
+                         net (fo=1, routed)           0.625    11.573    cpu_inst/instr_mem_inst/operand_b_reg_reg[5]_i_2_n_0
+    SLICE_X28Y7          LUT6 (Prop_lut6_I0_O)        0.298    11.871 r  cpu_inst/instr_mem_inst/operand_b_reg[5]_i_1/O
+                         net (fo=1, routed)           0.000    11.871    cpu_inst/instr_mem_inst_n_52
+    SLICE_X28Y7          FDRE                                         r  cpu_inst/operand_b_reg_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.787    14.787    <hidden>
+                         clock pessimism              0.260    15.047    <hidden>
+                         clock uncertainty           -0.035    15.012    <hidden>
+    SLICE_X28Y7          FDRE (Setup_fdre_C_D)        0.031    15.043    cpu_inst/operand_b_reg_reg[5]
+  -------------------------------------------------------------------
+                         required time                         15.043    <hidden>
+                         arrival time                         -11.871    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.172    <hidden>
+
+Slack (MET) :             3.200ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.711ns  (logic 1.476ns (21.995%)  route 5.235ns (78.005%))
+  Logic Levels:           2  (LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.085ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.786ns = ( 14.786 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[15])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[15]
+                         net (fo=128, routed)         4.503    10.517    cpu_inst/instr_mem_inst/bram_instruction[15]
+    SLICE_X32Y8          MUXF7 (Prop_muxf7_S_O)       0.296    10.813 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[14]_i_4/O
+                         net (fo=1, routed)           0.732    11.544    cpu_inst/instr_mem_inst/operand_b_reg_reg[14]_i_4_n_0
+    SLICE_X29Y9          LUT6 (Prop_lut6_I3_O)        0.298    11.842 r  cpu_inst/instr_mem_inst/operand_b_reg[14]_i_1/O
+                         net (fo=1, routed)           0.000    11.842    cpu_inst/instr_mem_inst_n_43
+    SLICE_X29Y9          FDRE                                         r  cpu_inst/operand_b_reg_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.786    14.786    <hidden>
+                         clock pessimism              0.260    15.046    <hidden>
+                         clock uncertainty           -0.035    15.011    <hidden>
+    SLICE_X29Y9          FDRE (Setup_fdre_C_D)        0.031    15.042    cpu_inst/operand_b_reg_reg[14]
+  -------------------------------------------------------------------
+                         required time                         15.042    <hidden>
+                         arrival time                         -11.842    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.200    <hidden>
+
+Slack (MET) :             3.220ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[3]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.692ns  (logic 1.471ns (21.982%)  route 5.221ns (78.018%))
+  Logic Levels:           2  (LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.083ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.788ns = ( 14.788 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[15])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[15]
+                         net (fo=128, routed)         4.636    10.650    cpu_inst/instr_mem_inst/bram_instruction[15]
+    SLICE_X30Y6          MUXF7 (Prop_muxf7_S_O)       0.292    10.942 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[3]_i_3/O
+                         net (fo=1, routed)           0.585    11.526    cpu_inst/instr_mem_inst/operand_b_reg_reg[3]_i_3_n_0
+    SLICE_X28Y6          LUT6 (Prop_lut6_I1_O)        0.297    11.823 r  cpu_inst/instr_mem_inst/operand_b_reg[3]_i_1/O
+                         net (fo=1, routed)           0.000    11.823    cpu_inst/instr_mem_inst_n_54
+    SLICE_X28Y6          FDRE                                         r  cpu_inst/operand_b_reg_reg[3]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.788    14.788    <hidden>
+                         clock pessimism              0.260    15.048    <hidden>
+                         clock uncertainty           -0.035    15.013    <hidden>
+    SLICE_X28Y6          FDRE (Setup_fdre_C_D)        0.031    15.044    cpu_inst/operand_b_reg_reg[3]
+  -------------------------------------------------------------------
+                         required time                         15.044    <hidden>
+                         arrival time                         -11.823    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.220    <hidden>
+
+Slack (MET) :             3.238ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_a_reg_reg[11]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.675ns  (logic 1.522ns (22.802%)  route 5.153ns (77.198%))
+  Logic Levels:           3  (LUT6=2 MUXF7=1)
+  Clock Path Skew:        -0.080ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.792ns = ( 14.792 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.133ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.133     5.133    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.133 r  cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKBWRCLK_DOBDO[1])
+                                                      0.882     6.015 r  cpu_inst/instr_mem_inst/instruction_reg/DOBDO[1]
+                         net (fo=256, routed)         3.713     9.727    cpu_inst/instr_mem_inst/bram_instruction[19]
+    SLICE_X29Y2          LUT6 (Prop_lut6_I2_O)        0.124     9.851 r  cpu_inst/instr_mem_inst/operand_a_reg[11]_i_7/O
+                         net (fo=1, routed)           0.000     9.851    cpu_inst/instr_mem_inst/operand_a_reg[11]_i_7_n_0
+    SLICE_X29Y2          MUXF7 (Prop_muxf7_I1_O)      0.217    10.068 r  cpu_inst/instr_mem_inst/operand_a_reg_reg[11]_i_2/O
+                         net (fo=1, routed)           1.440    11.509    cpu_inst/instr_mem_inst/operand_a_reg_reg[11]_i_2_n_0
+    SLICE_X15Y2          LUT6 (Prop_lut6_I0_O)        0.299    11.808 r  cpu_inst/instr_mem_inst/operand_a_reg[11]_i_1/O
+                         net (fo=1, routed)           0.000    11.808    cpu_inst/instr_mem_inst_n_78
+    SLICE_X15Y2          FDRE                                         r  cpu_inst/operand_a_reg_reg[11]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.792    14.792    <hidden>
+                         clock pessimism              0.260    15.052    <hidden>
+                         clock uncertainty           -0.035    15.017    <hidden>
+    SLICE_X15Y2          FDRE (Setup_fdre_C_D)        0.029    15.046    cpu_inst/operand_a_reg_reg[11]
+  -------------------------------------------------------------------
+                         required time                         15.046    <hidden>
+                         arrival time                         -11.808    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.238    <hidden>
+
+Slack (MET) :             3.279ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[21]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.628ns  (logic 1.494ns (22.541%)  route 5.134ns (77.459%))
+  Logic Levels:           2  (LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.088ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.783ns = ( 14.783 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[15])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[15]
+                         net (fo=128, routed)         4.122    10.136    cpu_inst/instr_mem_inst/bram_instruction[15]
+    SLICE_X30Y13         MUXF7 (Prop_muxf7_S_O)       0.314    10.450 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[21]_i_2/O
+                         net (fo=1, routed)           1.012    11.462    cpu_inst/instr_mem_inst/operand_b_reg_reg[21]_i_2_n_0
+    SLICE_X29Y14         LUT6 (Prop_lut6_I0_O)        0.298    11.760 r  cpu_inst/instr_mem_inst/operand_b_reg[21]_i_1/O
+                         net (fo=1, routed)           0.000    11.760    cpu_inst/instr_mem_inst_n_36
+    SLICE_X29Y14         FDRE                                         r  cpu_inst/operand_b_reg_reg[21]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.783    14.783    <hidden>
+                         clock pessimism              0.260    15.043    <hidden>
+                         clock uncertainty           -0.035    15.008    <hidden>
+    SLICE_X29Y14         FDRE (Setup_fdre_C_D)        0.031    15.039    cpu_inst/operand_b_reg_reg[21]
+  -------------------------------------------------------------------
+                         required time                         15.039    <hidden>
+                         arrival time                         -11.760    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.279    <hidden>
+
+Slack (MET) :             3.282ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_a_reg_reg[8]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.698ns  (logic 1.522ns (22.722%)  route 5.176ns (77.278%))
+  Logic Levels:           3  (LUT6=2 MUXF7=1)
+  Clock Path Skew:        -0.013ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.859ns = ( 14.859 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.133ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.133     5.133    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.133 r  cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKBWRCLK_DOBDO[1])
+                                                      0.882     6.015 r  cpu_inst/instr_mem_inst/instruction_reg/DOBDO[1]
+                         net (fo=256, routed)         4.587    10.602    cpu_inst/instr_mem_inst/bram_instruction[19]
+    SLICE_X3Y2           LUT6 (Prop_lut6_I2_O)        0.124    10.726 r  cpu_inst/instr_mem_inst/operand_a_reg[8]_i_13/O
+                         net (fo=1, routed)           0.000    10.726    cpu_inst/instr_mem_inst/operand_a_reg[8]_i_13_n_0
+    SLICE_X3Y2           MUXF7 (Prop_muxf7_I1_O)      0.217    10.943 r  cpu_inst/instr_mem_inst/operand_a_reg_reg[8]_i_5/O
+                         net (fo=1, routed)           0.589    11.532    cpu_inst/instr_mem_inst/operand_a_reg_reg[8]_i_5_n_0
+    SLICE_X4Y1           LUT6 (Prop_lut6_I5_O)        0.299    11.831 r  cpu_inst/instr_mem_inst/operand_a_reg[8]_i_1/O
+                         net (fo=1, routed)           0.000    11.831    cpu_inst/instr_mem_inst_n_81
+    SLICE_X4Y1           FDRE                                         r  cpu_inst/operand_a_reg_reg[8]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.859    14.859    <hidden>
+                         clock pessimism              0.260    15.119    <hidden>
+                         clock uncertainty           -0.035    15.084    <hidden>
+    SLICE_X4Y1           FDRE (Setup_fdre_C_D)        0.029    15.113    cpu_inst/operand_a_reg_reg[8]
+  -------------------------------------------------------------------
+                         required time                         15.113    <hidden>
+                         arrival time                         -11.831    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.282    <hidden>
+
+Slack (MET) :             3.358ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_a_reg_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.550ns  (logic 1.517ns (23.160%)  route 5.033ns (76.840%))
+  Logic Levels:           3  (LUT6=2 MUXF7=1)
+  Clock Path Skew:        -0.085ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.787ns = ( 14.787 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.133ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.133     5.133    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.133 r  cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKBWRCLK_DOBDO[1])
+                                                      0.882     6.015 r  cpu_inst/instr_mem_inst/instruction_reg/DOBDO[1]
+                         net (fo=256, routed)         4.092    10.107    cpu_inst/instr_mem_inst/bram_instruction[19]
+    SLICE_X32Y7          LUT6 (Prop_lut6_I2_O)        0.124    10.231 r  cpu_inst/instr_mem_inst/operand_a_reg[5]_i_10/O
+                         net (fo=1, routed)           0.000    10.231    cpu_inst/instr_mem_inst/operand_a_reg[5]_i_10_n_0
+    SLICE_X32Y7          MUXF7 (Prop_muxf7_I0_O)      0.212    10.443 r  cpu_inst/instr_mem_inst/operand_a_reg_reg[5]_i_4/O
+                         net (fo=1, routed)           0.941    11.384    cpu_inst/instr_mem_inst/operand_a_reg_reg[5]_i_4_n_0
+    SLICE_X28Y7          LUT6 (Prop_lut6_I3_O)        0.299    11.683 r  cpu_inst/instr_mem_inst/operand_a_reg[5]_i_1/O
+                         net (fo=1, routed)           0.000    11.683    cpu_inst/instr_mem_inst_n_84
+    SLICE_X28Y7          FDRE                                         r  cpu_inst/operand_a_reg_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.787    14.787    <hidden>
+                         clock pessimism              0.260    15.047    <hidden>
+                         clock uncertainty           -0.035    15.012    <hidden>
+    SLICE_X28Y7          FDRE (Setup_fdre_C_D)        0.029    15.041    cpu_inst/operand_a_reg_reg[5]
+  -------------------------------------------------------------------
+                         required time                         15.041    <hidden>
+                         arrival time                         -11.683    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.358    <hidden>
+
+Slack (MET) :             3.410ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[25]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.498ns  (logic 1.494ns (22.990%)  route 5.004ns (77.010%))
+  Logic Levels:           2  (LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.088ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.783ns = ( 14.783 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[15])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[15]
+                         net (fo=128, routed)         4.215    10.229    cpu_inst/instr_mem_inst/bram_instruction[15]
+    SLICE_X30Y16         MUXF7 (Prop_muxf7_S_O)       0.314    10.543 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[25]_i_4/O
+                         net (fo=1, routed)           0.789    11.332    cpu_inst/instr_mem_inst/operand_b_reg_reg[25]_i_4_n_0
+    SLICE_X29Y14         LUT6 (Prop_lut6_I3_O)        0.298    11.630 r  cpu_inst/instr_mem_inst/operand_b_reg[25]_i_1/O
+                         net (fo=1, routed)           0.000    11.630    cpu_inst/instr_mem_inst_n_32
+    SLICE_X29Y14         FDRE                                         r  cpu_inst/operand_b_reg_reg[25]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.783    14.783    <hidden>
+                         clock pessimism              0.260    15.043    <hidden>
+                         clock uncertainty           -0.035    15.008    <hidden>
+    SLICE_X29Y14         FDRE (Setup_fdre_C_D)        0.032    15.040    cpu_inst/operand_b_reg_reg[25]
+  -------------------------------------------------------------------
+                         required time                         15.040    <hidden>
+                         arrival time                         -11.630    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.410    <hidden>
+
+Slack (MET) :             3.431ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_b_reg_reg[24]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.473ns  (logic 1.545ns (23.869%)  route 4.928ns (76.131%))
+  Logic Levels:           3  (LUT5=1 LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.091ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.780ns = ( 14.780 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.132ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.132     5.132    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.132 r  cpu_inst/instr_mem_inst/instruction_reg/CLKARDCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[13])
+                                                      0.882     6.014 r  cpu_inst/instr_mem_inst/instruction_reg/DOADO[13]
+                         net (fo=256, routed)         4.240    10.254    cpu_inst/instr_mem_inst/bram_instruction[13]
+    SLICE_X12Y23         LUT5 (Prop_lut5_I3_O)        0.124    10.378 r  cpu_inst/instr_mem_inst/operand_b_reg[24]_i_12/O
+                         net (fo=1, routed)           0.000    10.378    cpu_inst/instr_mem_inst/operand_b_reg[24]_i_12_n_0
+    SLICE_X12Y23         MUXF7 (Prop_muxf7_I0_O)      0.241    10.619 r  cpu_inst/instr_mem_inst/operand_b_reg_reg[24]_i_5/O
+                         net (fo=1, routed)           0.688    11.306    cpu_inst/instr_mem_inst/operand_b_reg_reg[24]_i_5_n_0
+    SLICE_X13Y19         LUT6 (Prop_lut6_I5_O)        0.298    11.604 r  cpu_inst/instr_mem_inst/operand_b_reg[24]_i_1/O
+                         net (fo=1, routed)           0.000    11.604    cpu_inst/instr_mem_inst_n_33
+    SLICE_X13Y19         FDRE                                         r  cpu_inst/operand_b_reg_reg[24]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.780    14.780    <hidden>
+                         clock pessimism              0.260    15.040    <hidden>
+                         clock uncertainty           -0.035    15.005    <hidden>
+    SLICE_X13Y19         FDRE (Setup_fdre_C_D)        0.031    15.036    cpu_inst/operand_b_reg_reg[24]
+  -------------------------------------------------------------------
+                         required time                         15.036    <hidden>
+                         arrival time                         -11.604    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.431    <hidden>
+
+Slack (MET) :             3.496ns  (required time - arrival time)
+  Source:                 cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/operand_a_reg_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (sys_clk_pin rise@10.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        6.413ns  (logic 1.517ns (23.655%)  route 4.896ns (76.345%))
+  Logic Levels:           3  (LUT6=2 MUXF7=1)
+  Clock Path Skew:        -0.086ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.786ns = ( 14.786 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.133ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.133     5.133    <hidden>
+    RAMB18_X0Y3          RAMB18E1                     0.000     5.133 r  cpu_inst/instr_mem_inst/instruction_reg/CLKBWRCLK
+    RAMB18_X0Y3          RAMB18E1 (Prop_ramb18e1_CLKBWRCLK_DOBDO[0])
+                                                      0.882     6.015 r  cpu_inst/instr_mem_inst/instruction_reg/DOBDO[0]
+                         net (fo=256, routed)         4.463    10.477    cpu_inst/instr_mem_inst/bram_instruction[18]
+    SLICE_X13Y14         LUT6 (Prop_lut6_I4_O)        0.124    10.601 r  cpu_inst/instr_mem_inst/operand_a_reg[15]_i_8/O
+                         net (fo=1, routed)           0.000    10.601    cpu_inst/instr_mem_inst/operand_a_reg[15]_i_8_n_0
+    SLICE_X13Y14         MUXF7 (Prop_muxf7_I0_O)      0.212    10.813 r  cpu_inst/instr_mem_inst/operand_a_reg_reg[15]_i_3/O
+                         net (fo=1, routed)           0.433    11.247    cpu_inst/instr_mem_inst/operand_a_reg_reg[15]_i_3_n_0
+    SLICE_X13Y14         LUT6 (Prop_lut6_I1_O)        0.299    11.546 r  cpu_inst/instr_mem_inst/operand_a_reg[15]_i_1/O
+                         net (fo=1, routed)           0.000    11.546    cpu_inst/instr_mem_inst_n_74
+    SLICE_X13Y14         FDRE                                         r  cpu_inst/operand_a_reg_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.000    10.000 r  <hidden>
+                         propagated clock network latency
+                                                      4.786    14.786    <hidden>
+                         clock pessimism              0.260    15.046    <hidden>
+                         clock uncertainty           -0.035    15.011    <hidden>
+    SLICE_X13Y14         FDRE (Setup_fdre_C_D)        0.031    15.042    cpu_inst/operand_a_reg_reg[15]
+  -------------------------------------------------------------------
+                         required time                         15.042    <hidden>
+                         arrival time                         -11.546    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.496    <hidden>
+
+
+
+
