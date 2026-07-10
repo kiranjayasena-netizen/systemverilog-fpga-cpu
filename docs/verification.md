@@ -1853,6 +1853,79 @@ Conclusion:
 
 The Phase 10G full-program verification test passed. It confirms that the separate BRAM-aware multi-cycle CPU now supports the full custom ISA in simulation, including BEQ/JUMP control flow and invalid opcode safety, without modifying the existing verified `cpu_core_multicycle.sv` baseline or changing instruction encodings.
 
+## Phase 11A BRAM-Aware Prefetch CPU Basic Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_multicycle_bram_prefetch.sv`
+- `tb/tb_cpu_core_multicycle_bram_prefetch_basic.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Reset state and `prefetch_valid` reset behaviour.
+- Sequential arithmetic execution through the prefetch path.
+- LOAD/STORE execution with synchronous BRAM data-memory timing.
+- Taken BEQ and JUMP wrong-path prefetch invalidation.
+- BEQ not-taken fall-through behaviour.
+- Register `x0` write protection.
+- Invalid opcode safety.
+- Control-signal safety checks that `reg_write` only occurs during WRITEBACK and `mem_write` only occurs during STORE `MEMORY_ADDR`.
+
+Result:
+
+- Standalone Phase 11A XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 11A test.
+- Testbench summary reported 52 tests run and 0 tests failed.
+- Console output included `PHASE 11A BRAM PREFETCH BASIC TEST PASSED`.
+- The existing `rtl/cpu_core_multicycle_bram.sv`, `rtl/cpu_core_multicycle.sv` and `rtl/cpu_core.sv` baselines were not modified.
+
+Sequential arithmetic benchmark:
+
+| Design | Cycles | Completed instructions | CPI | Estimated MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: |
+| Phase 10G BRAM-aware baseline arithmetic edge | 48 | 10 | 4.800 | 20.833 |
+| Phase 11A BRAM-aware prefetch prototype | 30 | 10 | 3.000 | 33.333 |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_multicycle_bram_prefetch.sv tb\tb_cpu_core_multicycle_bram_prefetch_basic.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_bram_prefetch_basic -s tb_cpu_core_multicycle_bram_prefetch_basic_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_bram_prefetch_basic_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase11a_xsim_regression_20260710_113107.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after the snapshot was built.
+- `xsim` still ran successfully and the self-checking testbench reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_bram_prefetch_basic.vcd`.
+
+Conclusion:
+
+The Phase 11A basic prefetch CPU test passed. The separate prefetch variant improves the small sequential arithmetic benchmark from 48 cycles to 30 cycles compared with the Phase 10G BRAM-aware baseline, while preserving existing CPU baselines and instruction encodings. Full custom-ISA prefetch verification remains future work.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
