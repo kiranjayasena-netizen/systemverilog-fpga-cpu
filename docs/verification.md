@@ -1709,6 +1709,73 @@ Conclusion:
 
 The Phase 10C standalone BRAM-style memory prototype tests passed. They verify synchronous-read instruction and data memory behaviour without modifying the verified CPU cores, existing memory modules or instruction encodings.
 
+## Phase 10F BRAM-Aware Multi-Cycle CPU Basic Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_multicycle_bram.sv`
+- `tb/tb_cpu_core_multicycle_bram_basic.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Reset state.
+- `FETCH_ADDR` and `FETCH_CAPTURE` behaviour.
+- Instruction register capture after synchronous instruction-memory read.
+- Sequential PC advance.
+- ADDI.
+- ADD.
+- SUB.
+- AND.
+- OR.
+- XOR.
+- STORE through BRAM data memory.
+- LOAD with synchronous BRAM data capture.
+- Register `x0` write protection.
+- Invalid opcode safety.
+- STORE write-enable pulse state.
+
+Result:
+
+- Standalone Phase 10F XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 10F test.
+- Testbench summary reported 27 tests run and 0 tests failed.
+- Console output included `PHASE 10F BRAM-AWARE CPU BASIC TEST PASSED`.
+- The existing `rtl/cpu_core_multicycle.sv` baseline was not modified.
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_multicycle_bram.sv tb\tb_cpu_core_multicycle_bram_basic.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_bram_basic -s tb_cpu_core_multicycle_bram_basic_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_bram_basic_sim -runall
+```
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after the snapshot was built.
+- `xsim` still ran successfully and the self-checking testbench reported PASS.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase10f_xsim_regression_20260710_102950.txt`
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_bram_basic.vcd`.
+
+Conclusion:
+
+The Phase 10F focused BRAM-aware CPU test passed. Branch and jump support is implemented in the new module, but full BRAM-aware branch/jump and custom-ISA program regression remains future Phase 10G work.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.

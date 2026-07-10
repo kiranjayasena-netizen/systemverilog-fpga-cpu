@@ -235,6 +235,12 @@ Invoke-XsimTest `
     -Snapshot "tb_bram_data_mem_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 10F BRAM-aware multi-cycle CPU basic" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_multicycle_bram.sv", "tb/tb_cpu_core_multicycle_bram_basic.sv") `
+    -Top "tb_cpu_core_multicycle_bram_basic" `
+    -Snapshot "tb_cpu_core_multicycle_bram_basic_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `
