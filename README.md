@@ -75,13 +75,14 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 8D LOAD/STORE memory execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8E BEQ/JUMP control-flow execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8F full custom-ISA program verification for the separate multi-cycle CPU has passed in Vivado XSim.
-- The full local Vivado XSim regression now passes through Phase 10F.
+- The full local Vivado XSim regression now passes through Phase 10G.
 - Phase 8G synthesis and implementation comparison for the separate multi-cycle FPGA top has passed; the multi-cycle path meets the 100 MHz post-route timing target.
 - Phase 10A simulation-based performance benchmarking for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 10B single-cycle-style versus multi-cycle architecture trade-off comparison has passed in Vivado XSim.
 - Phase 10C standalone BRAM-style instruction and data memory prototype simulations have passed in Vivado XSim.
-- Phase 10D BRAM integration planning is documented; BRAM integration is not implemented yet.
+- Phase 10D BRAM integration planning is documented for the future BRAM-aware CPU path.
 - Phase 10F adds a separate BRAM-aware multi-cycle CPU variant with a focused basic simulation passing in Vivado XSim.
+- Phase 10G full custom-ISA verification for the separate BRAM-aware multi-cycle CPU has passed in Vivado XSim.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -104,6 +105,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 10C BRAM memory study](reports/phase10c_bram_memory_study.md) documents standalone synchronous-read BRAM-style instruction and data memory prototypes.
 - [Phase 10D BRAM integration plan](reports/phase10d_bram_integration_plan.md) defines the future FSM, verification and timing-comparison plan for integrating BRAM-style memories into a separate multi-cycle CPU path.
 - [Phase 10F BRAM-aware CPU variant](reports/phase10f_bram_cpu_variant.md) documents the first separate BRAM-aware multi-cycle CPU implementation and focused basic simulation.
+- [Phase 10G BRAM-aware full verification](reports/phase10g_bram_cpu_full_verification.md) records full custom-ISA program verification, CPI and estimated MIPS for the BRAM-aware CPU variant.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -229,6 +231,7 @@ Completed work:
 - Phase 10C standalone BRAM-style memory prototypes and tests
 - Phase 10D BRAM integration planning for a future separate multi-cycle CPU path
 - Phase 10F separate BRAM-aware multi-cycle CPU variant and focused basic test
+- Phase 10G full custom-ISA verification for the separate BRAM-aware multi-cycle CPU variant
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -240,7 +243,7 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Phase 10G full BRAM-aware custom-ISA verification and later BRAM-aware synthesis comparison
+- Phase 10H BRAM-aware synthesis, implementation and timing comparison
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure

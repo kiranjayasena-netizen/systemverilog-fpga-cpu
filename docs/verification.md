@@ -1774,7 +1774,84 @@ Waveform notes:
 
 Conclusion:
 
-The Phase 10F focused BRAM-aware CPU test passed. Branch and jump support is implemented in the new module, but full BRAM-aware branch/jump and custom-ISA program regression remains future Phase 10G work.
+The Phase 10F focused BRAM-aware CPU test passed. Branch and jump support is implemented in the new module; Phase 10G extends this path with full BRAM-aware custom-ISA program regression.
+
+## Phase 10G BRAM-Aware Multi-Cycle CPU Full-Program Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_multicycle_bram.sv`
+- `tb/tb_cpu_core_multicycle_bram_full_programs.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic edge program covering ADDI, ADD, SUB, negative immediate sign extension, ADD wraparound, SUB underflow and `x0` protection.
+- Memory offset program covering STORE, LOAD, base + 0 addressing, base + 4 addressing, negative offset load and final BRAM data memory contents.
+- Branch control program covering BEQ taken, BEQ not taken, skipped instruction protection and fall-through execution.
+- Jump control program covering forward JUMP and skipped instruction protection.
+- Simple loop program covering repeated ADD/SUB, BEQ loop exit, backward JUMP and final STORE to BRAM data memory.
+- Invalid opcode safety program covering `valid_instr` low for invalid opcodes, no invalid register writes, no invalid memory writes and valid instructions before/after invalid opcodes.
+- Control-signal safety checks that `reg_write` only occurs during WRITEBACK, `mem_write` only occurs during STORE MEMORY_ADDR, and BEQ/JUMP never assert register or memory writes.
+
+Result:
+
+- Standalone Phase 10G XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 10G test.
+- Testbench summary reported 135 tests run and 0 tests failed.
+- Console output included `PHASE 10G BRAM-AWARE FULL-PROGRAM TEST PASSED`.
+- The existing `rtl/cpu_core_multicycle.sv` baseline was not modified.
+
+Performance summary:
+
+| Program | Cycles | Completed instructions | CPI | Estimated MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: |
+| BRAM arithmetic edge | 48 | 10 | 4.800 | 20.833 |
+| BRAM memory offset | 49 | 9 | 5.444 | 18.367 |
+| BRAM branch control | 46 | 10 | 4.600 | 21.739 |
+| BRAM jump control | 31 | 7 | 4.429 | 22.581 |
+| BRAM simple loop | 73 | 16 | 4.562 | 21.918 |
+| BRAM invalid opcode safety | 24 | 6 | 4.000 | 25.000 |
+| Aggregate | 271 | 58 | 4.672 | 21.402 |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_multicycle_bram.sv tb\tb_cpu_core_multicycle_bram_full_programs.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_bram_full_programs -s tb_cpu_core_multicycle_bram_full_programs_phase10g_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_bram_full_programs_phase10g_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase10g_xsim_regression_20260710_105251.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_bram_full_programs.vcd`.
+
+Conclusion:
+
+The Phase 10G full-program verification test passed. It confirms that the separate BRAM-aware multi-cycle CPU now supports the full custom ISA in simulation, including BEQ/JUMP control flow and invalid opcode safety, without modifying the existing verified `cpu_core_multicycle.sv` baseline or changing instruction encodings.
 
 ## Future Verification Work
 
