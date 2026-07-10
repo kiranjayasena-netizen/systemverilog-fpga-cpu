@@ -1926,6 +1926,92 @@ Conclusion:
 
 The Phase 11A basic prefetch CPU test passed. The separate prefetch variant improves the small sequential arithmetic benchmark from 48 cycles to 30 cycles compared with the Phase 10G BRAM-aware baseline, while preserving existing CPU baselines and instruction encodings. Full custom-ISA prefetch verification remains future work.
 
+## Phase 11B BRAM-Aware Prefetch CPU Full-Program Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_multicycle_bram_prefetch.sv`
+- `tb/tb_cpu_core_multicycle_bram_prefetch_full_programs.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Arithmetic edge program covering ADDI, ADD, SUB, negative immediate sign extension, ADD wraparound, SUB underflow and `x0` protection.
+- Memory offset program covering STORE, LOAD, base + 0 addressing, base + 4 addressing, negative offset load and final BRAM data memory contents.
+- Branch control program covering BEQ taken, BEQ not taken, wrong-path prefetch discard, skipped instruction protection and fall-through execution.
+- Jump control program covering forward JUMP, wrong-path prefetch discard and skipped instruction protection.
+- Simple loop program covering repeated ADD/SUB, BEQ loop exit, backward JUMP and final STORE to BRAM data memory.
+- Invalid opcode safety program covering `valid_instr` low for invalid opcodes, no invalid register writes, no invalid memory writes and valid instructions before/after invalid opcodes.
+- Control-signal safety checks that `reg_write` only occurs during WRITEBACK, `mem_write` only occurs during STORE `MEMORY_ADDR`, and BEQ/JUMP never assert register or memory writes.
+
+Result:
+
+- Standalone Phase 11B XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 11B test.
+- Testbench summary reported 135 tests run and 0 tests failed.
+- Console output included `PHASE 11B BRAM PREFETCH FULL-PROGRAM TEST PASSED`.
+- The existing `rtl/cpu_core_multicycle_bram.sv`, `rtl/cpu_core_multicycle.sv` and `rtl/cpu_core.sv` baselines were not modified.
+
+Performance summary:
+
+| Program | Cycles | Completed instructions | CPI | Estimated MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: |
+| Prefetch arithmetic edge | 30 | 10 | 3.000 | 33.333 |
+| Prefetch memory offset | 33 | 9 | 3.667 | 27.273 |
+| Prefetch branch control | 30 | 10 | 3.000 | 33.333 |
+| Prefetch jump control | 23 | 7 | 3.286 | 30.435 |
+| Prefetch simple loop | 49 | 16 | 3.062 | 32.653 |
+| Prefetch invalid opcode safety | 14 | 6 | 2.333 | 42.857 |
+| Aggregate | 179 | 58 | 3.086 | 32.402 |
+
+Comparison with Phase 10G BRAM-aware baseline:
+
+| Metric | Phase 10G BRAM-aware baseline | Phase 11B prefetch CPU |
+| --- | ---: | ---: |
+| Cycles | 271 | 179 |
+| Completed instructions | 58 | 58 |
+| CPI | 4.672 | 3.086 |
+| Estimated MIPS at 100 MHz | 21.402 | 32.402 |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_multicycle_bram_prefetch.sv tb\tb_cpu_core_multicycle_bram_prefetch_full_programs.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_bram_prefetch_full_programs -s tb_cpu_core_multicycle_bram_prefetch_full_programs_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_bram_prefetch_full_programs_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase11b_xsim_regression_20260710_120845.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_bram_prefetch_full_programs.vcd`.
+
+Conclusion:
+
+The Phase 11B full-program verification test passed. The separate BRAM-aware prefetch CPU now passes full custom-ISA simulation coverage and improves aggregate CPI from 4.672 to 3.086 compared with the Phase 10G BRAM-aware baseline. Synthesis and implementation evidence for the prefetch path remains future work.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
