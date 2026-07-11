@@ -88,6 +88,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 11B full custom-ISA verification for the BRAM-aware prefetch CPU has passed in Vivado XSim, reducing aggregate CPI from 4.672 to 3.086 versus the Phase 10G BRAM-aware baseline.
 - Phase 11C synthesis, implementation and bitstream generation have passed for the separate BRAM-aware prefetch FPGA top; it meets 100 MHz timing with WNS +1.247 ns.
 - Phase 11D adds a separate control-flow-optimised prefetch CPU variant; simulation passes and aggregate CPI improves from 3.086 to 2.983 versus Phase 11B.
+- Phase 11E synthesis, implementation and bitstream generation have passed for the separate control-flow-optimised prefetch FPGA top; it meets 100 MHz timing with WNS +1.128 ns.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -116,6 +117,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 11B BRAM prefetch full verification](reports/phase11b_bram_prefetch_full_verification.md) records full custom-ISA simulation, CPI and estimated MIPS for the BRAM-aware prefetch CPU variant.
 - [Phase 11C BRAM prefetch timing comparison](reports/phase11c_prefetch_timing_comparison.md) records synthesis, implementation, timing and practical estimated MIPS for the separate prefetch FPGA top.
 - [Phase 11D control-flow prefetch optimisation](reports/phase11d_control_flow_prefetch_optimisation.md) records the separate control-flow-optimised prefetch CPU simulation and CPI comparison.
+- [Phase 11E control-flow prefetch timing comparison](reports/phase11e_ctrlopt_timing_comparison.md) records synthesis, implementation, timing and practical estimated MIPS for the separate control-flow-optimised prefetch FPGA top.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -247,6 +249,7 @@ Completed work:
 - Phase 11B full custom-ISA verification for the separate BRAM-aware instruction prefetch CPU prototype
 - Phase 11C separate BRAM-aware prefetch FPGA top-level wrapper, Vivado build scripts, implementation and timing comparison
 - Phase 11D separate control-flow-optimised prefetch CPU variant and simulation comparison
+- Phase 11E separate control-flow-optimised prefetch FPGA top-level wrapper, Vivado build scripts, implementation and timing comparison
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -258,7 +261,6 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Phase 11E synthesis and timing comparison for the control-flow-optimised prefetch CPU variant
 - Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 11E
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
