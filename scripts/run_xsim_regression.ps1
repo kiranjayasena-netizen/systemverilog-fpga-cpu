@@ -259,6 +259,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_multicycle_bram_prefetch_full_programs_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 11D BRAM-aware control-flow-optimised prefetch CPU" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_multicycle_bram_prefetch_ctrlopt.sv", "tb/tb_cpu_core_multicycle_bram_prefetch_ctrlopt.sv") `
+    -Top "tb_cpu_core_multicycle_bram_prefetch_ctrlopt" `
+    -Snapshot "tb_cpu_core_multicycle_bram_prefetch_ctrlopt_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `

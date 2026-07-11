@@ -2012,6 +2012,94 @@ Conclusion:
 
 The Phase 11B full-program verification test passed. The separate BRAM-aware prefetch CPU now passes full custom-ISA simulation coverage and improves aggregate CPI from 4.672 to 3.086 compared with the Phase 10G BRAM-aware baseline. Synthesis and implementation evidence for the prefetch path remains future work.
 
+## Phase 11D BRAM-Aware Control-Flow-Optimised Prefetch CPU Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_multicycle_bram_prefetch_ctrlopt.sv`
+- `tb/tb_cpu_core_multicycle_bram_prefetch_ctrlopt.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Sequential arithmetic benchmark to check normal prefetch behaviour did not regress.
+- Memory offset benchmark to check LOAD/STORE BRAM timing stayed correct.
+- BEQ taken and BEQ not taken control flow.
+- Forward JUMP control flow.
+- Backward JUMP simple loop execution with final STORE result.
+- Invalid opcode safety mixed with normal execution.
+- Register `x0` protection.
+- Final BRAM data memory checks.
+- Control-signal safety checks that `reg_write` only occurs during WRITEBACK, `mem_write` only occurs during STORE `MEMORY_ADDR`, and BEQ/JUMP never assert register or memory writes.
+
+Result:
+
+- Standalone Phase 11D XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 11D test.
+- Testbench summary reported 135 tests run and 0 tests failed.
+- Console output included `PHASE 11D BRAM PREFETCH CTRLOPT TEST PASSED`.
+- The existing `rtl/cpu_core_multicycle_bram_prefetch.sv`, `rtl/cpu_core_multicycle_bram.sv`, `rtl/cpu_core_multicycle.sv` and `rtl/cpu_core.sv` baselines were not modified.
+
+Performance summary:
+
+| Program | Cycles | Completed instructions | CPI | Estimated MIPS at 100 MHz |
+| --- | ---: | ---: | ---: | ---: |
+| Ctrlopt arithmetic edge | 30 | 10 | 3.000 | 33.333 |
+| Ctrlopt memory offset | 33 | 9 | 3.667 | 27.273 |
+| Ctrlopt branch control | 29 | 10 | 2.900 | 34.483 |
+| Ctrlopt jump control | 21 | 7 | 3.000 | 33.333 |
+| Ctrlopt simple loop | 46 | 16 | 2.875 | 34.783 |
+| Ctrlopt invalid opcode safety | 14 | 6 | 2.333 | 42.857 |
+| Aggregate | 173 | 58 | 2.983 | 33.526 |
+
+Comparison with Phase 11B prefetch baseline:
+
+| Metric | Phase 11B prefetch CPU | Phase 11D ctrlopt prefetch CPU |
+| --- | ---: | ---: |
+| Cycles | 179 | 173 |
+| Completed instructions | 58 | 58 |
+| CPI | 3.086 | 2.983 |
+| Estimated MIPS at 100 MHz | 32.402 | 33.526 |
+
+Standalone command run from the repository root:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_multicycle_bram_prefetch_ctrlopt.sv tb\tb_cpu_core_multicycle_bram_prefetch_ctrlopt.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_multicycle_bram_prefetch_ctrlopt -s tb_cpu_core_multicycle_bram_prefetch_ctrlopt_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_multicycle_bram_prefetch_ctrlopt_sim -runall
+```
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase11d_xsim_regression_20260711_113910.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_multicycle_bram_prefetch_ctrlopt.vcd`.
+
+Conclusion:
+
+The Phase 11D control-flow-optimised prefetch CPU test passed. The separate ctrlopt variant reduced aggregate cycle count from 179 to 173 and improved aggregate CPI from 3.086 to 2.983 compared with the Phase 11B prefetch baseline. The improvement is concentrated in taken BEQ, JUMP and loop benchmarks. This is simulation evidence only; synthesis, implementation and hardware validation remain future work.
+
 ## Future Verification Work
 
 - Continue adding verification entries for future RTL modules and integration tests.
