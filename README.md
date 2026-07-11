@@ -75,7 +75,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 8D LOAD/STORE memory execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8E BEQ/JUMP control-flow execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8F full custom-ISA program verification for the separate multi-cycle CPU has passed in Vivado XSim.
-- The full local Vivado XSim regression now passes through Phase 12B.
+- The full local Vivado XSim regression now passes through the Phase 12 full pipelined CPU custom-ISA test.
 - Phase 8G synthesis and implementation comparison for the separate multi-cycle FPGA top has passed; the multi-cycle path meets the 100 MHz post-route timing target.
 - Phase 10A simulation-based performance benchmarking for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 10B single-cycle-style versus multi-cycle architecture trade-off comparison has passed in Vivado XSim.
@@ -90,8 +90,8 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 11D adds a separate control-flow-optimised prefetch CPU variant; simulation passes and aggregate CPI improves from 3.086 to 2.983 versus Phase 11B.
 - Phase 11E synthesis, implementation and bitstream generation have passed for the separate control-flow-optimised prefetch FPGA top; it meets 100 MHz timing with WNS +1.128 ns.
 - Phase 12A pipeline architecture planning is documented as the next major performance direction.
-- Phase 12B adds a separate pipelined CPU skeleton with synchronous instruction-BRAM request/response handling, IF/ID valid-bit flow, safe NOP retirement and invalid-opcode bubbles; the focused test and full regression pass in Vivado XSim.
-- Arithmetic execution, data memory, branch redirection, hazards and forwarding are not implemented in the pipelined CPU yet; Phase 12C is the next planned pipeline step.
+- Phase 12 adds a separate full pipelined CPU path with synchronous instruction/data BRAM, forwarding, load-use stalls, branch/jump flush handling and architectural retirement.
+- The Phase 12 pipeline passes the full custom-ISA XSim test and Basys 3 post-route 100 MHz timing, but reaches about 71.1 practical estimated MIPS, so the 90 MIPS target remains future optimisation work.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -123,6 +123,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 11E control-flow prefetch timing comparison](reports/phase11e_ctrlopt_timing_comparison.md) records synthesis, implementation, timing and practical estimated MIPS for the separate control-flow-optimised prefetch FPGA top.
 - [Phase 12A pipeline architecture plan](reports/phase12a_pipeline_architecture_plan.md) defines the proposed five-stage pipeline, hazard strategy, verification roadmap and future comparison plan.
 - [Phase 12B pipeline skeleton](reports/phase12b_pipeline_skeleton.md) documents the separate pipelined CPU skeleton, synchronous instruction-BRAM timing, IF/ID valid-bit behaviour and focused XSim result.
+- [Phase 12 pipeline performance comparison](reports/phase12_pipeline_performance_comparison.md) records the full pipelined CPU simulation, post-route timing, practical estimated MIPS and comparison against Phase 11E.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -257,6 +258,7 @@ Completed work:
 - Phase 11E separate control-flow-optimised prefetch FPGA top-level wrapper, Vivado build scripts, implementation and timing comparison
 - Phase 12A pipelined CPU architecture planning
 - Phase 12B separate pipelined CPU skeleton and focused XSim test
+- Phase 12 full separate pipelined CPU custom-ISA verification, Basys 3 implementation, timing result and performance comparison
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -269,7 +271,7 @@ Next planned work:
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 11E
-- Phase 12C arithmetic execution for the separate pipelined CPU skeleton
+- Further Phase 12 pipeline optimisation toward the 90 MIPS target, especially reducing control-flow penalty without breaking 100 MHz timing
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure

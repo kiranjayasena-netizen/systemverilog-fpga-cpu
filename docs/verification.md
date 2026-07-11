@@ -2157,11 +2157,81 @@ Waveform notes:
 
 Conclusion:
 
-The Phase 12B pipelined CPU skeleton test passed. The new separate pipeline path now proves synchronous instruction-BRAM request/response pairing, IF/ID valid-bit handling, safe NOP retirement, invalid-opcode bubble conversion and enable/pause behaviour. Arithmetic, memory, branch redirection, hazards and forwarding remain future Phase 12 work.
+The Phase 12B pipelined CPU skeleton test passed. The new separate pipeline path now proves synchronous instruction-BRAM request/response pairing, IF/ID valid-bit handling, safe NOP retirement, invalid-opcode bubble conversion and enable/pause behaviour.
+
+## Phase 12 Full Pipelined CPU Custom-ISA Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_full.sv`
+- `tb/tb_cpu_core_pipeline_full.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Full custom-ISA program execution on the separate pipelined CPU path.
+- ADD, SUB, AND, OR, XOR and ADDI execution.
+- Register writeback and `x0` protection.
+- EX/MEM and MEM/WB forwarding for ALU dependencies.
+- LOAD and STORE using synchronous BRAM-style data memory.
+- One-cycle load-use hazard detection and pipeline stall handling.
+- STORE-data forwarding.
+- BEQ taken and not-taken behaviour.
+- Forward JUMP and backward JUMP loop behaviour.
+- Wrong-path flush and invalidation after taken control flow.
+- Invalid opcode safety.
+- Architectural retirement interface and no duplicate retirement for non-loop tests.
+
+Result:
+
+- Full XSim regression completed successfully after adding the Phase 12 full pipeline test.
+- Phase 12 full pipeline testbench summary reported 2,793 tests run and 0 tests failed.
+- Console output included `PIPELINE FULL CUSTOM ISA TEST PASSED`.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 457 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.433 |
+| Aggregate MIPS at 100 MHz | 69.803 |
+
+Vivado implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline`.
+- Post-route WNS: +0.185 ns.
+- Post-route TNS: 0.000 ns.
+- Estimated Fmax: approximately 101.9 MHz.
+- Practical estimated MIPS: approximately 71.1.
+- 100 MHz timing passed.
+- Bitstream generation passed.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase12_pipeline_regression_20260711_143721.txt`
+
+Report:
+
+- `reports/phase12_pipeline_performance_comparison.md`
+
+Conclusion:
+
+The separate Phase 12 pipelined CPU passes full custom-ISA simulation and meets the Basys 3 100 MHz post-route timing target. Practical estimated throughput improves over Phase 11E, from about 37.8 MIPS to about 71.1 MIPS, but the 90 MIPS primary target is not yet achieved.
 
 ## Future Verification Work
 
-- Use the Phase 12A pipeline architecture plan to guide future pipelined CPU verification, starting with pipeline register valid bits, NOP/bubble flow, stalls, flushes and full custom-ISA regression.
+- Continue Phase 12 optimisation by reducing control-flow penalty and load-use overhead while preserving full regression correctness and 100 MHz post-route timing.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

@@ -271,6 +271,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_skeleton_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 12 full pipelined CPU custom-ISA verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_full.sv", "tb/tb_cpu_core_pipeline_full.sv") `
+    -Top "tb_cpu_core_pipeline_full" `
+    -Snapshot "tb_cpu_core_pipeline_full_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `
