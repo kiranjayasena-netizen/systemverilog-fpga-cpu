@@ -265,6 +265,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_multicycle_bram_prefetch_ctrlopt_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 12B pipelined CPU skeleton" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/cpu_core_pipeline.sv", "tb/tb_cpu_core_pipeline_skeleton.sv") `
+    -Top "tb_cpu_core_pipeline_skeleton" `
+    -Snapshot "tb_cpu_core_pipeline_skeleton_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `

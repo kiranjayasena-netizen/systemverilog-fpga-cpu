@@ -2100,6 +2100,65 @@ Conclusion:
 
 The Phase 11D control-flow-optimised prefetch CPU test passed. The separate ctrlopt variant reduced aggregate cycle count from 179 to 173 and improved aggregate CPI from 3.086 to 2.983 compared with the Phase 11B prefetch baseline. The improvement is concentrated in taken BEQ, JUMP and loop benchmarks. This is simulation evidence only; synthesis, implementation and hardware validation remain future work.
 
+## Phase 12B Pipelined CPU Skeleton Simulation
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/cpu_core_pipeline.sv`
+- `tb/tb_cpu_core_pipeline_skeleton.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Reset clears fetch request, IF/ID and retirement valid state.
+- Initial stale BRAM output after reset is not accepted.
+- Sequential fetch requests advance through byte PCs `0, 4, 8, 12, 16`.
+- Synchronous BRAM responses are paired with the saved fetch request PC.
+- IF/ID stores valid, PC and instruction state.
+- Software NOPs retire exactly once.
+- Invalid opcode `4'hf` becomes a safe bubble and does not retire.
+- Later NOP instructions continue after the invalid opcode.
+- Enable low pauses fetch, request metadata, IF/ID state and retirement.
+- Resume continues without duplicated or skipped fetch/retirement events.
+
+Result:
+
+- Focused Phase 12B XSim simulation completed successfully.
+- Full XSim regression completed successfully after adding the Phase 12B test.
+- Testbench summary reported 278 tests run and 0 tests failed.
+- Console output included `PHASE 12B PIPELINE SKELETON TEST PASSED`.
+- The existing Phase 10 and Phase 11 CPU baselines were not modified.
+
+Regression command run from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase12b_xsim_regression_20260711_132223.txt`
+
+Warning note:
+
+- `xelab` reported the known object-directory cleanup warning after snapshots were built.
+- `xsim` still ran successfully and the self-checking testbenches reported PASS.
+
+Waveform notes:
+
+- The generated waveform file is `tb_cpu_core_pipeline_skeleton.vcd`.
+
+Conclusion:
+
+The Phase 12B pipelined CPU skeleton test passed. The new separate pipeline path now proves synchronous instruction-BRAM request/response pairing, IF/ID valid-bit handling, safe NOP retirement, invalid-opcode bubble conversion and enable/pause behaviour. Arithmetic, memory, branch redirection, hazards and forwarding remain future Phase 12 work.
+
 ## Future Verification Work
 
 - Use the Phase 12A pipeline architecture plan to guide future pipelined CPU verification, starting with pipeline register valid bits, NOP/bubble flow, stalls, flushes and full custom-ISA regression.
