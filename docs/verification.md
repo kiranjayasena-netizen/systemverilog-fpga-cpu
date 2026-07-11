@@ -2102,6 +2102,7 @@ The Phase 11D control-flow-optimised prefetch CPU test passed. The separate ctrl
 
 ## Future Verification Work
 
+- Use the Phase 12A pipeline architecture plan to guide future pipelined CPU verification, starting with pipeline register valid bits, NOP/bubble flow, stalls, flushes and full custom-ISA regression.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
