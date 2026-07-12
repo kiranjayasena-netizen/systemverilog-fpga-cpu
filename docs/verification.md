@@ -2450,9 +2450,157 @@ Conclusion:
 
 The separate Phase 13C timing-optimised pipeline preserves the Phase 13A CPI and aggregate retired instruction count while increasing verified post-route Fmax. Practical estimated throughput improves from about 76.1 MIPS to about 82.1 MIPS. The 90 MIPS target is not yet achieved, so the remaining timing work should focus on the data-memory-to-ID/EX operand critical-path family.
 
+## Phase 13D Load-Forwarding Timing Experiment
+
+Status: passed, but not preferred.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_loadtiming.sv`
+- `tb/tb_cpu_core_pipeline_loadtiming.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- ALU and load dependency behaviour through the full custom-ISA aggregate benchmark.
+- LOAD-to-ALU and LOAD-to-BEQ behaviour with existing load-use stalls preserved.
+- STORE data forwarding and wrong-path STORE protection.
+- BEQ taken/not-taken and fast JUMP behaviour retained.
+- Pause/resume, invalid opcode safety and `x0` protection retained.
+
+Result:
+
+- Full local XSim regression completed successfully after adding the Phase 13D test.
+- Phase 13D testbench summary reported 3,262 tests run and 0 tests failed.
+- Console output included `Phase 13D loadtiming PIPELINE TEST PASSED`.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 434 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.361 |
+| Aggregate MIPS at 100 MHz | 73.502 |
+
+Post-route implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_loadtiming`.
+- Period tested: 9.100 ns.
+- Verified post-route Fmax from implementation: 109.890 MHz.
+- WNS at 9.100 ns: +0.044 ns.
+- TNS at 9.100 ns: 0.000 ns.
+- WHS at 9.100 ns: +0.112 ns.
+- BRAM use: 1 Block RAM Tile / 2 RAMB18.
+- Bitstream generation passed.
+- Practical estimated MIPS: approximately 80.7.
+
+Commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+$env:PHASE13D_PERIOD='9.100'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_loadtiming.tcl
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase13d_xsim_regression_20260712_145218.txt`
+
+Report:
+
+- `reports/phase13d_load_forwarding_timing.md`
+
+Conclusion:
+
+The separate Phase 13D load-forwarding timing experiment is functionally correct and timing-clean at 9.100 ns, but it adds seven aggregate cycles by replacing the decode-time WB-to-ID bypass with a one-cycle decode stall. Practical estimated throughput drops from the Phase 13C result of about 82.1 MIPS to about 80.7 MIPS. Phase 13D should remain documented as an unsuccessful experiment and did not replace Phase 13C.
+
+## Phase 13E Forwarding-Path Timing Experiment
+
+Status: passed and preferred over Phase 13C.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_forwardtiming.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Phase 13C forwarding behaviour retained, including WB-to-ID bypass.
+- Split ALU/load writeback forwarding sources and precomputed bypass selects.
+- ALU dependencies, load-use dependencies, LOAD-to-ALU, LOAD-to-BEQ and STORE data forwarding.
+- BEQ taken/not-taken, fast JUMP, pause/resume, invalid opcode safety and wrong-path STORE protection.
+- Full aggregate benchmark matching the Phase 13C instruction mix and measurement boundaries.
+
+Result:
+
+- Focused Phase 13E test passed with 3,232 tests run and 0 tests failed.
+- Full local XSim regression completed successfully after adding the Phase 13E test.
+- Console output included `Phase 13E forwardtiming PIPELINE TEST PASSED`.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 427 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Aggregate MIPS at 100 MHz | 74.707 |
+
+Post-route implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_forwardtiming`.
+- Best verified period tested: 8.900 ns.
+- Verified post-route Fmax from implementation: 112.360 MHz.
+- WNS at 8.900 ns: +0.059 ns.
+- TNS at 8.900 ns: 0.000 ns.
+- WHS at 8.900 ns: +0.040 ns.
+- BRAM use: 1 Block RAM Tile / 2 RAMB18.
+- LUTs: 1,359.
+- FFs: 1,510.
+- Bitstream generation passed.
+- Practical estimated MIPS: approximately 83.9.
+
+Commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+$env:PHASE13E_PERIOD='9.100'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_forwardtiming.tcl
+$env:PHASE13E_PERIOD='8.900'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_forwardtiming.tcl
+```
+
+Transcripts:
+
+- `reports/simulation_transcripts/phase13e_forwardtiming_focused_20260712_193438.txt`
+- `reports/simulation_transcripts/phase13e_xsim_regression_20260712_193518.txt`
+
+Report:
+
+- `reports/phase13e_forwarding_timing.md`
+
+Conclusion:
+
+The separate Phase 13E forwarding-path timing experiment preserves Phase 13C CPI while improving verified post-route Fmax from 109.890 MHz to 112.360 MHz. Practical estimated throughput improves from about 82.1 MIPS to about 83.9 MIPS, so Phase 13E becomes the preferred measured implementation path. The 90 MIPS target is still not reached.
+
 ## Future Verification Work
 
-- Continue Phase 13 optimisation by reducing the remaining data-memory-to-ID/EX operand timing path while preserving full regression correctness, routed timing and the Phase 13C CPI.
+- Continue Phase 13 optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E is now the preferred measured implementation path.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
