@@ -277,6 +277,24 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_full_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 13A jumpfast pipelined CPU verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_jumpfast.sv", "tb/tb_cpu_core_pipeline_jumpfast.sv") `
+    -Top "tb_cpu_core_pipeline_jumpfast" `
+    -Snapshot "tb_cpu_core_pipeline_jumpfast_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 13B BEQ target-prefetch pipelined CPU verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem_dualread.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_branchprefetch.sv", "tb/tb_cpu_core_pipeline_branchprefetch.sv") `
+    -Top "tb_cpu_core_pipeline_branchprefetch" `
+    -Snapshot "tb_cpu_core_pipeline_branchprefetch_regression_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 13C timing-optimised pipelined CPU verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_timingopt.sv", "tb/tb_cpu_core_pipeline_timingopt.sv") `
+    -Top "tb_cpu_core_pipeline_timingopt" `
+    -Snapshot "tb_cpu_core_pipeline_timingopt_regression_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `

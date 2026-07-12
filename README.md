@@ -75,7 +75,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 8D LOAD/STORE memory execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8E BEQ/JUMP control-flow execution for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 8F full custom-ISA program verification for the separate multi-cycle CPU has passed in Vivado XSim.
-- The full local Vivado XSim regression now passes through the Phase 12 full pipelined CPU custom-ISA test.
+- The full local Vivado XSim regression now passes through the Phase 13C timing-optimised pipelined CPU test.
 - Phase 8G synthesis and implementation comparison for the separate multi-cycle FPGA top has passed; the multi-cycle path meets the 100 MHz post-route timing target.
 - Phase 10A simulation-based performance benchmarking for the separate multi-cycle CPU has passed in Vivado XSim.
 - Phase 10B single-cycle-style versus multi-cycle architecture trade-off comparison has passed in Vivado XSim.
@@ -92,6 +92,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 12A pipeline architecture planning is documented as the next major performance direction.
 - Phase 12 adds a separate full pipelined CPU path with synchronous instruction/data BRAM, forwarding, load-use stalls, branch/jump flush handling and architectural retirement.
 - The Phase 12 pipeline passes the full custom-ISA XSim test and Basys 3 post-route 100 MHz timing, but reaches about 71.1 practical estimated MIPS, so the 90 MIPS target remains future optimisation work.
+- Phase 13A adds a separate jumpfast pipeline variant that requests unconditional JUMP targets directly from ID; full regression and implementation pass, improving practical estimated throughput to about 76.1 MIPS while still below the 90 MIPS target.
+- Phase 13B adds a separate BEQ target-prefetch experiment; full regression and implementation pass, but practical estimated throughput is about 75.3 MIPS, so Phase 13A remains the preferred pipeline variant.
+- Phase 13C adds a separate timing-optimised jumpfast pipeline path; full regression passes, routed implementation passes at a verified 9.240 ns period, and practical estimated throughput improves to about 80.8 MIPS. The 90 MIPS target is not yet reached.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -124,6 +127,9 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 12A pipeline architecture plan](reports/phase12a_pipeline_architecture_plan.md) defines the proposed five-stage pipeline, hazard strategy, verification roadmap and future comparison plan.
 - [Phase 12B pipeline skeleton](reports/phase12b_pipeline_skeleton.md) documents the separate pipelined CPU skeleton, synchronous instruction-BRAM timing, IF/ID valid-bit behaviour and focused XSim result.
 - [Phase 12 pipeline performance comparison](reports/phase12_pipeline_performance_comparison.md) records the full pipelined CPU simulation, post-route timing, practical estimated MIPS and comparison against Phase 11E.
+- [Phase 13A jump target request](reports/phase13a_jump_target_request.md) records the timing-safe fast JUMP target request variant, full regression, post-route timing and measured practical MIPS improvement.
+- [Phase 13B BEQ target prefetch](reports/phase13b_beq_target_prefetch.md) records the dual-read instruction-memory branch-prefetch experiment, full regression, post-route timing and why it remains experimental rather than replacing Phase 13A.
+- [Phase 13C timing closure](reports/phase13c_timing_closure.md) records the separate timing-optimised pipeline path, routed period sweep, critical-path shift and measured practical MIPS improvement to about 80.8 MIPS.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -259,6 +265,9 @@ Completed work:
 - Phase 12A pipelined CPU architecture planning
 - Phase 12B separate pipelined CPU skeleton and focused XSim test
 - Phase 12 full separate pipelined CPU custom-ISA verification, Basys 3 implementation, timing result and performance comparison
+- Phase 13A separate jumpfast pipeline variant, full regression, Basys 3 implementation and performance comparison
+- Phase 13B separate BEQ target-prefetch pipeline experiment, full regression, Basys 3 implementation and trade-off comparison
+- Phase 13C separate timing-optimised pipeline path, full regression, Basys 3 implementation, routed period sweep and timing-closure comparison
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -270,8 +279,8 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 11E
-- Further Phase 12 pipeline optimisation toward the 90 MIPS target, especially reducing control-flow penalty without breaking 100 MHz timing
+- Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 13C
+- Further Phase 13 pipeline optimisation toward the 90 MIPS target, using Phase 13C as the current preferred measured pipeline path
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure

@@ -1,0 +1,2 @@
+period_ns,requested_mhz,wns_ns,tns_ns,whs_ns,ths_ns,bitstream_status,report_dir
+9.100,109.890,-0.194,-3.157,0.059,0.000,PASS,reports/phase13c_timing/sweep/period_9p100ns

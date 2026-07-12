@@ -2229,9 +2229,229 @@ Conclusion:
 
 The separate Phase 12 pipelined CPU passes full custom-ISA simulation and meets the Basys 3 100 MHz post-route timing target. Practical estimated throughput improves over Phase 11E, from about 37.8 MIPS to about 71.1 MIPS, but the 90 MIPS primary target is not yet achieved.
 
+## Phase 13A Jumpfast Pipeline Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_jumpfast.sv`
+- `tb/tb_cpu_core_pipeline_jumpfast.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Single forward JUMP target request.
+- Consecutive JUMPs.
+- Backward JUMP loop.
+- Pause immediately after a fast JUMP target request.
+- Older taken BEQ overriding a younger wrong-path JUMP.
+- JUMP near a load-use/fetch-buffer condition.
+- Wrong-path STORE protection.
+- Full custom-ISA benchmark suite matching the Phase 12 pipeline benchmark mix.
+
+Result:
+
+- Focused Phase 13A test passed with 3,232 tests run and 0 tests failed.
+- Full local XSim regression completed successfully after adding the Phase 13A test.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 427 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Aggregate MIPS at 100 MHz | 74.707 |
+
+Vivado implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_jumpfast`.
+- Post-route WNS: +0.182 ns.
+- Post-route TNS: 0.000 ns.
+- Estimated Fmax: approximately 101.9 MHz.
+- Practical estimated MIPS: approximately 76.1.
+- 100 MHz timing passed.
+- Bitstream generation passed.
+
+Transcripts:
+
+- `reports/simulation_transcripts/phase13a_jumpfast_focused_final_20260711_193050.txt`
+- `reports/simulation_transcripts/phase13a_xsim_regression_final_20260711_193104.txt`
+
+Report:
+
+- `reports/phase13a_jump_target_request.md`
+
+Conclusion:
+
+The separate Phase 13A jumpfast pipeline keeps the Phase 12 baseline intact, preserves full custom-ISA correctness, meets the 100 MHz Basys 3 timing target, and improves practical estimated throughput from about 71.1 MIPS to about 76.1 MIPS. The 90 MIPS target remains future optimisation work.
+
+## Phase 13B BEQ Target-Prefetch Pipeline Verification
+
+Status: passed, but experimental.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem_dualread.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_branchprefetch.sv`
+- `tb/tb_cpu_core_pipeline_branchprefetch.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Taken forward `BEQ` using the prefetched target response.
+- Not-taken `BEQ` discarding the speculative target response.
+- Load-to-`BEQ` dependency with the existing load-use stall preserved.
+- Invalid opcode at a branch target.
+- Pause while a branch target response is pending.
+- Retained Phase 13A fast `JUMP` behaviour.
+- Wrong-path register write and STORE protection.
+- Full custom-ISA aggregate benchmark suite matching the Phase 13A comparison workload.
+
+Result:
+
+- Full local XSim regression completed successfully after adding the Phase 13B test.
+- Phase 13B testbench summary reported 4,004 tests run and 0 tests failed.
+- Console output included `PHASE 13B BRANCH-PREFETCH PIPELINE TEST PASSED`.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 424 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.329 |
+| Aggregate MIPS at 100 MHz | 75.236 |
+| Branch-heavy benchmark cycles | 75 |
+| Branch-heavy retired instructions | 45 |
+| Branch-heavy CPI | 1.667 |
+| Branch-heavy target prefetch hits | 16 |
+| Branch-heavy target prefetch discards | 7 |
+
+Post-route implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_branchprefetch`.
+- Post-route WNS: +0.008 ns.
+- Post-route TNS: 0.000 ns.
+- Estimated Fmax: approximately 100.1 MHz.
+- Practical estimated MIPS: approximately 75.3.
+- BRAM use: 1.5 Block RAM Tiles / 3 RAMB18.
+- Bitstream generation passed.
+
+Commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_branchprefetch.tcl
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase13b_xsim_regression_final_20260711_203157.txt`
+
+Report:
+
+- `reports/phase13b_beq_target_prefetch.md`
+
+Conclusion:
+
+The separate Phase 13B branch-prefetch pipeline is functionally correct and meets the 100 MHz Basys 3 timing target, but it does not replace Phase 13A as the preferred implementation. It improves aggregate CPI slightly, from 1.339 to 1.329, but increases BRAM use from 2 to 3 RAMB18 and reduces practical estimated throughput from about 76.1 MIPS to about 75.3 MIPS.
+
+## Phase 13C Timing-Optimised Pipeline Verification
+
+Status: passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_timingopt.sv`
+- `tb/tb_cpu_core_pipeline_timingopt.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Full custom-ISA aggregate benchmark suite matching the Phase 13A comparison workload.
+- Phase 13A fast `JUMP` behaviour retained.
+- BEQ taken/not-taken behaviour retained.
+- Forwarding, store-data forwarding and load-use stalls retained.
+- Wrong-path register write and STORE protection retained.
+- Invalid opcode safety and `x0` protection retained.
+
+Result:
+
+- Full local XSim regression completed successfully after adding the Phase 13C test.
+- Phase 13C testbench summary reported 3,232 tests run and 0 tests failed.
+- Console output included `PHASE 13C TIMINGOPT PIPELINE TEST PASSED`.
+- Known `xelab` object-directory cleanup warnings appeared after successful snapshot builds; `xsim` still ran and all self-checking tests passed.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 427 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Aggregate MIPS at 100 MHz | 74.707 |
+
+Post-route implementation and timing-sweep summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_timingopt`.
+- Standard 10.000 ns implementation WNS: +0.759 ns.
+- Standard 10.000 ns implementation TNS: 0.000 ns.
+- Tightest tested passing routed period: 9.240 ns.
+- Verified post-route Fmax from the routed period sweep: 108.225 MHz.
+- WNS at 9.240 ns: +0.259 ns.
+- TNS at 9.240 ns: 0.000 ns.
+- WHS at 9.240 ns: +0.057 ns.
+- BRAM use: 1 Block RAM Tile / 2 RAMB18.
+- Bitstream generation passed.
+- Practical estimated MIPS: approximately 80.8.
+
+Commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_timingopt.tcl
+$env:PHASE13C_PERIODS='9.240'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_fmax_sweep_pipeline_timingopt.tcl
+```
+
+Transcript:
+
+- `reports/simulation_transcripts/phase13c_final_xsim_regression_20260712_140137.txt`
+
+Report:
+
+- `reports/phase13c_timing_closure.md`
+
+Conclusion:
+
+The separate Phase 13C timing-optimised pipeline preserves the Phase 13A CPI and aggregate retired instruction count while increasing verified post-route Fmax. Practical estimated throughput improves from about 76.1 MIPS to about 80.8 MIPS. The 90 MIPS target is not yet achieved, so the remaining timing work should focus on the data-memory-to-ID/EX operand critical-path family.
+
 ## Future Verification Work
 
-- Continue Phase 12 optimisation by reducing control-flow penalty and load-use overhead while preserving full regression correctness and 100 MHz post-route timing.
+- Continue Phase 13 optimisation by reducing the remaining data-memory-to-ID/EX operand timing path while preserving full regression correctness, routed timing and the Phase 13C CPI.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

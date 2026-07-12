@@ -1,0 +1,1019 @@
+import cpu_defs_pkg::*;
+
+module tb_cpu_core_pipeline_branchprefetch;
+
+    localparam int unsigned IMEM_DEPTH = 256;
+    localparam int unsigned DMEM_DEPTH = 256;
+
+    logic        clk;
+    logic        rst;
+    logic        enable;
+    logic [31:0] fetch_pc;
+    logic [31:0] instruction_addr;
+    logic [31:0] fetch_request_pc;
+    logic        fetch_request_valid;
+    logic        if_id_valid;
+    logic [31:0] if_id_pc;
+    logic [31:0] if_id_instruction;
+    logic [3:0]  decoded_opcode;
+    logic        decoded_valid;
+    logic        id_ex_valid;
+    logic        ex_mem_valid;
+    logic        mem_wb_valid;
+    logic [31:0] alu_result;
+    logic [31:0] data_addr;
+    logic [31:0] memory_read_data;
+    logic        retire_valid;
+    logic [31:0] retire_pc;
+    logic [3:0]  retire_opcode;
+    logic [4:0]  retire_rd;
+    logic        retire_reg_write;
+    logic [31:0] retire_write_data;
+    logic        retire_mem_write;
+    logic [31:0] retire_mem_addr;
+    logic [31:0] retire_mem_data;
+    logic        reg_write;
+    logic        mem_write;
+    logic        pc_redirect;
+    logic [31:0] total_cycles;
+    logic [31:0] retired_instructions;
+    logic [31:0] pipeline_fill_cycles;
+    logic [31:0] data_hazard_stall_cycles;
+    logic [31:0] load_use_stall_cycles;
+    logic [31:0] control_hazard_flush_cycles;
+    logic [31:0] instruction_fetch_wait_cycles;
+    logic [31:0] memory_wait_cycles;
+    logic [31:0] taken_branches;
+    logic [31:0] not_taken_branches;
+    logic [31:0] jumps;
+    logic [31:0] wrong_path_instructions_flushed;
+    logic [31:0] beq_target_prefetch_requests;
+    logic [31:0] beq_target_prefetch_hits;
+    logic [31:0] beq_target_prefetch_discards;
+    logic [31:0] beq_target_prefetch_invalidations;
+
+    int tests_run;
+    int tests_failed;
+    int aggregate_cycles;
+    int aggregate_retired;
+
+    int current_retired;
+    bit forbidden_word [0:IMEM_DEPTH-1];
+    int retire_seen [0:IMEM_DEPTH-1];
+    bit allow_repeated_retire;
+
+    cpu_core_pipeline_branchprefetch #(
+        .IMEM_DEPTH(IMEM_DEPTH),
+        .DMEM_DEPTH(DMEM_DEPTH),
+        .IMEM_INIT_FILE("")
+    ) dut (
+        .clk(clk),
+        .rst(rst),
+        .enable(enable),
+        .fetch_pc(fetch_pc),
+        .instruction_addr(instruction_addr),
+        .fetch_request_pc(fetch_request_pc),
+        .fetch_request_valid(fetch_request_valid),
+        .if_id_valid(if_id_valid),
+        .if_id_pc(if_id_pc),
+        .if_id_instruction(if_id_instruction),
+        .decoded_opcode(decoded_opcode),
+        .decoded_valid(decoded_valid),
+        .id_ex_valid(id_ex_valid),
+        .ex_mem_valid(ex_mem_valid),
+        .mem_wb_valid(mem_wb_valid),
+        .alu_result(alu_result),
+        .data_addr(data_addr),
+        .memory_read_data(memory_read_data),
+        .retire_valid(retire_valid),
+        .retire_pc(retire_pc),
+        .retire_opcode(retire_opcode),
+        .retire_rd(retire_rd),
+        .retire_reg_write(retire_reg_write),
+        .retire_write_data(retire_write_data),
+        .retire_mem_write(retire_mem_write),
+        .retire_mem_addr(retire_mem_addr),
+        .retire_mem_data(retire_mem_data),
+        .reg_write(reg_write),
+        .mem_write(mem_write),
+        .pc_redirect(pc_redirect),
+        .total_cycles(total_cycles),
+        .retired_instructions(retired_instructions),
+        .pipeline_fill_cycles(pipeline_fill_cycles),
+        .data_hazard_stall_cycles(data_hazard_stall_cycles),
+        .load_use_stall_cycles(load_use_stall_cycles),
+        .control_hazard_flush_cycles(control_hazard_flush_cycles),
+        .instruction_fetch_wait_cycles(instruction_fetch_wait_cycles),
+        .memory_wait_cycles(memory_wait_cycles),
+        .taken_branches(taken_branches),
+        .not_taken_branches(not_taken_branches),
+        .jumps(jumps),
+        .wrong_path_instructions_flushed(wrong_path_instructions_flushed),
+        .beq_target_prefetch_requests(beq_target_prefetch_requests),
+        .beq_target_prefetch_hits(beq_target_prefetch_hits),
+        .beq_target_prefetch_discards(beq_target_prefetch_discards),
+        .beq_target_prefetch_invalidations(beq_target_prefetch_invalidations)
+    );
+
+    initial begin
+        clk = 1'b0;
+        forever #5 clk = ~clk;
+    end
+
+    function automatic logic [31:0] instr(
+        input logic [3:0]  opcode,
+        input logic [4:0]  rd,
+        input logic [4:0]  rs1,
+        input logic [4:0]  rs2,
+        input logic [12:0] imm13
+    );
+        instr = {opcode, rd, rs1, rs2, imm13};
+    endfunction
+
+    function automatic logic [12:0] imm13_signed(input int value);
+        imm13_signed = value[12:0];
+    endfunction
+
+    task automatic step_clock();
+        @(posedge clk);
+        #1;
+    endtask
+
+    task automatic check_true(input string name, input bit condition);
+        tests_run++;
+        if (condition) begin
+            $display("PASS: %s", name);
+        end else begin
+            tests_failed++;
+            $display("FAIL: %s", name);
+        end
+    endtask
+
+    task automatic check_equal32(input string name, input logic [31:0] actual, input logic [31:0] expected);
+        tests_run++;
+        if (actual === expected) begin
+            $display("PASS: %s | value=0x%08h", name, actual);
+        end else begin
+            tests_failed++;
+            $display("FAIL: %s | actual=0x%08h expected=0x%08h", name, actual, expected);
+        end
+    endtask
+
+    task automatic check_nonzero(input string name, input logic [31:0] actual);
+        tests_run++;
+        if (actual != 32'd0) begin
+            $display("PASS: %s | value=%0d", name, actual);
+        end else begin
+            tests_failed++;
+            $display("FAIL: %s | expected nonzero", name);
+        end
+    endtask
+
+    task automatic clear_memories();
+        for (int i = 0; i < IMEM_DEPTH; i++) begin
+            dut.instr_mem_inst.mem[i] = instr(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0);
+            forbidden_word[i] = 1'b0;
+            retire_seen[i] = 0;
+        end
+
+        for (int i = 0; i < DMEM_DEPTH; i++) begin
+            dut.data_mem_inst.mem[i] = 32'h0000_0000;
+        end
+    endtask
+
+    task automatic put_instr(input int word_index, input logic [31:0] instruction);
+        dut.instr_mem_inst.mem[word_index] = instruction;
+    endtask
+
+    task automatic forbid_retire(input int word_index);
+        forbidden_word[word_index] = 1'b1;
+    endtask
+
+    task automatic reset_core();
+        enable = 1'b0;
+        rst = 1'b1;
+        allow_repeated_retire = 1'b0;
+        repeat (4) begin
+            step_clock();
+        end
+        rst = 1'b0;
+        repeat (2) begin
+            step_clock();
+        end
+
+        check_equal32("reset fetch PC", fetch_pc, 32'h0000_0000);
+        check_true("reset IF/ID invalid", if_id_valid === 1'b0);
+        check_true("reset retire invalid", retire_valid === 1'b0);
+        check_equal32("reset cycle counter", total_cycles, 32'd0);
+        check_equal32("reset retired counter", retired_instructions, 32'd0);
+    endtask
+
+    task automatic start_program();
+        current_retired = 0;
+        enable = 1'b1;
+    endtask
+
+    task automatic observe_retire(input string program_name);
+        int word_index;
+
+        if (retire_valid) begin
+            current_retired++;
+            check_true($sformatf("%s retire PC aligned", program_name), retire_pc[1:0] == 2'b00);
+            check_true($sformatf("%s invalid opcode never retires", program_name), opcode_is_valid(retire_opcode));
+            word_index = int'(retire_pc >> 2);
+
+            if ((word_index >= 0) && (word_index < IMEM_DEPTH)) begin
+                retire_seen[word_index]++;
+                check_true(
+                    $sformatf("%s forbidden PC %0d did not retire", program_name, word_index),
+                    !forbidden_word[word_index]
+                );
+                if (!allow_repeated_retire) begin
+                    check_true(
+                        $sformatf("%s PC %0d retires once", program_name, word_index),
+                        retire_seen[word_index] == 1
+                    );
+                end
+            end else begin
+                check_true($sformatf("%s retire PC in range", program_name), 1'b0);
+            end
+
+            if (retire_reg_write) begin
+                check_true($sformatf("%s retire writeback never targets x0", program_name), retire_rd != 5'd0);
+            end
+        end
+
+        check_equal32($sformatf("%s x0 remains zero", program_name), dut.regs[0], 32'h0000_0000);
+        check_true($sformatf("%s register write not unknown", program_name), !$isunknown(reg_write));
+        check_true($sformatf("%s memory write not unknown", program_name), !$isunknown(mem_write));
+    endtask
+
+    task automatic run_until_retired(input string program_name, input int expected_retired, input int max_cycles);
+        int cycles;
+
+        start_program();
+        cycles = 0;
+        while ((current_retired < expected_retired) && (cycles < max_cycles)) begin
+            step_clock();
+            observe_retire(program_name);
+            cycles++;
+        end
+        enable = 1'b0;
+        step_clock();
+
+        check_equal32($sformatf("%s retired instruction count", program_name), current_retired, expected_retired);
+        check_true($sformatf("%s completed before timeout", program_name), cycles < max_cycles);
+
+        aggregate_cycles += total_cycles;
+        aggregate_retired += retired_instructions;
+
+        if (retired_instructions != 0) begin
+            real cpi;
+            real mips_100;
+            cpi = real'(total_cycles) / real'(retired_instructions);
+            mips_100 = 100.0 / cpi;
+            $display("");
+            $display("BENCHMARK RESULT: %s", program_name);
+            $display("  Cycles:                 %0d", total_cycles);
+            $display("  Retired instructions:   %0d", retired_instructions);
+            $display("  CPI:                    %0.3f", cpi);
+            $display("  Estimated MIPS @100MHz: %0.3f", mips_100);
+            $display("  Load-use stalls:        %0d", load_use_stall_cycles);
+            $display("  Control flushes:        %0d", control_hazard_flush_cycles);
+            $display("  Taken branches:         %0d", taken_branches);
+            $display("  Not-taken branches:     %0d", not_taken_branches);
+            $display("  Jumps:                  %0d", jumps);
+            $display("  Wrong-path flushed:     %0d", wrong_path_instructions_flushed);
+        end
+    endtask
+
+    task automatic run_until_retired_no_aggregate(input string program_name, input int expected_retired, input int max_cycles);
+        int cycles;
+
+        start_program();
+        cycles = 0;
+        while ((current_retired < expected_retired) && (cycles < max_cycles)) begin
+            step_clock();
+            observe_retire(program_name);
+            cycles++;
+        end
+        enable = 1'b0;
+        step_clock();
+
+        check_equal32($sformatf("%s retired instruction count", program_name), current_retired, expected_retired);
+        check_true($sformatf("%s completed before timeout", program_name), cycles < max_cycles);
+    endtask
+
+    task automatic prepare_program();
+        clear_memories();
+        reset_core();
+    endtask
+
+    task automatic run_until_retired_focused(
+        input  string program_name,
+        input  int    expected_retired,
+        input  int    max_cycles,
+        input  int    jump_word,
+        input  int    target_word,
+        output int    id_to_target_ifid,
+        output int    id_to_target_retire
+    );
+        int cycles;
+        int jump_id_cycle;
+        int target_ifid_cycle;
+        int target_retire_cycle;
+
+        start_program();
+        cycles = 0;
+        jump_id_cycle = -1;
+        target_ifid_cycle = -1;
+        target_retire_cycle = -1;
+
+        while ((current_retired < expected_retired) && (cycles < max_cycles)) begin
+            @(negedge clk);
+
+            if ((jump_id_cycle < 0) &&
+                dut.id_jump_redirect &&
+                (dut.if_id_reg.pc == (32'(jump_word) << 2))) begin
+                jump_id_cycle = cycles;
+            end
+
+            if ((jump_id_cycle >= 0) &&
+                (target_ifid_cycle < 0) &&
+                if_id_valid &&
+                (if_id_pc == (32'(target_word) << 2))) begin
+                target_ifid_cycle = cycles;
+            end
+
+            observe_retire(program_name);
+
+            if ((jump_id_cycle >= 0) &&
+                (target_retire_cycle < 0) &&
+                retire_valid &&
+                (retire_pc == (32'(target_word) << 2))) begin
+                target_retire_cycle = cycles;
+            end
+
+            cycles++;
+        end
+
+        enable = 1'b0;
+        step_clock();
+
+        check_equal32($sformatf("%s retired instruction count", program_name), current_retired, expected_retired);
+        check_true($sformatf("%s completed before timeout", program_name), cycles < max_cycles);
+        check_true($sformatf("%s observed JUMP in ID", program_name), jump_id_cycle >= 0);
+        check_true($sformatf("%s observed target in IF/ID", program_name), target_ifid_cycle >= 0);
+        check_true($sformatf("%s observed target retirement", program_name), target_retire_cycle >= 0);
+
+        id_to_target_ifid = target_ifid_cycle - jump_id_cycle;
+        id_to_target_retire = target_retire_cycle - jump_id_cycle;
+
+        $display("");
+        $display("JUMP PENALTY RESULT: %s", program_name);
+        $display("  cycles ID JUMP -> target IF/ID: %0d", id_to_target_ifid);
+        $display("  cycles ID JUMP -> target retire:%0d", id_to_target_retire);
+    endtask
+
+    task automatic run_single_forward_jump_focus();
+        int id_to_ifid;
+        int id_to_retire;
+
+        $display("");
+        $display("---- Phase 13A focused single forward JUMP ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(1, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(2, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(3, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(22)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(2);
+        forbid_retire(3);
+
+        run_until_retired_focused("single forward JUMP", 4, 80, 1, 4, id_to_ifid, id_to_retire);
+        check_equal32("single jump x1", dut.regs[1], 32'd1);
+        check_equal32("single jump target x2", dut.regs[2], 32'd22);
+        check_equal32("single jump wrong-path x3 unchanged", dut.regs[3], 32'd0);
+        check_equal32("single jump wrong-path STORE blocked", dut.data_mem_inst.mem[0], 32'd0);
+        check_equal32("single jump count", jumps, 32'd1);
+        check_equal32("single jump target IF/ID sampled latency", 32'(id_to_ifid), 32'd2);
+    endtask
+
+    task automatic run_consecutive_jumps_focus();
+        int id_to_ifid;
+        int id_to_retire;
+
+        $display("");
+        $display("---- Phase 13A focused consecutive JUMPs ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(1, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(2, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(3, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(55)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(1);
+        forbid_retire(3);
+
+        run_until_retired_focused("consecutive JUMPs", 4, 90, 0, 2, id_to_ifid, id_to_retire);
+        check_equal32("consecutive jumps x1 unchanged", dut.regs[1], 32'd0);
+        check_equal32("consecutive jumps x2 unchanged", dut.regs[2], 32'd0);
+        check_equal32("consecutive jumps final target x3", dut.regs[3], 32'd55);
+        check_equal32("consecutive jumps count", jumps, 32'd2);
+        check_equal32("first consecutive jump target IF/ID sampled latency", 32'(id_to_ifid), 32'd2);
+    endtask
+
+    task automatic run_backward_jump_loop_focus();
+        int id_to_ifid;
+        int id_to_retire;
+
+        $display("");
+        $display("---- Phase 13A focused backward JUMP loop ----");
+        prepare_program();
+        allow_repeated_retire = 1'b1;
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(0)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(2, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(3, instr(OP_ADD,  5'd1, 5'd1, 5'd3, 13'd0));
+        put_instr(4, instr(OP_SUB,  5'd2, 5'd2, 5'd3, 13'd0));
+        put_instr(5, instr(OP_BEQ,  5'd0, 5'd2, 5'd0, imm13_signed(2)));
+        put_instr(6, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(-3)));
+        put_instr(7, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(8, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired_focused("backward JUMP loop", 16, 160, 6, 3, id_to_ifid, id_to_retire);
+        check_equal32("backward loop x1", dut.regs[1], 32'd3);
+        check_equal32("backward loop x2", dut.regs[2], 32'd0);
+        check_equal32("backward loop data word 0", dut.data_mem_inst.mem[0], 32'd3);
+        check_equal32("backward loop jump count", jumps, 32'd2);
+        check_equal32("backward loop target IF/ID sampled latency", 32'(id_to_ifid), 32'd2);
+    endtask
+
+    task automatic run_pause_after_jump_request_focus();
+        int cycles;
+
+        $display("");
+        $display("---- Phase 13A focused pause after fast JUMP request ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(1, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(2, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(3, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(22)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(2);
+        forbid_retire(3);
+
+        start_program();
+        cycles = 0;
+        while (!dut.id_jump_redirect && (cycles < 40)) begin
+            step_clock();
+            observe_retire("pause after JUMP request");
+            cycles++;
+        end
+        check_true("pause test observed JUMP in ID", dut.id_jump_redirect);
+
+        step_clock();
+        enable = 1'b0;
+        check_true("pause test jump response pending set", dut.jump_response_pending);
+        repeat (4) begin
+            step_clock();
+            check_true("pause holds jump response pending", dut.jump_response_pending);
+            check_true("pause suppresses retirement", retire_valid === 1'b0);
+            check_true("pause suppresses reg write", reg_write === 1'b0);
+            check_true("pause suppresses mem write", mem_write === 1'b0);
+        end
+
+        enable = 1'b1;
+        while ((current_retired < 4) && (cycles < 100)) begin
+            step_clock();
+            observe_retire("pause after JUMP request");
+            cycles++;
+        end
+        enable = 1'b0;
+        step_clock();
+
+        check_equal32("pause test retired count", current_retired, 4);
+        check_equal32("pause test target x2", dut.regs[2], 32'd22);
+        check_equal32("pause test wrong-path STORE blocked", dut.data_mem_inst.mem[0], 32'd0);
+        check_equal32("pause test jump count", jumps, 32'd1);
+    endtask
+
+    task automatic run_older_beq_younger_jump_focus();
+        $display("");
+        $display("---- Phase 13A focused older BEQ overrides younger JUMP ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(2, instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(3)));
+        put_instr(3, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(4)));
+        put_instr(4, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(5, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(42)));
+        put_instr(6, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(3);
+        forbid_retire(4);
+
+        run_until_retired_no_aggregate("older BEQ younger JUMP", 5, 120);
+        check_equal32("older BEQ target x3", dut.regs[3], 32'd42);
+        check_equal32("older BEQ wrong-path STORE blocked", dut.data_mem_inst.mem[0], 32'd0);
+        check_equal32("older BEQ younger JUMP did not count", jumps, 32'd0);
+        check_equal32("older BEQ taken count", taken_branches, 32'd1);
+    endtask
+
+    task automatic run_fetch_buffer_near_jump_focus();
+        $display("");
+        $display("---- Phase 13A focused load-use buffer near JUMP ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(64)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(7)));
+        put_instr(2, instr(OP_STORE,5'd0, 5'd1, 5'd2, imm13_signed(0)));
+        put_instr(3, instr(OP_LOAD, 5'd3, 5'd1, 5'd0, imm13_signed(0)));
+        put_instr(4, instr(OP_ADD,  5'd4, 5'd3, 5'd3, 13'd0));
+        put_instr(5, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(6, instr(OP_STORE,5'd0, 5'd0, 5'd4, imm13_signed(4)));
+        put_instr(7, instr(OP_ADDI, 5'd5, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(8, instr(OP_ADDI, 5'd6, 5'd0, 5'd0, imm13_signed(33)));
+        put_instr(9, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(6);
+        forbid_retire(7);
+
+        run_until_retired_no_aggregate("fetch buffer near JUMP", 8, 140);
+        check_equal32("buffer near jump loaded value", dut.regs[3], 32'd7);
+        check_equal32("buffer near jump dependent add", dut.regs[4], 32'd14);
+        check_equal32("buffer near jump target x6", dut.regs[6], 32'd33);
+        check_equal32("buffer near jump wrong-path x5 unchanged", dut.regs[5], 32'd0);
+        check_equal32("buffer near jump wrong-path STORE blocked", dut.data_mem_inst.mem[17], 32'd0);
+        check_nonzero("buffer near jump load-use stall observed", load_use_stall_cycles);
+        check_equal32("buffer near jump count", jumps, 32'd1);
+    endtask
+
+    task automatic run_taken_beq_prefetch_focus();
+        $display("");
+        $display("---- Phase 13B focused taken BEQ target prefetch ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(2, instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(2)));
+        put_instr(3, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(42)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(3);
+
+        run_until_retired_no_aggregate("taken BEQ prefetch", 5, 100);
+        check_equal32("taken BEQ target x3", dut.regs[3], 32'd42);
+        check_equal32("taken BEQ count", taken_branches, 32'd1);
+        check_equal32("taken BEQ prefetch requests", beq_target_prefetch_requests, 32'd1);
+        check_equal32("taken BEQ prefetch hits", beq_target_prefetch_hits, 32'd1);
+        check_equal32("taken BEQ prefetch discards", beq_target_prefetch_discards, 32'd0);
+    endtask
+
+    task automatic run_not_taken_beq_prefetch_focus();
+        $display("");
+        $display("---- Phase 13B focused not-taken BEQ target discard ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(2, instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(2)));
+        put_instr(3, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(11)));
+        put_instr(4, instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(22)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired_no_aggregate("not-taken BEQ prefetch", 6, 100);
+        check_equal32("not-taken BEQ fall-through x3", dut.regs[3], 32'd11);
+        check_equal32("not-taken BEQ later x4", dut.regs[4], 32'd22);
+        check_equal32("not-taken BEQ taken count", taken_branches, 32'd0);
+        check_equal32("not-taken BEQ count", not_taken_branches, 32'd1);
+        check_equal32("not-taken BEQ prefetch requests", beq_target_prefetch_requests, 32'd1);
+        check_equal32("not-taken BEQ prefetch hits", beq_target_prefetch_hits, 32'd0);
+        check_equal32("not-taken BEQ prefetch discards", beq_target_prefetch_discards, 32'd1);
+    endtask
+
+    task automatic run_load_to_beq_prefetch_focus();
+        $display("");
+        $display("---- Phase 13B focused LOAD-to-BEQ prefetch after stall ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(7)));
+        put_instr(1, instr(OP_STORE,5'd0, 5'd0, 5'd2, imm13_signed(0)));
+        put_instr(2, instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(7)));
+        put_instr(3, instr(OP_LOAD, 5'd3, 5'd0, 5'd0, imm13_signed(0)));
+        put_instr(4, instr(OP_BEQ,  5'd0, 5'd3, 5'd4, imm13_signed(2)));
+        put_instr(5, instr(OP_ADDI, 5'd5, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(6, instr(OP_ADDI, 5'd5, 5'd0, 5'd0, imm13_signed(55)));
+        put_instr(7, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(5);
+
+        run_until_retired_no_aggregate("LOAD-to-BEQ prefetch", 7, 140);
+        check_equal32("LOAD-to-BEQ loaded x3", dut.regs[3], 32'd7);
+        check_equal32("LOAD-to-BEQ target x5", dut.regs[5], 32'd55);
+        check_equal32("LOAD-to-BEQ prefetch requests once", beq_target_prefetch_requests, 32'd1);
+        check_equal32("LOAD-to-BEQ prefetch hit", beq_target_prefetch_hits, 32'd1);
+        check_nonzero("LOAD-to-BEQ load-use stall observed", load_use_stall_cycles);
+    endtask
+
+    task automatic run_invalid_beq_target_focus();
+        $display("");
+        $display("---- Phase 13B focused invalid opcode at BEQ target ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(2, instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(2)));
+        put_instr(3, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4, instr(4'hF,    5'd9, 5'd0, 5'd0, 13'd0));
+        put_instr(5, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(33)));
+        put_instr(6, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(3);
+        forbid_retire(4);
+
+        run_until_retired_no_aggregate("invalid BEQ target", 5, 120);
+        check_equal32("invalid BEQ target x3", dut.regs[3], 32'd33);
+        check_equal32("invalid BEQ target bad rd unchanged", dut.regs[9], 32'd0);
+        check_equal32("invalid BEQ target prefetch hit", beq_target_prefetch_hits, 32'd1);
+    endtask
+
+    task automatic run_pause_after_beq_prefetch_focus();
+        int cycles;
+
+        $display("");
+        $display("---- Phase 13B focused pause after BEQ target request ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(3)));
+        put_instr(2, instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(2)));
+        put_instr(3, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(4, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(44)));
+        put_instr(5, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(3);
+
+        start_program();
+        cycles = 0;
+        while (!dut.beq_prefetch_pending && (cycles < 80)) begin
+            step_clock();
+            observe_retire("pause after BEQ request");
+            cycles++;
+        end
+        check_true("pause BEQ observed target prefetch pending", dut.beq_prefetch_pending);
+
+        enable = 1'b0;
+        repeat (4) begin
+            step_clock();
+            check_true("pause holds BEQ target prefetch pending", dut.beq_prefetch_pending);
+            check_true("pause suppresses retirement after BEQ request", retire_valid === 1'b0);
+            check_true("pause suppresses reg write after BEQ request", reg_write === 1'b0);
+            check_true("pause suppresses mem write after BEQ request", mem_write === 1'b0);
+        end
+        enable = 1'b1;
+
+        while ((current_retired < 5) && (cycles < 140)) begin
+            step_clock();
+            observe_retire("pause after BEQ request");
+            cycles++;
+        end
+
+        check_equal32("pause BEQ retired count", current_retired, 5);
+        check_equal32("pause BEQ target x3", dut.regs[3], 32'd44);
+        check_equal32("pause BEQ wrong-path STORE blocked", dut.data_mem_inst.mem[0], 32'd0);
+        check_equal32("pause BEQ prefetch hit", beq_target_prefetch_hits, 32'd1);
+    endtask
+
+    task automatic run_branch_heavy_prefetch_benchmark();
+        real cpi;
+        real mips_100;
+
+        $display("");
+        $display("---- Phase 13B branch-heavy target-prefetch benchmark ----");
+        prepare_program();
+        allow_repeated_retire = 1'b1;
+
+        put_instr(0,  instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(0)));
+        put_instr(1,  instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(8)));
+        put_instr(2,  instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(3,  instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(4,  instr(OP_BEQ,  5'd0, 5'd3, 5'd4, imm13_signed(2)));
+        put_instr(5,  instr(OP_ADDI, 5'd10,5'd0, 5'd0, imm13_signed(99)));
+        put_instr(6,  instr(OP_ADD,  5'd1, 5'd1, 5'd3, 13'd0));
+        put_instr(7,  instr(OP_SUB,  5'd2, 5'd2, 5'd3, 13'd0));
+        put_instr(8,  instr(OP_BEQ,  5'd0, 5'd2, 5'd0, imm13_signed(2)));
+        put_instr(9,  instr(OP_BEQ,  5'd0, 5'd3, 5'd4, imm13_signed(-5)));
+        put_instr(10, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(11, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(5);
+
+        run_until_retired_no_aggregate("branch-heavy prefetch", 45, 400);
+        check_equal32("branch-heavy x1", dut.regs[1], 32'd8);
+        check_equal32("branch-heavy x2", dut.regs[2], 32'd0);
+        check_equal32("branch-heavy memory word 0", dut.data_mem_inst.mem[0], 32'd8);
+        check_equal32("branch-heavy taken branches", taken_branches, 32'd16);
+        check_equal32("branch-heavy not-taken branches", not_taken_branches, 32'd7);
+        check_equal32("branch-heavy prefetch requests", beq_target_prefetch_requests, 32'd23);
+        check_equal32("branch-heavy prefetch hits", beq_target_prefetch_hits, 32'd16);
+        check_equal32("branch-heavy prefetch discards", beq_target_prefetch_discards, 32'd7);
+
+        cpi = real'(total_cycles) / real'(retired_instructions);
+        mips_100 = 100.0 / cpi;
+        $display("");
+        $display("BRANCH-HEAVY RESULT");
+        $display("  Cycles:                  %0d", total_cycles);
+        $display("  Retired instructions:    %0d", retired_instructions);
+        $display("  CPI:                     %0.3f", cpi);
+        $display("  Estimated MIPS @100MHz:  %0.3f", mips_100);
+        $display("  Taken BEQs:              %0d", taken_branches);
+        $display("  Not-taken BEQs:          %0d", not_taken_branches);
+        $display("  Target prefetch hits:    %0d", beq_target_prefetch_hits);
+        $display("  Target prefetch discards:%0d", beq_target_prefetch_discards);
+    endtask
+
+
+    task automatic run_independent_arithmetic();
+        $display("");
+        $display("---- Pipeline independent arithmetic benchmark ----");
+        prepare_program();
+
+        for (int i = 0; i < 80; i++) begin
+            put_instr(i, instr(OP_ADDI, 5'((i % 31) + 1), 5'd0, 5'd0, imm13_signed(i + 1)));
+        end
+        put_instr(80, instr(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired("independent arithmetic", 81, 220);
+        check_equal32("independent arithmetic x1 final", dut.regs[1], 32'd63);
+        check_equal32("independent arithmetic x18 final", dut.regs[18], 32'd80);
+    endtask
+
+    task automatic run_dependency_arithmetic();
+        $display("");
+        $display("---- Pipeline dependency-heavy arithmetic benchmark ----");
+        prepare_program();
+
+        put_instr(0,  instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(1,  instr(OP_ADD,  5'd2, 5'd1, 5'd1, 13'd0));
+        put_instr(2,  instr(OP_ADD,  5'd3, 5'd2, 5'd1, 13'd0));
+        put_instr(3,  instr(OP_SUB,  5'd4, 5'd3, 5'd1, 13'd0));
+        put_instr(4,  instr(OP_OR,   5'd5, 5'd4, 5'd2, 13'd0));
+        put_instr(5,  instr(OP_XOR,  5'd6, 5'd5, 5'd3, 13'd0));
+        put_instr(6,  instr(OP_AND,  5'd7, 5'd6, 5'd5, 13'd0));
+        put_instr(7,  instr(OP_ADDI, 5'd8, 5'd7, 5'd0, imm13_signed(-1)));
+        put_instr(8,  instr(OP_ADD,  5'd9, 5'd8, 5'd1, 13'd0));
+        put_instr(9,  instr(OP_ADDI, 5'd0, 5'd0, 5'd0, imm13_signed(123)));
+        put_instr(10, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired("dependency arithmetic", 11, 80);
+        check_equal32("dependency arithmetic x1", dut.regs[1], 32'd1);
+        check_equal32("dependency arithmetic x2", dut.regs[2], 32'd2);
+        check_equal32("dependency arithmetic x3", dut.regs[3], 32'd3);
+        check_equal32("dependency arithmetic x4", dut.regs[4], 32'd2);
+        check_equal32("dependency arithmetic x8", dut.regs[8], 32'hffff_ffff);
+        check_equal32("dependency arithmetic x9", dut.regs[9], 32'd0);
+        check_equal32("dependency arithmetic x0", dut.regs[0], 32'd0);
+    endtask
+
+    task automatic run_memory_offset();
+        $display("");
+        $display("---- Pipeline memory offset benchmark ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(64)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(123)));
+        put_instr(2, instr(OP_STORE, 5'd0, 5'd1, 5'd2, imm13_signed(0)));
+        put_instr(3, instr(OP_LOAD,  5'd3, 5'd1, 5'd0, imm13_signed(0)));
+        put_instr(4, instr(OP_STORE, 5'd0, 5'd1, 5'd3, imm13_signed(4)));
+        put_instr(5, instr(OP_LOAD,  5'd4, 5'd1, 5'd0, imm13_signed(4)));
+        put_instr(6, instr(OP_ADDI,  5'd5, 5'd0, 5'd0, imm13_signed(68)));
+        put_instr(7, instr(OP_LOAD,  5'd6, 5'd5, 5'd0, imm13_signed(-4)));
+        put_instr(8, instr(OP_NOP,   5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired("memory offset", 9, 120);
+        check_equal32("memory offset x1", dut.regs[1], 32'd64);
+        check_equal32("memory offset x2", dut.regs[2], 32'd123);
+        check_equal32("memory offset x3", dut.regs[3], 32'd123);
+        check_equal32("memory offset x4", dut.regs[4], 32'd123);
+        check_equal32("memory offset x5", dut.regs[5], 32'd68);
+        check_equal32("memory offset x6", dut.regs[6], 32'd123);
+        check_equal32("memory offset data word 16", dut.data_mem_inst.mem[16], 32'd123);
+        check_equal32("memory offset data word 17", dut.data_mem_inst.mem[17], 32'd123);
+        check_nonzero("memory offset load-use stall observed", load_use_stall_cycles);
+    endtask
+
+    task automatic run_load_use_dependency();
+        $display("");
+        $display("---- Pipeline load-use dependency benchmark ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(64)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(21)));
+        put_instr(2, instr(OP_STORE, 5'd0, 5'd1, 5'd2, imm13_signed(0)));
+        put_instr(3, instr(OP_LOAD,  5'd3, 5'd1, 5'd0, imm13_signed(0)));
+        put_instr(4, instr(OP_ADD,   5'd4, 5'd3, 5'd3, 13'd0));
+        put_instr(5, instr(OP_ADD,   5'd5, 5'd4, 5'd3, 13'd0));
+        put_instr(6, instr(OP_STORE, 5'd0, 5'd1, 5'd5, imm13_signed(4)));
+        put_instr(7, instr(OP_NOP,   5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired("load-use dependency", 8, 120);
+        check_equal32("load-use x3", dut.regs[3], 32'd21);
+        check_equal32("load-use x4", dut.regs[4], 32'd42);
+        check_equal32("load-use x5", dut.regs[5], 32'd63);
+        check_equal32("load-use data word 17", dut.data_mem_inst.mem[17], 32'd63);
+        check_nonzero("load-use stall counter", load_use_stall_cycles);
+    endtask
+
+    task automatic run_branch_control();
+        $display("");
+        $display("---- Pipeline branch taken/not-taken benchmark ----");
+        prepare_program();
+
+        put_instr(0,  instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(1,  instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(5)));
+        put_instr(2,  instr(OP_BEQ,  5'd0, 5'd1, 5'd2, imm13_signed(2)));
+        put_instr(3,  instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(4,  instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(42)));
+        put_instr(5,  instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(6,  instr(OP_ADDI, 5'd5, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(7,  instr(OP_BEQ,  5'd0, 5'd4, 5'd5, imm13_signed(2)));
+        put_instr(8,  instr(OP_ADDI, 5'd6, 5'd0, 5'd0, imm13_signed(77)));
+        put_instr(9,  instr(OP_ADDI, 5'd7, 5'd0, 5'd0, imm13_signed(88)));
+        put_instr(10, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(3);
+
+        run_until_retired("branch control", 10, 140);
+        check_equal32("branch x1", dut.regs[1], 32'd5);
+        check_equal32("branch x2", dut.regs[2], 32'd5);
+        check_equal32("branch x3", dut.regs[3], 32'd42);
+        check_equal32("branch x6", dut.regs[6], 32'd77);
+        check_equal32("branch x7", dut.regs[7], 32'd88);
+        check_equal32("branch taken count", taken_branches, 32'd1);
+        check_equal32("branch not-taken count", not_taken_branches, 32'd1);
+    endtask
+
+    task automatic run_jump_control();
+        $display("");
+        $display("---- Pipeline jump benchmark ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(11)));
+        put_instr(1, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(2, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(3, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(22)));
+        put_instr(4, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(33)));
+        put_instr(5, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(2)));
+        put_instr(6, instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(99)));
+        put_instr(7, instr(OP_ADDI, 5'd4, 5'd0, 5'd0, imm13_signed(44)));
+        put_instr(8, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(2);
+        forbid_retire(6);
+
+        run_until_retired("jump control", 7, 120);
+        check_equal32("jump x1", dut.regs[1], 32'd11);
+        check_equal32("jump x2", dut.regs[2], 32'd22);
+        check_equal32("jump x3", dut.regs[3], 32'd33);
+        check_equal32("jump x4", dut.regs[4], 32'd44);
+        check_equal32("jump count", jumps, 32'd2);
+    endtask
+
+    task automatic run_simple_loop();
+        $display("");
+        $display("---- Pipeline backward loop benchmark ----");
+        prepare_program();
+        allow_repeated_retire = 1'b1;
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(0)));
+        put_instr(1, instr(OP_ADDI, 5'd2, 5'd0, 5'd0, imm13_signed(10)));
+        put_instr(2, instr(OP_ADDI, 5'd3, 5'd0, 5'd0, imm13_signed(1)));
+        put_instr(3, instr(OP_ADD,  5'd1, 5'd1, 5'd3, 13'd0));
+        put_instr(4, instr(OP_SUB,  5'd2, 5'd2, 5'd3, 13'd0));
+        put_instr(5, instr(OP_BEQ,  5'd0, 5'd2, 5'd0, imm13_signed(2)));
+        put_instr(6, instr(OP_JUMP, 5'd0, 5'd0, 5'd0, imm13_signed(-3)));
+        put_instr(7, instr(OP_STORE,5'd0, 5'd0, 5'd1, imm13_signed(0)));
+        put_instr(8, instr(OP_NOP,  5'd0, 5'd0, 5'd0, 13'd0));
+
+        run_until_retired("simple loop", 44, 320);
+        check_equal32("loop x1", dut.regs[1], 32'd10);
+        check_equal32("loop x2", dut.regs[2], 32'd0);
+        check_equal32("loop x3", dut.regs[3], 32'd1);
+        check_equal32("loop data word 0", dut.data_mem_inst.mem[0], 32'd10);
+        check_equal32("loop taken branch count", taken_branches, 32'd1);
+        check_equal32("loop not-taken branch count", not_taken_branches, 32'd9);
+        check_equal32("loop jump count", jumps, 32'd9);
+    endtask
+
+    task automatic run_invalid_opcode();
+        $display("");
+        $display("---- Pipeline invalid opcode safety benchmark ----");
+        prepare_program();
+
+        put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(10)));
+        put_instr(1, instr(4'hb,   5'd3, 5'd1, 5'd1, 13'h123));
+        put_instr(2, instr(OP_ADDI,5'd2, 5'd0, 5'd0, imm13_signed(20)));
+        put_instr(3, instr(4'hf,   5'd4, 5'd2, 5'd2, 13'h456));
+        put_instr(4, instr(OP_STORE,5'd0,5'd0, 5'd2, imm13_signed(0)));
+        put_instr(5, instr(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0));
+        forbid_retire(1);
+        forbid_retire(3);
+
+        run_until_retired("invalid opcode", 4, 100);
+        check_equal32("invalid x1", dut.regs[1], 32'd10);
+        check_equal32("invalid x2", dut.regs[2], 32'd20);
+        check_equal32("invalid x3 unchanged", dut.regs[3], 32'd0);
+        check_equal32("invalid x4 unchanged", dut.regs[4], 32'd0);
+        check_equal32("invalid data word 0", dut.data_mem_inst.mem[0], 32'd20);
+    endtask
+
+    task automatic run_mixed_benchmark();
+        $display("");
+        $display("---- Pipeline complete mixed benchmark ----");
+        prepare_program();
+        allow_repeated_retire = 1'b1;
+
+        put_instr(0,  instr(OP_ADDI, 5'd1,  5'd0,  5'd0, imm13_signed(0)));
+        put_instr(1,  instr(OP_ADDI, 5'd2,  5'd0,  5'd0, imm13_signed(20)));
+        put_instr(2,  instr(OP_ADDI, 5'd3,  5'd0,  5'd0, imm13_signed(1)));
+        put_instr(3,  instr(OP_ADDI, 5'd10, 5'd0,  5'd0, imm13_signed(64)));
+        put_instr(4,  instr(OP_ADD,  5'd1,  5'd1,  5'd3, 13'd0));
+        put_instr(5,  instr(OP_STORE,5'd0,  5'd10, 5'd1, imm13_signed(0)));
+        put_instr(6,  instr(OP_LOAD, 5'd4,  5'd10, 5'd0, imm13_signed(0)));
+        put_instr(7,  instr(OP_ADD,  5'd5,  5'd4,  5'd1, 13'd0));
+        put_instr(8,  instr(OP_SUB,  5'd2,  5'd2,  5'd3, 13'd0));
+        put_instr(9,  instr(OP_BEQ,  5'd0,  5'd2,  5'd0, imm13_signed(2)));
+        put_instr(10, instr(OP_JUMP, 5'd0,  5'd0,  5'd0, imm13_signed(-6)));
+        put_instr(11, instr(OP_STORE,5'd0,  5'd0,  5'd5, imm13_signed(0)));
+        put_instr(12, instr(OP_NOP,  5'd0,  5'd0,  5'd0, 13'd0));
+
+        run_until_retired("mixed custom ISA", 145, 900);
+        check_equal32("mixed x1", dut.regs[1], 32'd20);
+        check_equal32("mixed x2", dut.regs[2], 32'd0);
+        check_equal32("mixed x5", dut.regs[5], 32'd40);
+        check_equal32("mixed memory word 16", dut.data_mem_inst.mem[16], 32'd20);
+        check_equal32("mixed memory word 0", dut.data_mem_inst.mem[0], 32'd40);
+    endtask
+
+    initial begin
+        $dumpfile("tb_cpu_core_pipeline_branchprefetch.vcd");
+        $dumpvars(0, tb_cpu_core_pipeline_branchprefetch);
+
+        rst = 1'b1;
+        enable = 1'b0;
+        tests_run = 0;
+        tests_failed = 0;
+        aggregate_cycles = 0;
+        aggregate_retired = 0;
+
+        run_single_forward_jump_focus();
+        run_consecutive_jumps_focus();
+        run_backward_jump_loop_focus();
+        run_pause_after_jump_request_focus();
+        run_older_beq_younger_jump_focus();
+        run_fetch_buffer_near_jump_focus();
+        run_taken_beq_prefetch_focus();
+        run_not_taken_beq_prefetch_focus();
+        run_load_to_beq_prefetch_focus();
+        run_invalid_beq_target_focus();
+        run_pause_after_beq_prefetch_focus();
+        run_branch_heavy_prefetch_benchmark();
+
+        run_independent_arithmetic();
+        run_dependency_arithmetic();
+        run_memory_offset();
+        run_load_use_dependency();
+        run_branch_control();
+        run_jump_control();
+        run_simple_loop();
+        run_invalid_opcode();
+        run_mixed_benchmark();
+
+        $display("");
+        $display("AGGREGATE PIPELINE PERFORMANCE");
+        $display("  Aggregate cycles:       %0d", aggregate_cycles);
+        $display("  Aggregate retired:      %0d", aggregate_retired);
+        if (aggregate_retired != 0) begin
+            real aggregate_cpi;
+            real aggregate_mips_100;
+            aggregate_cpi = real'(aggregate_cycles) / real'(aggregate_retired);
+            aggregate_mips_100 = 100.0 / aggregate_cpi;
+            $display("  Aggregate CPI:          %0.3f", aggregate_cpi);
+            $display("  Aggregate MIPS @100MHz: %0.3f", aggregate_mips_100);
+        end
+
+        $display("");
+        $display("Tests run:    %0d", tests_run);
+        $display("Tests failed: %0d", tests_failed);
+
+        if (tests_failed == 0) begin
+            $display("PHASE 13B BRANCH-PREFETCH PIPELINE TEST PASSED");
+        end else begin
+            $display("PHASE 13B BRANCH-PREFETCH PIPELINE TEST FAILED");
+            $fatal(1, "Phase 13B branch-prefetch pipeline test failed");
+        end
+
+        $finish;
+    end
+
+endmodule
