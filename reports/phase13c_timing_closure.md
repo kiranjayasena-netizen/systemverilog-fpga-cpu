@@ -70,6 +70,7 @@ Phase 13C adds a separate implementation path:
 - `scripts/run_vivado_synth_pipeline_timingopt.tcl`
 - `scripts/run_vivado_impl_pipeline_timingopt.tcl`
 - `scripts/run_vivado_fmax_sweep_pipeline_timingopt.tcl`
+- `scripts/run_vivado_impl_pipeline_timingopt_perf.tcl`
 
 The Phase 13A and Phase 13B paths remain unchanged.
 
@@ -157,7 +158,7 @@ The sweep script runs separate implementation attempts under `reports/phase13c_t
 | 9.100 ns | 109.890 MHz | -0.194 ns | -3.157 ns | +0.059 ns | 0.000 ns | Failed setup |
 | 9.000 ns | 111.111 MHz | -0.175 ns | -1.574 ns | +0.034 ns | 0.000 ns | Failed setup |
 
-The tightest verified passing period tested was 9.240 ns, so Phase 13C uses 108.225 MHz as the measured post-route Fmax evidence.
+The normal routed sweep showed 9.240 ns as the tightest passing point before testing Vivado performance directives.
 
 At 9.240 ns:
 
@@ -183,13 +184,55 @@ Route delay: 4.335 ns
 Logic levels: 8
 ```
 
-The top paths at the tightest passing period are mostly variants of the same path family:
+The top paths at the 9.240 ns sweep point are mostly variants of the same path family:
 
 - data BRAM output to `id_ex_reg.operand_a`;
 - data BRAM output to `id_ex_reg.operand_b`;
 - data BRAM output through frontend/fetch-buffer clock-enable control;
 - roughly balanced logic and route delay;
 - no loss of BRAM inference.
+
+## Vivado Strategy Experiment
+
+One separate performance-directive implementation experiment was then run with:
+
+```text
+synth_design -directive PerformanceOptimized
+opt_design -directive Explore
+place_design -directive ExtraNetDelay_high
+phys_opt_design -directive AggressiveExplore
+route_design -directive AggressiveExplore
+phys_opt_design -directive AggressiveExplore
+```
+
+This experiment used the same Phase 13C RTL and the same benchmark CPI. It closed timing at 9.100 ns:
+
+| Metric | Phase 13C performance-directive result |
+| --- | ---: |
+| Period | 9.100 ns |
+| Requested frequency | 109.890 MHz |
+| WNS | +0.166 ns |
+| TNS | 0.000 ns |
+| WHS | +0.034 ns |
+| THS | 0.000 ns |
+| LUTs | 1,239 |
+| FFs | 1,503 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Bitstream | Passed |
+
+Worst path at 9.100 ns:
+
+```text
+Source:      cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+Destination: cpu_inst/id_ex_reg_reg[operand_b][16]/R
+Slack:       +0.166 ns
+Data delay:  8.455 ns
+Logic delay: 3.834 ns
+Route delay: 4.621 ns
+```
+
+The performance-directive result is therefore the best verified Phase 13C post-route result.
 
 ## Performance Calculation
 
@@ -198,8 +241,8 @@ The top paths at the tightest passing period are mostly variants of the same pat
 | Aggregate cycles | 427 | 427 |
 | Retired instructions | 319 | 319 |
 | Aggregate CPI | 1.339 | 1.339 |
-| Verified post-route Fmax | ~101.9 MHz | 108.225 MHz |
-| Practical estimated MIPS | ~76.1 | ~80.8 |
+| Verified post-route Fmax | ~101.9 MHz | 109.890 MHz |
+| Practical estimated MIPS | ~76.1 | ~82.1 |
 | LUTs | 1,233 | 1,239 |
 | FFs | 1,507 | 1,503 |
 | BRAM | 1 tile / 2 RAMB18 | 1 tile / 2 RAMB18 |
@@ -208,14 +251,14 @@ The top paths at the tightest passing period are mostly variants of the same pat
 Calculation:
 
 ```text
-108.225 MHz / 1.339 CPI = 80.8 practical estimated MIPS
+109.890 MHz / 1.339 CPI = 82.1 practical estimated MIPS
 ```
 
-Phase 13C improves practical estimated MIPS by about 6.2% over Phase 13A.
+Phase 13C improves practical estimated MIPS by about 7.9% over Phase 13A.
 
 ## Interpretation
 
-Phase 13C is a useful timing-closure improvement. It preserves the Phase 13A CPI and instruction retirement count while increasing verified post-route Fmax.
+Phase 13C is a useful timing-closure improvement. It preserves the Phase 13A CPI and instruction retirement count while increasing verified post-route Fmax to 109.890 MHz.
 
 It does not reach the 90 MIPS primary target. Using the project classification:
 
@@ -247,7 +290,7 @@ Possible Phase 13D work:
 | No instruction lost, duplicated or incorrectly retired | Passed |
 | BRAM inference retained | Passed |
 | Post-route routing completes | Passed |
-| TNS zero at claimed frequency | Passed at 9.240 ns |
+| TNS zero at claimed frequency | Passed at 9.100 ns |
 | Hold timing passes | Passed |
 | Bitstream generation passes | Passed |
 | Practical MIPS exceeds Phase 13A | Passed |

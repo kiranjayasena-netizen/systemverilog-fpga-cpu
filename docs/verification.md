@@ -2420,14 +2420,14 @@ Post-route implementation and timing-sweep summary:
 - Top module: `fpga_top_pipeline_timingopt`.
 - Standard 10.000 ns implementation WNS: +0.759 ns.
 - Standard 10.000 ns implementation TNS: 0.000 ns.
-- Tightest tested passing routed period: 9.240 ns.
-- Verified post-route Fmax from the routed period sweep: 108.225 MHz.
-- WNS at 9.240 ns: +0.259 ns.
-- TNS at 9.240 ns: 0.000 ns.
-- WHS at 9.240 ns: +0.057 ns.
+- Tightest tested passing routed period: 9.100 ns with Vivado performance directives.
+- Verified post-route Fmax from implementation: 109.890 MHz.
+- WNS at 9.100 ns: +0.166 ns.
+- TNS at 9.100 ns: 0.000 ns.
+- WHS at 9.100 ns: +0.034 ns.
 - BRAM use: 1 Block RAM Tile / 2 RAMB18.
 - Bitstream generation passed.
-- Practical estimated MIPS: approximately 80.8.
+- Practical estimated MIPS: approximately 82.1.
 
 Commands:
 
@@ -2435,6 +2435,7 @@ Commands:
 powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_timingopt.tcl
 $env:PHASE13C_PERIODS='9.240'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_fmax_sweep_pipeline_timingopt.tcl
+$env:PHASE13C_PERIOD='9.100'; C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -source scripts/run_vivado_impl_pipeline_timingopt_perf.tcl
 ```
 
 Transcript:
@@ -2447,7 +2448,7 @@ Report:
 
 Conclusion:
 
-The separate Phase 13C timing-optimised pipeline preserves the Phase 13A CPI and aggregate retired instruction count while increasing verified post-route Fmax. Practical estimated throughput improves from about 76.1 MIPS to about 80.8 MIPS. The 90 MIPS target is not yet achieved, so the remaining timing work should focus on the data-memory-to-ID/EX operand critical-path family.
+The separate Phase 13C timing-optimised pipeline preserves the Phase 13A CPI and aggregate retired instruction count while increasing verified post-route Fmax. Practical estimated throughput improves from about 76.1 MIPS to about 82.1 MIPS. The 90 MIPS target is not yet achieved, so the remaining timing work should focus on the data-memory-to-ID/EX operand critical-path family.
 
 ## Future Verification Work
 

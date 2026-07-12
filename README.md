@@ -94,7 +94,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - The Phase 12 pipeline passes the full custom-ISA XSim test and Basys 3 post-route 100 MHz timing, but reaches about 71.1 practical estimated MIPS, so the 90 MIPS target remains future optimisation work.
 - Phase 13A adds a separate jumpfast pipeline variant that requests unconditional JUMP targets directly from ID; full regression and implementation pass, improving practical estimated throughput to about 76.1 MIPS while still below the 90 MIPS target.
 - Phase 13B adds a separate BEQ target-prefetch experiment; full regression and implementation pass, but practical estimated throughput is about 75.3 MIPS, so Phase 13A remains the preferred pipeline variant.
-- Phase 13C adds a separate timing-optimised jumpfast pipeline path; full regression passes, routed implementation passes at a verified 9.240 ns period, and practical estimated throughput improves to about 80.8 MIPS. The 90 MIPS target is not yet reached.
+- Phase 13C adds a separate timing-optimised jumpfast pipeline path; full regression passes, routed implementation passes at a verified 9.100 ns period with Vivado performance directives, and practical estimated throughput improves to about 82.1 MIPS. The 90 MIPS target is not yet reached.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -129,7 +129,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 12 pipeline performance comparison](reports/phase12_pipeline_performance_comparison.md) records the full pipelined CPU simulation, post-route timing, practical estimated MIPS and comparison against Phase 11E.
 - [Phase 13A jump target request](reports/phase13a_jump_target_request.md) records the timing-safe fast JUMP target request variant, full regression, post-route timing and measured practical MIPS improvement.
 - [Phase 13B BEQ target prefetch](reports/phase13b_beq_target_prefetch.md) records the dual-read instruction-memory branch-prefetch experiment, full regression, post-route timing and why it remains experimental rather than replacing Phase 13A.
-- [Phase 13C timing closure](reports/phase13c_timing_closure.md) records the separate timing-optimised pipeline path, routed period sweep, critical-path shift and measured practical MIPS improvement to about 80.8 MIPS.
+- [Phase 13C timing closure](reports/phase13c_timing_closure.md) records the separate timing-optimised pipeline path, routed period sweep, critical-path shift and measured practical MIPS improvement to about 82.1 MIPS.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
