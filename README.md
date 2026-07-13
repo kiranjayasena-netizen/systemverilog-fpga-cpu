@@ -97,6 +97,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 13C adds a separate timing-optimised jumpfast pipeline path; full regression passes, routed implementation passes at a verified 9.100 ns period with Vivado performance directives, and practical estimated throughput improves to about 82.1 MIPS. The 90 MIPS target is not yet reached.
 - Phase 13D tests a separate load-forwarding timing experiment; full regression and implementation pass, but extra stalls reduce practical estimated throughput to about 80.7 MIPS, so it did not replace Phase 13C.
 - Phase 13E tests a separate forwarding-path restructuring experiment; full regression passes, routed implementation passes at a verified 8.900 ns period, and practical estimated throughput improves to about 83.9 MIPS. Phase 13E is now the preferred measured pipeline path.
+- Phase 13G tests a separate registered target-buffer experiment; the focused test and routed 8.900 ns implementation pass, but aggregate CPI and Fmax match Phase 13E while resources increase, so Phase 13E remains preferred.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -134,6 +135,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 13C timing closure](reports/phase13c_timing_closure.md) records the separate timing-optimised pipeline path, routed period sweep, critical-path shift and measured practical MIPS improvement to about 82.1 MIPS.
 - [Phase 13D load-forwarding timing experiment](reports/phase13d_load_forwarding_timing.md) records the WB-to-ID bypass removal experiment and why it does not replace Phase 13C.
 - [Phase 13E forwarding-path timing experiment](reports/phase13e_forwarding_timing.md) records the WB/load forwarding-path restructuring experiment, full regression, routed 8.900 ns implementation and measured practical MIPS improvement to about 83.9 MIPS.
+- [Phase 13G registered target-buffer experiment](reports/phase13g_registered_target_buffer.md) records the timing-safe registered target-buffer experiment and why it does not replace Phase 13E.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -274,6 +276,7 @@ Completed work:
 - Phase 13C separate timing-optimised pipeline path, full regression, Basys 3 implementation, routed period sweep and timing-closure comparison
 - Phase 13D separate load-forwarding timing experiment, full regression and Basys 3 implementation comparison
 - Phase 13E separate forwarding-path timing experiment, full regression, Basys 3 implementation and updated preferred measured pipeline comparison
+- Phase 13G separate registered target-buffer experiment, focused simulation, Basys 3 implementation and neutral comparison against Phase 13E
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -285,8 +288,8 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 13E
-- Further Phase 13 pipeline optimisation toward the 90 MIPS target, using Phase 13E as the current preferred measured pipeline path
+- Supervisor-facing conclusion on the preferred FPGA implementation path after Phase 13E and the neutral Phase 13G experiment
+- Further Phase 13 pipeline optimisation toward the 90 MIPS target, still using Phase 13E as the current preferred measured pipeline path
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure

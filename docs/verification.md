@@ -2598,9 +2598,79 @@ Conclusion:
 
 The separate Phase 13E forwarding-path timing experiment preserves Phase 13C CPI while improving verified post-route Fmax from 109.890 MHz to 112.360 MHz. Practical estimated throughput improves from about 82.1 MIPS to about 83.9 MIPS, so Phase 13E becomes the preferred measured implementation path. The 90 MIPS target is still not reached.
 
+## Phase 13G Registered Target-Buffer Experiment
+
+Status: focused simulation passed; implementation passed; not preferred over Phase 13E.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline_targetbuf_reg.sv`
+- `tb/tb_cpu_core_pipeline_targetbuf_reg.sv`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Tests covered:
+
+- Registered one-entry JUMP target-buffer lookup.
+- First JUMP target miss and repeated JUMP target hit behaviour.
+- Backward JUMP loop with target-buffer hits.
+- BEQ behaviour retained from Phase 13E.
+- Older BEQ flushing younger JUMP behaviour.
+- Pause/resume, invalid opcode safety, wrong-path STORE protection and no duplicate retirement through the inherited Phase 13 pipeline checks.
+- Full aggregate benchmark matching the Phase 13E instruction mix and measurement boundaries.
+
+Result:
+
+- Focused Phase 13G test passed with 3,264 tests run and 0 tests failed.
+- Console output included `Phase 13G targetbuf_reg PIPELINE TEST PASSED`.
+- Full local regression was not rerun after the final Phase 13G change because the focused test passed and the variant did not improve the preferred Phase 13E design. The regression script now includes Phase 13G for future full runs.
+
+Performance summary from simulation:
+
+| Metric | Value |
+| --- | ---: |
+| Aggregate cycles | 427 |
+| Aggregate retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Aggregate MIPS at 100 MHz | 74.707 |
+| Target-buffer hits | 18 |
+| Target-buffer misses | 1 |
+
+Post-route implementation summary:
+
+- Basys 3 part: `xc7a35tcpg236-1`.
+- Top module: `fpga_top_pipeline_targetbuf_reg`.
+- Verified period tested: 8.900 ns.
+- Verified post-route Fmax from implementation: 112.360 MHz.
+- WNS at 8.900 ns: +0.058 ns.
+- TNS at 8.900 ns: 0.000 ns.
+- WHS at 8.900 ns: +0.041 ns.
+- BRAM use: 1 Block RAM Tile / 2 RAMB18.
+- LUTs: 1,447.
+- FFs: 1,615.
+- Bitstream generation passed.
+- Practical estimated MIPS: approximately 83.9.
+
+Transcript:
+
+- `reports/simulation_transcripts/phase13g_targetbuf_reg_focused_20260713_112502.txt`
+
+Report:
+
+- `reports/phase13g_registered_target_buffer.md`
+
+Conclusion:
+
+The separate Phase 13G registered target-buffer experiment fixes the Phase 13F timing problem by registering the target-buffer hit before use. However, the extra register stage also removes the Phase 13F CPI benefit. Phase 13G matches Phase 13E CPI and Fmax while using more LUTs and FFs, so Phase 13E remains the preferred measured implementation path.
+
 ## Future Verification Work
 
-- Continue Phase 13 optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E is now the preferred measured implementation path.
+- Continue Phase 13 optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E remains the preferred measured implementation path after the neutral Phase 13G experiment.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

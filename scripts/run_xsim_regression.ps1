@@ -313,6 +313,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_targetbuf_regression_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 13G registered target-buffer experiment" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_targetbuf_reg.sv", "tb/tb_cpu_core_pipeline_targetbuf_reg.sv") `
+    -Top "tb_cpu_core_pipeline_targetbuf_reg" `
+    -Snapshot "tb_cpu_core_pipeline_targetbuf_regression_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `
