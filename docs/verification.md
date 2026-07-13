@@ -2726,9 +2726,69 @@ Conclusion:
 
 Phase 13H confirms that Phase 13E is the current preferred measured FPGA implementation path. The final verified result is about 84.4 practical estimated MIPS. The 90 MIPS target is not yet reached.
 
+## Phase 13I Implementation Strategy Sweep
+
+Status: passed; Phase 13I becomes the preferred implementation strategy for the unchanged Phase 13E RTL.
+
+Files reviewed:
+
+- `rtl/cpu_core_pipeline_forwardtiming.sv`
+- `rtl/fpga_top_pipeline_forwardtiming.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming.sv`
+- `scripts/run_vivado_impl_pipeline_forwardtiming.tcl`
+- `reports/phase13h_preferred_pipeline_summary.md`
+
+Files added:
+
+- `scripts/run_vivado_phase13i_strategy_sweep.tcl`
+- `reports/phase13i_strategy_sweep.md`
+
+Functional verification:
+
+- No RTL, testbench, instruction encoding or benchmark program changed in Phase 13I.
+- No new functional testbench was required.
+- The functional evidence remains the Phase 13H full XSim regression: `reports/simulation_transcripts/phase13h_xsim_regression_final_20260713_124649.txt`.
+
+Vivado implementation strategy sweep:
+
+| Strategy | Period | WNS | TNS | WHS | THS | Status |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Phase 13H baseline | 8.850 ns | +0.126 ns | 0.000 ns | +0.034 ns | 0.000 ns | Passed |
+| Phase 13H baseline | 8.800 ns | -0.026 ns | -0.161 ns | +0.039 ns | 0.000 ns | Failed setup |
+| `route_highcost` | 8.800 ns | -0.087 ns | -0.512 ns | +0.039 ns | 0.000 ns | Failed setup |
+| `fanout_opt` | 8.800 ns | +0.012 ns | 0.000 ns | +0.039 ns | 0.000 ns | Passed |
+| `fanout_opt` | 8.750 ns | +0.012 ns | 0.000 ns | +0.034 ns | 0.000 ns | Passed |
+| `fanout_opt` | 8.700 ns | +0.034 ns | 0.000 ns | +0.094 ns | 0.000 ns | Passed |
+| `fanout_opt` | 8.650 ns | +0.059 ns | 0.000 ns | +0.057 ns | 0.000 ns | Passed |
+
+Final accepted result:
+
+| Metric | Value |
+| --- | ---: |
+| Preferred RTL | Phase 13E forwarding-timing pipeline |
+| Preferred implementation strategy | Phase 13I `fanout_opt` |
+| Aggregate cycles | 427 |
+| Retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Final verified period | 8.650 ns |
+| Final verified Fmax | 115.607 MHz |
+| Practical estimated MIPS | ~86.4 |
+| LUTs | 1,363 |
+| FFs | 1,510 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+
+Report:
+
+- `reports/phase13i_strategy_sweep.md`
+
+Conclusion:
+
+Phase 13I improves the preferred measured result from about 84.4 MIPS to about 86.4 MIPS without changing CPU behaviour. The 90 MIPS target is still not reached.
+
 ## Future Verification Work
 
-- Continue optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E remains the preferred measured implementation path after the Phase 13H consolidation.
+- Continue optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. The preferred measured path is now the Phase 13E RTL implemented with the Phase 13I `fanout_opt` Vivado strategy.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
