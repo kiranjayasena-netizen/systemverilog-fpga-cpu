@@ -319,6 +319,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_targetbuf_reg_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 14B six-stage pipeline skeleton" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_skeleton.sv") `
+    -Top "tb_cpu_core_pipeline6_skeleton" `
+    -Snapshot "tb_cpu_core_pipeline6_skeleton_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `

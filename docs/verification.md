@@ -2810,9 +2810,51 @@ Summary:
 - The current Phase 13I result remains the preferred measured implementation until a future Phase 14 implementation passes full regression and beats about 86.4 practical estimated MIPS.
 - No new simulation was run because this phase did not add or modify RTL.
 
+## Phase 14B Six-Stage Pipeline Skeleton
+
+Status: focused simulation passed; full local regression passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `tb/tb_cpu_core_pipeline6_skeleton.sv`
+
+Focused transcript:
+
+- `reports/simulation_transcripts/phase14b_pipeline6_skeleton_focused_20260713_192051.txt`
+
+Full regression transcript:
+
+- `reports/simulation_transcripts/phase14b_full_xsim_regression_20260713_192118.txt`
+
+Coverage:
+
+- Reset clears fetch request state, pipeline valid bits, retirement pulse and retired count.
+- Synchronous instruction-BRAM responses are paired with saved request PCs.
+- Sequential request PCs are issued at 0, 4, 8, 12 and 16 bytes.
+- A known instruction advances through IF/ID, ID/OP, OP/EX, EX/MEM and MEM/WB in order.
+- `enable = 0` pauses fetch metadata and all pipeline registers without retirement.
+- Pause/resume preserves a pending BRAM response using a small paused-response buffer.
+- NOP flows as a valid software instruction and retires once.
+- Invalid opcode becomes a hardware bubble and does not retire.
+- No register-write or memory-write side-effect pulse occurs.
+
+Result:
+
+- Focused checks run: 198
+- Focused failures: 0
+- Full local XSim regression completed successfully after adding the Phase 14B test.
+- The known Vivado/XSim `xelab` object-directory cleanup warning appeared after snapshot builds, but XSim completed and self-checking tests passed.
+
+Conclusion:
+
+Phase 14B proves the separate IF -> ID -> OP -> EX -> MEM -> WB skeleton structure. It does not implement arithmetic, memory, control-flow redirects, forwarding or timing measurement yet, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
+
 ## Future Verification Work
 
-- Start Phase 14B with a six-stage pipeline skeleton and focused valid-bit/fetch/reset tests, while preserving the Phase 13I result as the preferred measured baseline.
+- Start Phase 14C with arithmetic execution and basic forwarding for the separate six-stage pipeline skeleton, while preserving the Phase 13I result as the preferred measured baseline.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

@@ -101,6 +101,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 13H consolidates the Phase 13 optimisation study and confirms Phase 13E as the preferred measured implementation. The 90 MIPS target has not yet been reached.
 - Phase 13I tests Vivado implementation strategies for the unchanged Phase 13E RTL; the fanout-focused strategy closes timing at 8.650 ns and improves practical estimated throughput to about 86.4 MIPS. The 90 MIPS target is still not reached.
 - Phase 14A plans a deeper six-stage pipeline as a future route toward 90+ MIPS; no RTL has been changed for this planning phase.
+- Phase 14B adds a separate six-stage pipeline skeleton; the focused XSim test and full local regression pass, but no performance improvement is claimed yet.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -142,6 +143,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 13H preferred pipeline summary](reports/phase13h_preferred_pipeline_summary.md) records the final Phase 13E timing sweep, final practical MIPS result and supervisor-ready comparison of Phase 12 through Phase 13G.
 - [Phase 13I implementation strategy sweep](reports/phase13i_strategy_sweep.md) records the fanout-focused Vivado strategy sweep that improves the preferred Phase 13E RTL to about 86.4 practical estimated MIPS.
 - [Phase 14A deeper pipeline plan](reports/phase14a_deeper_pipeline_plan.md) proposes a future IF/ID/OP/EX/MEM/WB pipeline and defines the verification and timing criteria required before it could replace Phase 13I.
+- [Phase 14B six-stage pipeline skeleton](reports/phase14b_pipeline6_skeleton.md) documents the separate IF/ID/OP/EX/MEM/WB skeleton, focused XSim result and current limitations.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -286,6 +288,7 @@ Completed work:
 - Phase 13H preferred pipeline consolidation, full regression rerun and final Phase 13E timing sweep
 - Phase 13I Vivado implementation strategy sweep for the unchanged preferred Phase 13E RTL
 - Phase 14A deeper pipeline architecture plan
+- Phase 14B separate six-stage pipeline skeleton and focused XSim verification
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -298,7 +301,7 @@ Next planned work:
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Supervisor-facing conclusion on the preferred FPGA implementation path after the Phase 13I strategy sweep
-- Phase 14B six-stage pipeline skeleton, while keeping the Phase 13E RTL with Phase 13I `fanout_opt` implementation as the current preferred measured path
+- Phase 14C arithmetic execution and basic forwarding for the separate six-stage pipeline skeleton
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure
