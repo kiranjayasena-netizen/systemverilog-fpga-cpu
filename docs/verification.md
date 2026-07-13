@@ -2852,9 +2852,51 @@ Conclusion:
 
 Phase 14B proves the separate IF -> ID -> OP -> EX -> MEM -> WB skeleton structure. It does not implement arithmetic, memory, control-flow redirects, forwarding or timing measurement yet, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
 
+## Phase 14C Six-Stage Pipeline Arithmetic
+
+Status: focused simulation passed; full local regression passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `tb/tb_cpu_core_pipeline6_arithmetic.sv`
+
+Focused transcript:
+
+- `reports/simulation_transcripts/phase14c_pipeline6_arithmetic_focused_20260713_194940.txt`
+
+Full regression transcript:
+
+- `reports/simulation_transcripts/phase14c_full_xsim_regression_20260713_195034.txt`
+
+Coverage:
+
+- Reset clears pipeline and internal architectural registers.
+- ADDI writes `x1 = 5`, `x2 = 7` and sign-extends `-1` into `x8`.
+- ADD, SUB, AND, OR and XOR execute correctly.
+- Writes to `x0` are ignored.
+- Back-to-back arithmetic dependencies are handled with simple forwarding from OP/EX, EX/MEM and MEM/WB sources.
+- NOP retires safely without a register write.
+- Invalid opcode becomes a bubble and does not retire or write.
+- No memory-write pulse occurs in Phase 14C.
+- Pause/resume holds pipeline and register state safely.
+
+Result:
+
+- Focused checks run: 377
+- Focused failures: 0
+- Full local XSim regression completed successfully after adding the Phase 14C test.
+- The known Vivado/XSim `xelab` object-directory cleanup warning appeared after snapshot builds, but XSim completed and self-checking tests passed.
+
+Conclusion:
+
+Phase 14C proves arithmetic execution for the separate six-stage pipeline path. It does not implement LOAD/STORE, BEQ/JUMP, full memory/control forwarding or Phase 14 timing measurement, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
+
 ## Future Verification Work
 
-- Start Phase 14C with arithmetic execution and basic forwarding for the separate six-stage pipeline skeleton, while preserving the Phase 13I result as the preferred measured baseline.
+- Start Phase 14D with LOAD/STORE support and load-use hazard handling for the separate six-stage pipeline, while preserving the Phase 13I result as the preferred measured baseline.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

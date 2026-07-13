@@ -43,6 +43,24 @@ module fpga_top_pipeline6 #(
     logic [3:0]  retire_opcode;
     logic        reg_write;
     logic        mem_write;
+    logic        writeback_valid;
+    logic [4:0]  writeback_rd;
+    logic [31:0] writeback_data;
+    logic        stall_active;
+    logic [31:0] debug_x0;
+    logic [31:0] debug_x1;
+    logic [31:0] debug_x2;
+    logic [31:0] debug_x3;
+    logic [31:0] debug_x4;
+    logic [31:0] debug_x5;
+    logic [31:0] debug_x6;
+    logic [31:0] debug_x7;
+    logic [31:0] debug_x8;
+    logic [31:0] debug_x9;
+    logic [31:0] debug_x10;
+    logic [31:0] debug_x11;
+    logic [31:0] debug_x12;
+    logic [31:0] debug_x13;
 
     cpu_core_pipeline6 #(
         .IMEM_DEPTH(IMEM_DEPTH),
@@ -85,7 +103,25 @@ module fpga_top_pipeline6 #(
         .debug_retire_pc(retire_pc),
         .debug_retire_opcode(retire_opcode),
         .debug_reg_write(reg_write),
-        .debug_mem_write(mem_write)
+        .debug_mem_write(mem_write),
+        .debug_writeback_valid(writeback_valid),
+        .debug_writeback_rd(writeback_rd),
+        .debug_writeback_data(writeback_data),
+        .debug_stall_active(stall_active),
+        .debug_x0(debug_x0),
+        .debug_x1(debug_x1),
+        .debug_x2(debug_x2),
+        .debug_x3(debug_x3),
+        .debug_x4(debug_x4),
+        .debug_x5(debug_x5),
+        .debug_x6(debug_x6),
+        .debug_x7(debug_x7),
+        .debug_x8(debug_x8),
+        .debug_x9(debug_x9),
+        .debug_x10(debug_x10),
+        .debug_x11(debug_x11),
+        .debug_x12(debug_x12),
+        .debug_x13(debug_x13)
     );
 
     always_comb begin
@@ -98,8 +134,8 @@ module fpga_top_pipeline6 #(
         // led[11]    = EX/MEM valid
         // led[12]    = MEM/WB valid
         // led[13]    = retirement pulse
-        // led[14]    = register-write side-effect pulse, expected 0 in Phase 14B
-        // led[15]    = memory-write side-effect pulse, expected 0 in Phase 14B
+        // led[14]    = register-write side-effect pulse
+        // led[15]    = memory-write side-effect pulse, expected 0 through Phase 14C
         led[3:0] = fetch_pc[5:2];
         led[7:4] = if_id_opcode;
         led[8]   = if_id_valid;
