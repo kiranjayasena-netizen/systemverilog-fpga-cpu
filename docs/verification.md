@@ -2628,7 +2628,7 @@ Result:
 
 - Focused Phase 13G test passed with 3,264 tests run and 0 tests failed.
 - Console output included `Phase 13G targetbuf_reg PIPELINE TEST PASSED`.
-- Full local regression was not rerun after the final Phase 13G change because the focused test passed and the variant did not improve the preferred Phase 13E design. The regression script now includes Phase 13G for future full runs.
+- Full local regression was rerun during Phase 13H after Phase 13G was added. The Phase 13G snapshot name in the regression script was shortened to avoid a Vivado/XSim snapshot cleanup/kernel issue, and the final full regression completed successfully.
 
 Performance summary from simulation:
 
@@ -2668,9 +2668,67 @@ Conclusion:
 
 The separate Phase 13G registered target-buffer experiment fixes the Phase 13F timing problem by registering the target-buffer hit before use. However, the extra register stage also removes the Phase 13F CPI benefit. Phase 13G matches Phase 13E CPI and Fmax while using more LUTs and FFs, so Phase 13E remains the preferred measured implementation path.
 
+## Phase 13H Preferred Pipeline Consolidation
+
+Status: passed; Phase 13E remains preferred.
+
+Files reviewed:
+
+- `rtl/cpu_core_pipeline_forwardtiming.sv`
+- `rtl/fpga_top_pipeline_forwardtiming.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming.sv`
+- `scripts/run_xsim_regression.ps1`
+- `scripts/run_vivado_impl_pipeline_forwardtiming.tcl`
+- `reports/phase13e_forwarding_timing.md`
+- `reports/phase13g_registered_target_buffer.md`
+
+Simulator:
+
+- Vivado XSim 2026.1
+
+Result:
+
+- Full local XSim regression was rerun after Phase 13G was added.
+- Final transcript: `reports/simulation_transcripts/phase13h_xsim_regression_final_20260713_124649.txt`.
+- The final transcript includes `All XSim regression tests completed.`
+- Phase 13E, Phase 13F and Phase 13G pipeline tests all reported 0 failures.
+- A previous full-regression attempt hit a Vivado/XSim snapshot cleanup/kernel issue on the Phase 13G snapshot. A shorter Phase 13G snapshot name in `scripts/run_xsim_regression.ps1` fixed the regression-script issue without changing RTL.
+
+Final Phase 13E timing sweep:
+
+| Period | WNS | TNS | WHS | THS | Status |
+| ---: | ---: | ---: | ---: | ---: | --- |
+| 8.900 ns | +0.059 ns | 0.000 ns | +0.040 ns | 0.000 ns | Passed |
+| 8.850 ns | +0.126 ns | 0.000 ns | +0.034 ns | 0.000 ns | Passed, final accepted result |
+| 8.800 ns | -0.026 ns | -0.161 ns | +0.039 ns | 0.000 ns | Failed setup |
+
+Final accepted result:
+
+| Metric | Value |
+| --- | ---: |
+| Preferred implementation | Phase 13E forwarding-timing pipeline |
+| Aggregate cycles | 427 |
+| Retired instructions | 319 |
+| Aggregate CPI | 1.339 |
+| Final verified period | 8.850 ns |
+| Final verified Fmax | 112.994 MHz |
+| Practical estimated MIPS | ~84.4 |
+| LUTs | 1,383 |
+| FFs | 1,513 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+
+Report:
+
+- `reports/phase13h_preferred_pipeline_summary.md`
+
+Conclusion:
+
+Phase 13H confirms that Phase 13E is the current preferred measured FPGA implementation path. The final verified result is about 84.4 practical estimated MIPS. The 90 MIPS target is not yet reached.
+
 ## Future Verification Work
 
-- Continue Phase 13 optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E remains the preferred measured implementation path after the neutral Phase 13G experiment.
+- Continue optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. Phase 13E remains the preferred measured implementation path after the Phase 13H consolidation.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
