@@ -2894,9 +2894,55 @@ Conclusion:
 
 Phase 14C proves arithmetic execution for the separate six-stage pipeline path. It does not implement LOAD/STORE, BEQ/JUMP, full memory/control forwarding or Phase 14 timing measurement, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
 
+## Phase 14D Six-Stage Pipeline Memory
+
+Status: focused simulation passed; full local regression passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `tb/tb_cpu_core_pipeline6_memory.sv`
+
+Focused transcript:
+
+- `reports/simulation_transcripts/phase14d_pipeline6_memory_focused_20260713_202559.txt`
+
+Full regression transcript:
+
+- `reports/simulation_transcripts/phase14d_full_xsim_regression_20260713_202642.txt`
+
+Coverage:
+
+- Reset clears pipeline and internal architectural registers.
+- STORE writes data memory word 16 using `[x1 + 0]`.
+- LOAD reads back data from `[x1 + 0]`.
+- STORE and LOAD work with a `+4` byte offset.
+- Negative-offset LOAD reads `[x5 - 4]`.
+- STORE-data forwarding works for a recently produced arithmetic result.
+- LOAD-use arithmetic dependency is handled safely.
+- LOAD-use STORE dependency is handled safely.
+- Writes to `x0` from LOAD and ADDI are ignored.
+- Invalid opcode becomes a bubble and does not retire, write a register or write memory.
+- NOP retires safely without register or memory side effects.
+- Pause/resume during data-memory activity holds state and does not duplicate STORE writes.
+
+Result:
+
+- Focused checks run: 489
+- Focused failures: 0
+- Full local XSim regression completed successfully after adding the Phase 14D test.
+- The known Vivado/XSim `xelab` object-directory cleanup warning appeared after snapshot builds, but XSim completed and self-checking tests passed.
+
+Conclusion:
+
+Phase 14D proves LOAD/STORE execution for the separate six-stage pipeline path using synchronous data memory. It does not implement BEQ/JUMP redirects, wrong-path protection, full custom-ISA benchmarking or Phase 14 timing measurement, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
+
 ## Future Verification Work
 
-- Start Phase 14D with LOAD/STORE support and load-use hazard handling for the separate six-stage pipeline, while preserving the Phase 13I result as the preferred measured baseline.
+- Start Phase 14E with BEQ/JUMP redirects and wrong-path protection for the separate six-stage pipeline, while preserving the Phase 13I result as the preferred measured baseline.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

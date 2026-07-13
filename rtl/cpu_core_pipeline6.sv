@@ -2,6 +2,7 @@ import cpu_defs_pkg::*;
 
 module cpu_core_pipeline6 #(
     parameter int unsigned IMEM_DEPTH = 256,
+    parameter int unsigned DMEM_DEPTH = 256,
     parameter string       IMEM_INIT_FILE = ""
 ) (
     input  logic        clk,
@@ -50,6 +51,12 @@ module cpu_core_pipeline6 #(
     output logic        debug_reg_write,
     output logic        debug_mem_write,
 
+    output logic        debug_mem_read,
+    output logic [31:0] debug_mem_addr,
+    output logic [31:0] debug_mem_write_data,
+    output logic [31:0] debug_mem_read_data,
+    output logic        debug_load_use_stall,
+
     output logic        debug_writeback_valid,
     output logic [4:0]  debug_writeback_rd,
     output logic [31:0] debug_writeback_data,
@@ -88,9 +95,11 @@ module cpu_core_pipeline6 #(
         logic        uses_rs2;
         logic [31:0] operand_a;
         logic [31:0] operand_b;
+        logic [31:0] store_data;
         logic [31:0] alu_result;
         logic [31:0] writeback_data;
         logic        reg_write;
+        logic        mem_read;
         logic        mem_write;
     } pipe_stage_t;
 
@@ -111,6 +120,19 @@ module cpu_core_pipeline6 #(
     logic [31:0] regs [0:31];
     logic [31:0] retired_count_reg;
     logic [31:0] op_ex_alu_result;
+    logic        data_mem_read;
+    logic        data_mem_write;
+    logic [31:0] data_mem_addr;
+    logic [31:0] data_mem_write_data;
+    logic [31:0] data_mem_read_data;
+    logic        mem_wb_load_data_valid_reg;
+    logic [31:0] mem_wb_load_data_reg;
+    logic        load_use_stall;
+    logic [31:0] wb_writeback_data;
+    logic        wb_reg_write;
+    logic        fetch_response_available;
+    logic [31:0] fetch_response_pc;
+    logic [31:0] fetch_response_instruction;
 
     assign debug_fetch_pc            = fetch_pc_reg;
     assign debug_instruction_addr    = fetch_pc_reg;
@@ -148,8 +170,23 @@ module cpu_core_pipeline6 #(
     assign debug_mem_wb_decoded_valid = mem_wb_reg.decoded_valid;
 
     assign debug_retired_count = retired_count_reg;
-    assign debug_stall_active  = 1'b0;
-    assign debug_mem_write     = 1'b0;
+    assign debug_stall_active  = load_use_stall;
+    assign debug_load_use_stall = load_use_stall;
+
+    assign data_mem_read       = ex_mem_reg.valid && ex_mem_reg.mem_read;
+    assign data_mem_write      = enable && ex_mem_reg.valid && ex_mem_reg.mem_write;
+    assign data_mem_addr       = ex_mem_reg.alu_result;
+    assign data_mem_write_data = ex_mem_reg.store_data;
+
+    assign debug_mem_read       = data_mem_read;
+    assign debug_mem_write      = data_mem_write;
+    assign debug_mem_addr       = data_mem_addr;
+    assign debug_mem_write_data = data_mem_write_data;
+    assign debug_mem_read_data  = data_mem_read_data;
+
+    assign fetch_response_available = paused_response_valid_reg || fetch_request_valid_reg;
+    assign fetch_response_pc = paused_response_valid_reg ? paused_response_pc_reg : fetch_request_pc_reg;
+    assign fetch_response_instruction = paused_response_valid_reg ? paused_response_instruction_reg : bram_instruction;
 
     assign debug_x0  = 32'h0000_0000;
     assign debug_x1  = regs[1];
@@ -177,6 +214,18 @@ module cpu_core_pipeline6 #(
         .instruction(bram_instruction)
     );
 
+    bram_data_mem #(
+        .DEPTH(DMEM_DEPTH),
+        .WIDTH(32)
+    ) data_mem_inst (
+        .clk(clk),
+        .mem_read(data_mem_read),
+        .mem_write(data_mem_write),
+        .addr(data_mem_addr),
+        .write_data(data_mem_write_data),
+        .read_data(data_mem_read_data)
+    );
+
     function automatic pipe_stage_t empty_stage();
         pipe_stage_t stage;
 
@@ -194,15 +243,17 @@ module cpu_core_pipeline6 #(
         stage.uses_rs2      = 1'b0;
         stage.operand_a      = 32'h0000_0000;
         stage.operand_b      = 32'h0000_0000;
+        stage.store_data     = 32'h0000_0000;
         stage.alu_result     = 32'h0000_0000;
         stage.writeback_data = 32'h0000_0000;
         stage.reg_write      = 1'b0;
+        stage.mem_read       = 1'b0;
         stage.mem_write      = 1'b0;
 
         return stage;
     endfunction
 
-    function automatic logic opcode_supported_phase14c(input logic [3:0] opcode);
+    function automatic logic opcode_supported_phase14d(input logic [3:0] opcode);
         unique case (opcode)
             OP_NOP,
             OP_ADD,
@@ -210,8 +261,10 @@ module cpu_core_pipeline6 #(
             OP_AND,
             OP_OR,
             OP_XOR,
-            OP_ADDI: opcode_supported_phase14c = 1'b1;
-            default: opcode_supported_phase14c = 1'b0;
+            OP_ADDI,
+            OP_LOAD,
+            OP_STORE: opcode_supported_phase14d = 1'b1;
+            default: opcode_supported_phase14d = 1'b0;
         endcase
     endfunction
 
@@ -227,11 +280,31 @@ module cpu_core_pipeline6 #(
             OP_AND:  alu_result_for_stage = stage.operand_a & stage.operand_b;
             OP_OR:   alu_result_for_stage = stage.operand_a | stage.operand_b;
             OP_XOR:  alu_result_for_stage = stage.operand_a ^ stage.operand_b;
+            OP_LOAD,
+            OP_STORE: alu_result_for_stage = stage.operand_a + stage.imm_ext;
             default: alu_result_for_stage = 32'h0000_0000;
         endcase
     endfunction
 
     assign op_ex_alu_result = alu_result_for_stage(op_ex_reg);
+
+    function automatic logic stage_forward_ready(input pipe_stage_t stage);
+        stage_forward_ready = stage.valid &&
+                              stage.writes_rd &&
+                              (stage.rd != 5'd0) &&
+                              (stage.opcode != OP_LOAD);
+    endfunction
+
+    function automatic logic [31:0] writeback_value_for_stage(input pipe_stage_t stage);
+        if (stage.valid && (stage.opcode == OP_LOAD)) begin
+            writeback_value_for_stage = mem_wb_load_data_valid_reg ? mem_wb_load_data_reg : data_mem_read_data;
+        end else begin
+            writeback_value_for_stage = stage.writeback_data;
+        end
+    endfunction
+
+    assign wb_writeback_data = writeback_value_for_stage(mem_wb_reg);
+    assign wb_reg_write = mem_wb_reg.valid && mem_wb_reg.reg_write && (mem_wb_reg.rd != 5'd0);
 
     function automatic logic [31:0] read_reg_or_forward(
         input logic [4:0] source_reg,
@@ -239,19 +312,34 @@ module cpu_core_pipeline6 #(
     );
         if (!source_used || (source_reg == 5'd0)) begin
             read_reg_or_forward = 32'h0000_0000;
-        end else if (op_ex_reg.valid && op_ex_reg.writes_rd &&
-                     (op_ex_reg.rd != 5'd0) && (op_ex_reg.rd == source_reg)) begin
+        end else if (stage_forward_ready(op_ex_reg) && (op_ex_reg.rd == source_reg)) begin
             read_reg_or_forward = op_ex_alu_result;
-        end else if (ex_mem_reg.valid && ex_mem_reg.writes_rd &&
-                     (ex_mem_reg.rd != 5'd0) && (ex_mem_reg.rd == source_reg)) begin
+        end else if (stage_forward_ready(ex_mem_reg) && (ex_mem_reg.rd == source_reg)) begin
             read_reg_or_forward = ex_mem_reg.writeback_data;
         end else if (mem_wb_reg.valid && mem_wb_reg.writes_rd &&
                      (mem_wb_reg.rd != 5'd0) && (mem_wb_reg.rd == source_reg)) begin
-            read_reg_or_forward = mem_wb_reg.writeback_data;
+            read_reg_or_forward = writeback_value_for_stage(mem_wb_reg);
         end else begin
             read_reg_or_forward = regs[source_reg];
         end
     endfunction
+
+    function automatic logic stage_depends_on_rd(input pipe_stage_t consumer, input logic [4:0] producer_rd);
+        stage_depends_on_rd = consumer.valid &&
+                              (producer_rd != 5'd0) &&
+                              ((consumer.uses_rs1 && (consumer.rs1 == producer_rd)) ||
+                               (consumer.uses_rs2 && (consumer.rs2 == producer_rd)));
+    endfunction
+
+    function automatic logic pending_load_hazard(input pipe_stage_t producer, input pipe_stage_t consumer);
+        pending_load_hazard = producer.valid &&
+                              (producer.opcode == OP_LOAD) &&
+                              producer.writes_rd &&
+                              stage_depends_on_rd(consumer, producer.rd);
+    endfunction
+
+    assign load_use_stall = pending_load_hazard(op_ex_reg, id_op_reg) ||
+                            pending_load_hazard(ex_mem_reg, id_op_reg);
 
     function automatic pipe_stage_t decoded_stage(
         input logic        accept_response,
@@ -264,7 +352,7 @@ module cpu_core_pipeline6 #(
 
         stage            = empty_stage();
         opcode           = response_instruction[31:28];
-        supported_opcode = opcode_is_valid(opcode) && opcode_supported_phase14c(opcode);
+        supported_opcode = opcode_is_valid(opcode) && opcode_supported_phase14d(opcode);
 
         if (accept_response && supported_opcode) begin
             stage.valid         = 1'b1;
@@ -276,7 +364,7 @@ module cpu_core_pipeline6 #(
             stage.rs2           = response_instruction[17:13];
             stage.imm_ext       = sign_extend_imm13(response_instruction[12:0]);
             stage.decoded_valid = 1'b1;
-            stage.writes_rd     = opcode_writes_rd(opcode) && opcode_is_arithmetic(opcode);
+            stage.writes_rd     = opcode_writes_rd(opcode);
             stage.uses_rs1      = opcode_uses_rs1(opcode);
             stage.uses_rs2      = opcode_uses_rs2(opcode);
         end
@@ -289,11 +377,12 @@ module cpu_core_pipeline6 #(
 
         stage = stage_in;
         stage.operand_a = read_reg_or_forward(stage_in.rs1, stage_in.uses_rs1);
+        stage.store_data = read_reg_or_forward(stage_in.rs2, stage_in.uses_rs2);
 
         if (stage_in.opcode == OP_ADDI) begin
             stage.operand_b = stage_in.imm_ext;
         end else begin
-            stage.operand_b = read_reg_or_forward(stage_in.rs2, stage_in.uses_rs2);
+            stage.operand_b = stage.store_data;
         end
 
         return stage;
@@ -301,12 +390,15 @@ module cpu_core_pipeline6 #(
 
     function automatic pipe_stage_t execute_stage(input pipe_stage_t stage_in);
         pipe_stage_t stage;
+        logic [31:0] result;
 
         stage = stage_in;
-        stage.alu_result     = alu_result_for_stage(stage_in);
-        stage.writeback_data = alu_result_for_stage(stage_in);
+        result = alu_result_for_stage(stage_in);
+        stage.alu_result     = result;
+        stage.writeback_data = opcode_is_arithmetic(stage_in.opcode) ? result : 32'h0000_0000;
         stage.reg_write      = stage_in.valid && stage_in.writes_rd && (stage_in.rd != 5'd0);
-        stage.mem_write      = 1'b0;
+        stage.mem_read       = stage_in.valid && (stage_in.opcode == OP_LOAD);
+        stage.mem_write      = stage_in.valid && (stage_in.opcode == OP_STORE);
 
         return stage;
     endfunction
@@ -324,6 +416,8 @@ module cpu_core_pipeline6 #(
             op_ex_reg               <= empty_stage();
             ex_mem_reg              <= empty_stage();
             mem_wb_reg              <= empty_stage();
+            mem_wb_load_data_valid_reg <= 1'b0;
+            mem_wb_load_data_reg     <= 32'h0000_0000;
             retired_count_reg       <= 32'd0;
             debug_retire_valid      <= 1'b0;
             debug_retire_pc         <= 32'h0000_0000;
@@ -339,42 +433,63 @@ module cpu_core_pipeline6 #(
         end else if (enable) begin
             // bram_instruction is the synchronous response for the request
             // metadata saved on the previous enabled cycle.
-            mem_wb_reg         <= ex_mem_reg;
-            ex_mem_reg         <= execute_stage(op_ex_reg);
-            op_ex_reg          <= prepare_operands(id_op_reg);
-            id_op_reg          <= if_id_reg;
-            if_id_reg          <= decoded_stage(
-                paused_response_valid_reg || fetch_request_valid_reg,
-                paused_response_valid_reg ? paused_response_pc_reg : fetch_request_pc_reg,
-                paused_response_valid_reg ? paused_response_instruction_reg : bram_instruction
-            );
-            paused_response_valid_reg <= 1'b0;
+            debug_retire_valid <= mem_wb_reg.valid;
+            debug_retire_pc    <= mem_wb_reg.pc;
+            debug_retire_opcode <= mem_wb_reg.opcode;
+            debug_reg_write <= wb_reg_write;
+            debug_writeback_valid <= wb_reg_write;
+            debug_writeback_rd <= mem_wb_reg.rd;
+            debug_writeback_data <= wb_writeback_data;
 
-            debug_retire_valid <= ex_mem_reg.valid;
-            debug_retire_pc    <= ex_mem_reg.pc;
-            debug_retire_opcode <= ex_mem_reg.opcode;
-            debug_reg_write <= ex_mem_reg.valid && ex_mem_reg.reg_write;
-            debug_writeback_valid <= ex_mem_reg.valid && ex_mem_reg.reg_write;
-            debug_writeback_rd <= ex_mem_reg.rd;
-            debug_writeback_data <= ex_mem_reg.writeback_data;
-
-            if (ex_mem_reg.valid) begin
+            if (mem_wb_reg.valid) begin
                 retired_count_reg <= retired_count_reg + 32'd1;
             end
 
-            if (ex_mem_reg.valid && ex_mem_reg.reg_write) begin
-                regs[ex_mem_reg.rd] <= ex_mem_reg.writeback_data;
+            if (wb_reg_write) begin
+                regs[mem_wb_reg.rd] <= wb_writeback_data;
             end
             regs[0] <= 32'h0000_0000;
+            mem_wb_load_data_valid_reg <= 1'b0;
 
-            fetch_request_pc_reg    <= fetch_pc_reg;
-            fetch_request_valid_reg <= 1'b1;
-            fetch_pc_reg            <= fetch_pc_reg + 32'd4;
+            if (load_use_stall) begin
+                mem_wb_reg <= ex_mem_reg;
+                ex_mem_reg <= execute_stage(op_ex_reg);
+                op_ex_reg  <= empty_stage();
+                id_op_reg  <= id_op_reg;
+                if_id_reg  <= if_id_reg;
+
+                if (fetch_request_valid_reg && !paused_response_valid_reg) begin
+                    paused_response_valid_reg       <= 1'b1;
+                    paused_response_pc_reg          <= fetch_request_pc_reg;
+                    paused_response_instruction_reg <= bram_instruction;
+                end
+            end else begin
+                mem_wb_reg <= ex_mem_reg;
+                ex_mem_reg <= execute_stage(op_ex_reg);
+                op_ex_reg  <= prepare_operands(id_op_reg);
+                id_op_reg  <= if_id_reg;
+                if_id_reg  <= decoded_stage(
+                    fetch_response_available,
+                    fetch_response_pc,
+                    fetch_response_instruction
+                );
+                paused_response_valid_reg <= 1'b0;
+
+                fetch_request_pc_reg    <= fetch_pc_reg;
+                fetch_request_valid_reg <= 1'b1;
+                fetch_pc_reg            <= fetch_pc_reg + 32'd4;
+            end
         end else begin
             debug_retire_valid <= 1'b0;
             debug_reg_write <= 1'b0;
             debug_writeback_valid <= 1'b0;
             regs[0] <= 32'h0000_0000;
+
+            if (mem_wb_reg.valid && (mem_wb_reg.opcode == OP_LOAD) &&
+                !mem_wb_load_data_valid_reg) begin
+                mem_wb_load_data_valid_reg <= 1'b1;
+                mem_wb_load_data_reg       <= data_mem_read_data;
+            end
 
             if (fetch_request_valid_reg && !paused_response_valid_reg) begin
                 paused_response_valid_reg       <= 1'b1;

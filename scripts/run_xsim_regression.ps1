@@ -320,15 +320,21 @@ Invoke-XsimTest `
 
 Invoke-XsimTest `
     -Name "Phase 14B six-stage pipeline skeleton" `
-    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_skeleton.sv") `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_skeleton.sv") `
     -Top "tb_cpu_core_pipeline6_skeleton" `
     -Snapshot "tb_cpu_core_pipeline6_skeleton_sim"
 
 Invoke-XsimTest `
     -Name "Phase 14C six-stage pipeline arithmetic" `
-    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_arithmetic.sv") `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_arithmetic.sv") `
     -Top "tb_cpu_core_pipeline6_arithmetic" `
     -Snapshot "tb_cpu_core_pipeline6_arithmetic_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 14D six-stage pipeline memory" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_memory.sv") `
+    -Top "tb_cpu_core_pipeline6_memory" `
+    -Snapshot "tb_cpu_core_pipeline6_memory_sim"
 
 Invoke-XsimTest `
     -Name "Phase 5 program execution" `

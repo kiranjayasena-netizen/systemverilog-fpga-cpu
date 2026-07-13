@@ -43,6 +43,11 @@ module fpga_top_pipeline6 #(
     logic [3:0]  retire_opcode;
     logic        reg_write;
     logic        mem_write;
+    logic        mem_read;
+    logic [31:0] mem_addr;
+    logic [31:0] mem_write_data;
+    logic [31:0] mem_read_data;
+    logic        load_use_stall;
     logic        writeback_valid;
     logic [4:0]  writeback_rd;
     logic [31:0] writeback_data;
@@ -104,6 +109,11 @@ module fpga_top_pipeline6 #(
         .debug_retire_opcode(retire_opcode),
         .debug_reg_write(reg_write),
         .debug_mem_write(mem_write),
+        .debug_mem_read(mem_read),
+        .debug_mem_addr(mem_addr),
+        .debug_mem_write_data(mem_write_data),
+        .debug_mem_read_data(mem_read_data),
+        .debug_load_use_stall(load_use_stall),
         .debug_writeback_valid(writeback_valid),
         .debug_writeback_rd(writeback_rd),
         .debug_writeback_data(writeback_data),
@@ -135,7 +145,7 @@ module fpga_top_pipeline6 #(
         // led[12]    = MEM/WB valid
         // led[13]    = retirement pulse
         // led[14]    = register-write side-effect pulse
-        // led[15]    = memory-write side-effect pulse, expected 0 through Phase 14C
+        // led[15]    = memory-write side-effect pulse
         led[3:0] = fetch_pc[5:2];
         led[7:4] = if_id_opcode;
         led[8]   = if_id_valid;

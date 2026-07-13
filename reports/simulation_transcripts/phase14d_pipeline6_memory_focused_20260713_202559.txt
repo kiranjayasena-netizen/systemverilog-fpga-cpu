@@ -1,0 +1,534 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_defs_pkg.sv" into library work
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/bram_instr_mem.sv" into library work
+INFO: [VRFC 10-311] analyzing module bram_instr_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/bram_data_mem.sv" into library work
+INFO: [VRFC 10-311] analyzing module bram_data_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/rtl/cpu_core_pipeline6.sv" into library work
+INFO: [VRFC 10-311] analyzing module cpu_core_pipeline6
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/FPGA/systemverilog-fpga-cpu/tb/tb_cpu_core_pipeline6_memory.sv" into library work
+INFO: [VRFC 10-311] analyzing module tb_cpu_core_pipeline6_memory
+Vivado Simulator v2026.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: C:/AMDDesignTools/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe tb_cpu_core_pipeline6_memory -s tb_cpu_core_pipeline6_memory_focus_20260713_202559 
+Multi-threading is on. Using 20 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package work.cpu_defs_pkg
+Compiling module work.bram_instr_mem(DEPTH=32'b0110000...
+Compiling module work.bram_data_mem(DEPTH=32'b01000000...
+Compiling module work.cpu_core_pipeline6(IMEM_DEPTH=32...
+Compiling module work.tb_cpu_core_pipeline6_memory
+Built simulation snapshot tb_cpu_core_pipeline6_memory_focus_20260713_202559
+Could not remove the obj directory: boost::filesystem::remove: Access is denied: "xsim.dir/tb_cpu_core_pipeline6_memory_focus_20260713_202559/obj\xsim_0.win64.obj"
+
+
+****** xsim v2026.1 (64-bit)
+  **** SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+  **** IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+  **** SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+  **** Start of session at: Mon Jul 13 20:26:03 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_cpu_core_pipeline6_memory_focus_20260713_202559/xsim_script.tcl
+# xsim {tb_cpu_core_pipeline6_memory_focus_20260713_202559} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+PASS: reset fetch PC | value=0x00000000
+PASS: reset IF/ID invalid
+PASS: reset ID/OP invalid
+PASS: reset OP/EX invalid
+PASS: reset EX/MEM invalid
+PASS: reset MEM/WB invalid
+PASS: reset no memory write
+PASS: reset x0 | value=0x00000000
+PASS: reset x1 | value=0x00000000
+PASS: reset retired count | value=0x00000000
+PASS: pause reached data-memory activity
+PASS: pause fetch PC held during memory | value=0x0000001c
+PASS: pause IF/ID instruction held during memory | value=0x72040004
+PASS: pause ID/OP instruction held during memory | value=0x80046004
+PASS: pause OP/EX instruction held during memory | value=0x71840000
+PASS: pause EX/MEM instruction held during memory | value=0x80044000
+PASS: pause MEM/WB instruction held during memory | value=0x6100007b
+PASS: pause retired count held during memory | value=0x00000001
+PASS: pause x1 held during memory | value=0x00000040
+PASS: pause x2 held during memory | value=0x00000000
+PASS: pause no retirement during memory
+PASS: pause no writeback during memory
+PASS: pause no memory write during memory
+PASS: pause fetch PC held during memory | value=0x0000001c
+PASS: pause IF/ID instruction held during memory | value=0x72040004
+PASS: pause ID/OP instruction held during memory | value=0x80046004
+PASS: pause OP/EX instruction held during memory | value=0x71840000
+PASS: pause EX/MEM instruction held during memory | value=0x80044000
+PASS: pause MEM/WB instruction held during memory | value=0x6100007b
+PASS: pause retired count held during memory | value=0x00000001
+PASS: pause x1 held during memory | value=0x00000040
+PASS: pause x2 held during memory | value=0x00000000
+PASS: pause no retirement during memory
+PASS: pause no writeback during memory
+PASS: pause no memory write during memory
+PASS: pause fetch PC held during memory | value=0x0000001c
+PASS: pause IF/ID instruction held during memory | value=0x72040004
+PASS: pause ID/OP instruction held during memory | value=0x80046004
+PASS: pause OP/EX instruction held during memory | value=0x71840000
+PASS: pause EX/MEM instruction held during memory | value=0x80044000
+PASS: pause MEM/WB instruction held during memory | value=0x6100007b
+PASS: pause retired count held during memory | value=0x00000001
+PASS: pause x1 held during memory | value=0x00000040
+PASS: pause x2 held during memory | value=0x00000000
+PASS: pause no retirement during memory
+PASS: pause no writeback during memory
+PASS: pause no memory write during memory
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: x0 remains zero during memory execution
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: memory address word aligned
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: x0 remains zero during memory execution
+PASS: retire PC aligned
+PASS: retired opcode valid
+PASS: ADDI x1 = 64 base address | value=0x00000040
+PASS: ADDI x2 = 123 store data | value=0x0000007b
+PASS: LOAD x3 from [x1 + 0] | value=0x0000007b
+PASS: LOAD x4 from [x1 + 4] | value=0x0000007b
+PASS: ADDI x5 = 68 | value=0x00000044
+PASS: LOAD x6 from [x5 - 4] | value=0x0000007b
+PASS: ADDI x7 = 77 | value=0x0000004d
+PASS: LOAD x8 from [x0 + 8] | value=0x0000004d
+PASS: LOAD-use ADDI x9 = x8 + 1 | value=0x0000004e
+PASS: LOAD x10 from [x0 + 8] | value=0x0000004d
+PASS: x0 remains zero after LOAD/ADDI to x0 | value=0x00000000
+PASS: invalid opcode target x11 unchanged | value=0x00000000
+PASS: STORE wrote data memory word 16 | value=0x0000007b
+PASS: STORE wrote data memory word 17 | value=0x0000007b
+PASS: STORE-data forwarding wrote word 2 | value=0x0000004d
+PASS: LOAD-use STORE wrote word 3 | value=0x0000004d
+PASS: word 16 store occurred once | value=1
+PASS: word 17 store occurred once | value=1
+PASS: word 2 store occurred once | value=1
+PASS: word 3 store occurred once | value=1
+PASS: total STORE memory writes | value=4
+PASS: load-use stalls observed
+PASS: no writeback to x0 observed | value=0
+PASS: no retirement while paused | value=0
+PASS: no memory write while paused | value=0
+PASS: PC16 invalid opcode did not retire | value=0
+PASS: PC17 NOP retired once | value=1
+PHASE 14D PIPELINE6 MEMORY TEST PASSED: tests_run=489 tests_failed=0
+$finish called at time : 1556 ns : File "C:/FPGA/systemverilog-fpga-cpu/tb/tb_cpu_core_pipeline6_memory.sv" Line 419
+exit
+INFO: [Common 17-206] Exiting xsim at Mon Jul 13 20:26:05 2026...

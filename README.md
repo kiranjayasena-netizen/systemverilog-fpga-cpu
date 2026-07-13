@@ -103,6 +103,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 14A plans a deeper six-stage pipeline as a future route toward 90+ MIPS; no RTL has been changed for this planning phase.
 - Phase 14B adds a separate six-stage pipeline skeleton; the focused XSim test and full local regression pass, but no performance improvement is claimed yet.
 - Phase 14C adds arithmetic execution to the separate six-stage pipeline; ADD/SUB/AND/OR/XOR/ADDI pass focused XSim verification, with Phase 13I still the preferred measured result.
+- Phase 14D adds LOAD/STORE execution to the separate six-stage pipeline; focused memory XSim and full local regression pass, with Phase 13I still the preferred measured result.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -146,6 +147,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 14A deeper pipeline plan](reports/phase14a_deeper_pipeline_plan.md) proposes a future IF/ID/OP/EX/MEM/WB pipeline and defines the verification and timing criteria required before it could replace Phase 13I.
 - [Phase 14B six-stage pipeline skeleton](reports/phase14b_pipeline6_skeleton.md) documents the separate IF/ID/OP/EX/MEM/WB skeleton, focused XSim result and current limitations.
 - [Phase 14C six-stage pipeline arithmetic](reports/phase14c_pipeline6_arithmetic.md) documents arithmetic execution, x0 protection, simple forwarding and focused XSim verification for the separate Phase 14 pipeline path.
+- [Phase 14D six-stage pipeline memory](reports/phase14d_pipeline6_memory.md) documents LOAD/STORE execution, synchronous data-memory timing, load-use stalls and focused XSim verification for the separate Phase 14 pipeline path.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -292,6 +294,7 @@ Completed work:
 - Phase 14A deeper pipeline architecture plan
 - Phase 14B separate six-stage pipeline skeleton and focused XSim verification
 - Phase 14C arithmetic execution and focused XSim verification for the separate six-stage pipeline path
+- Phase 14D LOAD/STORE execution, load-use hazard handling and focused XSim verification for the separate six-stage pipeline path
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -304,7 +307,7 @@ Next planned work:
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
 - Supervisor-facing conclusion on the preferred FPGA implementation path after the Phase 13I strategy sweep
-- Phase 14D LOAD/STORE support and load-use hazard handling for the separate six-stage pipeline
+- Phase 14E BEQ/JUMP redirects and wrong-path protection for the separate six-stage pipeline
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 
 ## Repository Structure
