@@ -1,5 +1,10 @@
-+====================+===================+=================================+
-| Launch Setup Clock | Launch Hold Clock | Pin                             |
-+====================+===================+=================================+
-| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[valid]/D |
-+--------------------+-------------------+---------------------------------+
++====================+===================+==================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                              |
++====================+===================+==================================+
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[jump]/D   |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[pc][15]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[pc][16]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[pc][11]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[pc][13]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[pc][12]/D |
++--------------------+-------------------+----------------------------------+

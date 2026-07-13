@@ -1,0 +1,40 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260712204751
+Username: DESKTOP-4GB7DVJ\kiran
+RunAs User: DESKTOP-4GB7DVJ\kiran
+Configuration Name: 
+Machine: DESKTOP-4GB7DVJ (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
+$transcript = "reports/simulation_transcripts/phase13f_targetbuf_focused_${timestamp}.txt"
+Start-Transcript -Path $transcript -Force | Out-Null
+$vivadoBin = 'C:\AMDDesignTools\2026.1\Vivado\bin'
+& "$vivadoBin\xvlog.bat" -sv rtl/cpu_defs_pkg.sv rtl/bram_instr_mem.sv rtl/bram_data_mem.sv rtl/cpu_core_pipeline_targetbuf.sv tb/tb_cpu_core_pipeline_targetbuf.sv
+if ($LASTEXITCODE -ne 0) { Stop-Transcript | Out-Null; exit $LASTEXITCODE }
+& "$vivadoBin\xelab.bat" tb_cpu_core_pipeline_targetbuf -s tb_cpu_core_pipeline_targetbuf_phase13f_sim
+$xelabExit = $LASTEXITCODE
+if ($xelabExit -ne 0) { Write-Host "xelab returned $xelabExit; continuing only if snapshot was created by Vivado." }
+& "$vivadoBin\xsim.bat" tb_cpu_core_pipeline_targetbuf_phase13f_sim -runall
+$xsimExit = $LASTEXITCODE
+Stop-Transcript | Out-Null
+Write-Host "Transcript: $transcript"
+exit $xsimExit
+Process ID: 28112
+PSVersion: 5.1.26100.8655
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.8655
+BuildVersion: 10.0.26100.8655
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+› Explain this codebase
+› Explain this codebase
+xelab returned 1; continuing only if snapshot was created by Vivado.
+› Explain this codebase
+**********************
+Windows PowerShell transcript end
+End time: 20260712204801
+**********************
