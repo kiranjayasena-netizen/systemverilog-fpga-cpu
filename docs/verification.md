@@ -2786,9 +2786,33 @@ Conclusion:
 
 Phase 13I improves the preferred measured result from about 84.4 MIPS to about 86.4 MIPS without changing CPU behaviour. The 90 MIPS target is still not reached.
 
+## Phase 14A Deeper Pipeline Architecture Plan
+
+Status: planning-only; no RTL or simulation changes.
+
+Files reviewed:
+
+- `rtl/cpu_core_pipeline_forwardtiming.sv`
+- `rtl/fpga_top_pipeline_forwardtiming.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming.sv`
+- `reports/phase13i_strategy_sweep.md`
+- `reports/phase13h_preferred_pipeline_summary.md`
+- `reports/phase13e_forwarding_timing.md`
+
+Planning output:
+
+- `reports/phase14a_deeper_pipeline_plan.md`
+
+Summary:
+
+- Phase 14A proposes a future six-stage pipeline: IF -> ID -> OP -> EX -> MEM -> WB.
+- The new OP stage would separate operand read, bypass preparation and forwarding selection from decode/execute timing.
+- The current Phase 13I result remains the preferred measured implementation until a future Phase 14 implementation passes full regression and beats about 86.4 practical estimated MIPS.
+- No new simulation was run because this phase did not add or modify RTL.
+
 ## Future Verification Work
 
-- Continue optimisation by reducing the remaining route-heavy operand/hazard-control timing path without adding extra CPI stalls. The preferred measured path is now the Phase 13E RTL implemented with the Phase 13I `fanout_opt` Vivado strategy.
+- Start Phase 14B with a six-stage pipeline skeleton and focused valid-bit/fetch/reset tests, while preserving the Phase 13I result as the preferred measured baseline.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
