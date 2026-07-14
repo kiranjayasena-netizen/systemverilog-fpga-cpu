@@ -3099,9 +3099,71 @@ Conclusion:
 
 Phase 14G beats the Phase 13I result of about 86.4 MIPS and reaches the 90 MIPS target. It also crosses 100 MIPS in the measured post-route sweep, with a practical estimated result of about 101.8 MIPS. The raw Vivado output remains under `reports/phase14g_impl/`; the human-readable summary is `reports/phase14g_pipeline6_timing.md`.
 
+## Phase 15A Basys 3 Slow-Enable Bring-Up Wrapper
+
+Status: Vivado implementation and bitstream generation passed; physical board observation is the next evidence step.
+
+Files added:
+
+- `rtl/fpga_top_pipeline6_bringup.sv`
+- `scripts/run_vivado_impl_pipeline6_bringup.tcl`
+- `reports/phase15a_basys3_bringup.md`
+
+Vivado implementation:
+
+- Top: `fpga_top_pipeline6_bringup`
+- Target: Basys 3, `xc7a35tcpg236-1`
+- Clock: 10.000 ns / 100 MHz
+- Bitstream: `reports/phase15a_bringup_impl/bitstreams/fpga_top_pipeline6_bringup.bit`
+
+Board control mapping:
+
+- BTNC / `rst_btn`: synchronized CPU reset
+- SW0 / `sw[0]`: run enable
+- SW1 / `sw[1]`: slow mode select
+
+LED mapping:
+
+- `led[3:0]`: fetch PC word index
+- `led[8:4]`: IF/ID, ID/OP, OP/EX, EX/MEM and MEM/WB valid bits
+- `led[9]`: stall/load-use stall
+- `led[10]`: redirect pulse
+- `led[11]`: retirement pulse
+- `led[12]`: register-write pulse
+- `led[13]`: memory-write pulse
+- `led[14]`: slow mode active
+- `led[15]`: run enable active
+
+Implementation result:
+
+- WNS: +2.444 ns
+- TNS: 0.000 ns
+- WHS: +0.062 ns
+- THS: 0.000 ns
+- LUTs: 1,321
+- FFs: 1,633
+- BRAM: 1 Block RAM Tile / 2 RAMB18
+- DSP: 0
+- Bitstream generation: passed
+
+Board test procedure:
+
+1. Program `fpga_top_pipeline6_bringup.bit` in Vivado Hardware Manager.
+2. Confirm DONE/startup status is high.
+3. Set SW0 low and SW1 high.
+4. Press and release BTNC reset.
+5. Set SW0 high.
+6. Observe slow LED stepping.
+7. Set SW0 low again and confirm the LED state freezes.
+
+Conclusion:
+
+Phase 15A provides a hardware-observable wrapper for the Phase 14G CPU without changing the CPU core or instruction encodings. It does not replace the Phase 14G performance result; it makes board bring-up practical using the 100 MHz clock and a slow CPU-enable pulse.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
+- Capture Phase 15B physical Basys 3 evidence for the Phase 15A slow-enable bitstream.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
