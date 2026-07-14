@@ -337,6 +337,18 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline6_memory_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 14E six-stage pipeline control" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_control.sv") `
+    -Top "tb_cpu_core_pipeline6_control" `
+    -Snapshot "tb_cpu_core_pipeline6_control_sim"
+
+Invoke-XsimTest `
+    -Name "Phase 14F six-stage pipeline full custom-ISA program" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline6.sv", "tb/tb_cpu_core_pipeline6_full_program.sv") `
+    -Top "tb_cpu_core_pipeline6_full_program" `
+    -Snapshot "tb_cpu_core_pipeline6_full_program_sim"
+
+Invoke-XsimTest `
     -Name "Phase 5 program execution" `
     -Sources ($phase5CpuTopSources + @("tb/tb_program_execution.sv")) `
     -Top "tb_program_execution" `

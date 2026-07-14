@@ -48,6 +48,11 @@ module fpga_top_pipeline6 #(
     logic [31:0] mem_write_data;
     logic [31:0] mem_read_data;
     logic        load_use_stall;
+    logic        redirect_valid;
+    logic [31:0] redirect_pc;
+    logic        flush_valid;
+    logic        branch_taken;
+    logic        jump_taken;
     logic        writeback_valid;
     logic [4:0]  writeback_rd;
     logic [31:0] writeback_data;
@@ -114,6 +119,11 @@ module fpga_top_pipeline6 #(
         .debug_mem_write_data(mem_write_data),
         .debug_mem_read_data(mem_read_data),
         .debug_load_use_stall(load_use_stall),
+        .debug_redirect_valid(redirect_valid),
+        .debug_redirect_pc(redirect_pc),
+        .debug_flush_valid(flush_valid),
+        .debug_branch_taken(branch_taken),
+        .debug_jump_taken(jump_taken),
         .debug_writeback_valid(writeback_valid),
         .debug_writeback_rd(writeback_rd),
         .debug_writeback_data(writeback_data),

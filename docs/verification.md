@@ -2940,9 +2940,168 @@ Conclusion:
 
 Phase 14D proves LOAD/STORE execution for the separate six-stage pipeline path using synchronous data memory. It does not implement BEQ/JUMP redirects, wrong-path protection, full custom-ISA benchmarking or Phase 14 timing measurement, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
 
+## Phase 14E Six-Stage Pipeline Control Flow
+
+Status: focused simulation passed; full local regression passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `tb/tb_cpu_core_pipeline6_control.sv`
+
+Focused transcript:
+
+- `reports/simulation_transcripts/phase14e_pipeline6_control_focused_20260713_205349.txt`
+
+Full regression transcript:
+
+- `reports/simulation_transcripts/phase14e_full_xsim_regression_20260713_205407.txt`
+
+Coverage:
+
+- BEQ not taken executes the fall-through path.
+- BEQ taken redirects to the target and flushes the wrong-path instruction.
+- Wrong-path STORE after BEQ is blocked.
+- JUMP forward redirects to the target and flushes the wrong-path instruction.
+- Wrong-path STORE after JUMP is blocked.
+- BEQ consumes forwarded arithmetic operands.
+- BEQ after LOAD is held or forwarded safely through the existing load-use handling.
+- Backward loop with BEQ exit and JUMP back-edge reaches the expected final register and memory state.
+- Invalid opcode at a redirected target remains a safe bubble.
+- NOP remains safe.
+- Pause/resume around a control redirect holds state and suppresses retirement, register writes and memory writes.
+
+Result:
+
+- Focused checks run: 2,812
+- Focused failures: 0
+- Full local XSim regression completed successfully after adding the Phase 14E test.
+- The known Vivado/XSim `xelab` object-directory cleanup warning appeared after snapshot builds, but XSim completed and self-checking tests passed.
+
+Conclusion:
+
+Phase 14E proves BEQ and JUMP redirect correctness for the separate six-stage pipeline path, including stale fetch-response invalidation and wrong-path side-effect protection. It does not include branch prediction, target buffering, full custom-ISA benchmarking or Phase 14 timing measurement, so no performance improvement is claimed. Phase 13E with the Phase 13I `fanout_opt` implementation remains the preferred measured path.
+
+## Phase 14F Six-Stage Pipeline Full Program Verification
+
+Status: focused simulation passed; full local regression passed.
+
+Files tested:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `tb/tb_cpu_core_pipeline6_full_program.sv`
+
+Focused transcript:
+
+- `reports/simulation_transcripts/phase14f_pipeline6_full_program_focused_20260714_110746.txt`
+
+Full regression transcript:
+
+- `reports/simulation_transcripts/phase14f_full_xsim_regression_20260714_110824.txt`
+
+Coverage:
+
+- ADDI, ADD, SUB, AND, OR and XOR execute in a full-program context.
+- Negative imm13 sign extension is checked.
+- `x0` protection is checked for both LOAD and ADDI paths.
+- STORE and LOAD execute with positive and negative signed offsets.
+- Load-use arithmetic and load-use STORE dependencies are checked.
+- BEQ taken, BEQ not taken, forward JUMP and backward JUMP loop execution are checked.
+- Wrong-path register write and wrong-path STORE protection are checked.
+- Invalid opcode safety is checked.
+- NOP safety is checked.
+- Pause/resume during in-flight execution holds state and suppresses side effects.
+- Final register state, final data memory state and repeated loop retirement counts are checked.
+
+Result:
+
+- Focused checks run: 97
+- Focused failures: 0
+- Enabled cycles: 95
+- Retired instructions: 58
+- CPI: 1.638
+- Branch redirects: 2
+- Jump redirects: 3
+- Total redirects: 5
+- Flush pulses: 5
+- Load-use stalls: 10
+- Memory writes: 11
+- Full local XSim regression completed successfully after adding the Phase 14F test.
+- The known Vivado/XSim `xelab` object-directory cleanup warning appeared after snapshot builds, but XSim completed and self-checking tests passed.
+
+Conclusion:
+
+Phase 14F proves full custom-ISA style program execution for the separate six-stage pipeline path and measures simulation CPI. The measured CPI of 1.638 is higher than the Phase 13I preferred CPI of 1.339, so Phase 14 requires enough post-route Fmax improvement to replace Phase 13I.
+
+## Phase 14G Six-Stage Pipeline Vivado Timing
+
+Status: Vivado implementation and timing sweep passed; Phase 14G becomes the preferred measured implementation result.
+
+Implementation script:
+
+- `scripts/run_vivado_impl_pipeline6.tcl`
+
+Source files used:
+
+- `rtl/cpu_defs_pkg.sv`
+- `rtl/bram_instr_mem.sv`
+- `rtl/bram_data_mem.sv`
+- `rtl/cpu_core_pipeline6.sv`
+- `rtl/fpga_top_pipeline6.sv`
+- `constraints/basys3.xdc`
+
+Timing sweep result:
+
+| Period | Fmax | WNS | TNS | WHS | Bitstream | MIPS using CPI 1.638 |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 8.000 ns | 125.000 MHz | +0.841 ns | 0.000 ns | +0.058 ns | pass | 76.313 |
+| 7.500 ns | 133.333 MHz | +0.694 ns | 0.000 ns | +0.098 ns | pass | 81.400 |
+| 7.000 ns | 142.857 MHz | +0.451 ns | 0.000 ns | +0.059 ns | pass | 87.214 |
+| 6.800 ns | 147.059 MHz | +0.344 ns | 0.000 ns | +0.057 ns | pass | 89.780 |
+| 6.750 ns | 148.148 MHz | +0.533 ns | 0.000 ns | +0.082 ns | pass | 90.445 |
+| 6.700 ns | 149.254 MHz | +0.337 ns | 0.000 ns | +0.054 ns | pass | 91.119 |
+| 6.650 ns | 150.376 MHz | +0.212 ns | 0.000 ns | +0.034 ns | pass | 91.805 |
+| 6.500 ns | 153.846 MHz | +0.129 ns | 0.000 ns | +0.033 ns | pass | 93.923 |
+| 6.400 ns | 156.250 MHz | +0.216 ns | 0.000 ns | +0.059 ns | pass | 95.391 |
+| 6.200 ns | 161.290 MHz | +0.088 ns | 0.000 ns | +0.037 ns | pass | 98.468 |
+| 6.100 ns | 163.934 MHz | +0.041 ns | 0.000 ns | +0.101 ns | pass | 100.082 |
+| 6.000 ns | 166.667 MHz | +0.024 ns | 0.000 ns | +0.058 ns | pass | 101.750 |
+
+Best verified result:
+
+- Best passing period tested: 6.000 ns
+- Verified Fmax: 166.667 MHz
+- Phase 14F CPI used: 1.638
+- Practical estimated MIPS: 101.750
+- LUTs: 1,308
+- FFs: 1,602
+- BRAM: 1 Block RAM Tile / 2 RAMB18
+- DSP: 0
+- THS: 0.000 ns
+- Bitstream: generated
+
+Critical path:
+
+- Source: `cpu_inst/op_ex_reg_reg[operand_b][1]/C`
+- Destination: `cpu_inst/op_ex_reg_reg[store_data][1]/R`
+- Data path delay: 5.376 ns
+- Logic delay: 1.891 ns
+- Route delay: 3.485 ns
+- Logic levels: 6
+
+Conclusion:
+
+Phase 14G beats the Phase 13I result of about 86.4 MIPS and reaches the 90 MIPS target. It also crosses 100 MIPS in the measured post-route sweep, with a practical estimated result of about 101.8 MIPS. The raw Vivado output remains under `reports/phase14g_impl/`; the human-readable summary is `reports/phase14g_pipeline6_timing.md`.
+
 ## Future Verification Work
 
-- Start Phase 14E with BEQ/JUMP redirects and wrong-path protection for the separate six-stage pipeline, while preserving the Phase 13I result as the preferred measured baseline.
+- Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

@@ -57,6 +57,12 @@ module cpu_core_pipeline6 #(
     output logic [31:0] debug_mem_read_data,
     output logic        debug_load_use_stall,
 
+    output logic        debug_redirect_valid,
+    output logic [31:0] debug_redirect_pc,
+    output logic        debug_flush_valid,
+    output logic        debug_branch_taken,
+    output logic        debug_jump_taken,
+
     output logic        debug_writeback_valid,
     output logic [4:0]  debug_writeback_rd,
     output logic [31:0] debug_writeback_data,
@@ -133,6 +139,10 @@ module cpu_core_pipeline6 #(
     logic        fetch_response_available;
     logic [31:0] fetch_response_pc;
     logic [31:0] fetch_response_instruction;
+    logic        redirect_valid;
+    logic [31:0] redirect_pc;
+    logic        branch_taken;
+    logic        jump_taken;
 
     assign debug_fetch_pc            = fetch_pc_reg;
     assign debug_instruction_addr    = fetch_pc_reg;
@@ -263,7 +273,9 @@ module cpu_core_pipeline6 #(
             OP_XOR,
             OP_ADDI,
             OP_LOAD,
-            OP_STORE: opcode_supported_phase14d = 1'b1;
+            OP_STORE,
+            OP_BEQ,
+            OP_JUMP: opcode_supported_phase14d = 1'b1;
             default: opcode_supported_phase14d = 1'b0;
         endcase
     endfunction
@@ -282,11 +294,20 @@ module cpu_core_pipeline6 #(
             OP_XOR:  alu_result_for_stage = stage.operand_a ^ stage.operand_b;
             OP_LOAD,
             OP_STORE: alu_result_for_stage = stage.operand_a + stage.imm_ext;
+            OP_BEQ,
+            OP_JUMP: alu_result_for_stage = stage.pc + (stage.imm_ext << 2);
             default: alu_result_for_stage = 32'h0000_0000;
         endcase
     endfunction
 
     assign op_ex_alu_result = alu_result_for_stage(op_ex_reg);
+
+    assign branch_taken = op_ex_reg.valid &&
+                          (op_ex_reg.opcode == OP_BEQ) &&
+                          (op_ex_reg.operand_a == op_ex_reg.operand_b);
+    assign jump_taken = op_ex_reg.valid && (op_ex_reg.opcode == OP_JUMP);
+    assign redirect_valid = branch_taken || jump_taken;
+    assign redirect_pc = op_ex_reg.pc + (op_ex_reg.imm_ext << 2);
 
     function automatic logic stage_forward_ready(input pipe_stage_t stage);
         stage_forward_ready = stage.valid &&
@@ -423,6 +444,11 @@ module cpu_core_pipeline6 #(
             debug_retire_pc         <= 32'h0000_0000;
             debug_retire_opcode     <= OP_NOP;
             debug_reg_write         <= 1'b0;
+            debug_redirect_valid    <= 1'b0;
+            debug_redirect_pc       <= 32'h0000_0000;
+            debug_flush_valid       <= 1'b0;
+            debug_branch_taken      <= 1'b0;
+            debug_jump_taken        <= 1'b0;
             debug_writeback_valid   <= 1'b0;
             debug_writeback_rd      <= 5'd0;
             debug_writeback_data    <= 32'h0000_0000;
@@ -437,6 +463,11 @@ module cpu_core_pipeline6 #(
             debug_retire_pc    <= mem_wb_reg.pc;
             debug_retire_opcode <= mem_wb_reg.opcode;
             debug_reg_write <= wb_reg_write;
+            debug_redirect_valid <= redirect_valid;
+            debug_redirect_pc <= redirect_valid ? redirect_pc : 32'h0000_0000;
+            debug_flush_valid <= redirect_valid;
+            debug_branch_taken <= branch_taken;
+            debug_jump_taken <= jump_taken;
             debug_writeback_valid <= wb_reg_write;
             debug_writeback_rd <= mem_wb_reg.rd;
             debug_writeback_data <= wb_writeback_data;
@@ -451,7 +482,18 @@ module cpu_core_pipeline6 #(
             regs[0] <= 32'h0000_0000;
             mem_wb_load_data_valid_reg <= 1'b0;
 
-            if (load_use_stall) begin
+            if (redirect_valid) begin
+                mem_wb_reg <= ex_mem_reg;
+                ex_mem_reg <= execute_stage(op_ex_reg);
+                op_ex_reg  <= empty_stage();
+                id_op_reg  <= empty_stage();
+                if_id_reg  <= empty_stage();
+
+                paused_response_valid_reg <= 1'b0;
+                fetch_request_valid_reg <= 1'b0;
+                fetch_request_pc_reg <= redirect_pc;
+                fetch_pc_reg <= redirect_pc;
+            end else if (load_use_stall) begin
                 mem_wb_reg <= ex_mem_reg;
                 ex_mem_reg <= execute_stage(op_ex_reg);
                 op_ex_reg  <= empty_stage();
@@ -482,6 +524,10 @@ module cpu_core_pipeline6 #(
         end else begin
             debug_retire_valid <= 1'b0;
             debug_reg_write <= 1'b0;
+            debug_redirect_valid <= 1'b0;
+            debug_flush_valid <= 1'b0;
+            debug_branch_taken <= 1'b0;
+            debug_jump_taken <= 1'b0;
             debug_writeback_valid <= 1'b0;
             regs[0] <= 32'h0000_0000;
 
