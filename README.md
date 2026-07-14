@@ -108,6 +108,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 14F adds full custom-ISA style program verification and CPI measurement for the separate six-stage pipeline; focused XSim and full local regression pass with 95 cycles, 58 retired instructions and CPI 1.638. No Phase 14 MIPS result is claimed until Phase 14G timing evidence exists.
 - Phase 14G implements the separate six-stage pipeline on the Basys 3 target and passes post-route timing at 6.000 ns. Using the Phase 14F CPI of 1.638, the measured practical estimated throughput is about 101.8 MIPS, so Phase 14G is now the preferred measured implementation result.
 - Phase 15A adds a separate Basys 3 slow-enable bring-up wrapper for the Phase 14G CPU. It maps SW0 to run enable, SW1 to slow mode and LEDs to fetch/pipeline/side-effect debug signals; the 100 MHz bring-up bitstream has been generated.
+- Phase 15B updates the bring-up wrapper with sticky event LEDs; LEDs 9-13 now stay on after stall, redirect, retire, register-write or memory-write events until BTNC reset clears them.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -156,6 +157,7 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - [Phase 14F six-stage pipeline full verification](reports/phase14f_pipeline6_full_verification.md) documents full custom-ISA style program verification, final architectural checks and measured simulation CPI for the separate Phase 14 pipeline path.
 - [Phase 14G six-stage pipeline timing comparison](reports/phase14g_pipeline6_timing.md) records the Basys 3 implementation sweep, best verified 6.000 ns period and measured practical estimated throughput of about 101.8 MIPS.
 - [Phase 15A Basys 3 bring-up](reports/phase15a_basys3_bringup.md) documents the slow-enable FPGA wrapper, switch/LED mapping, bitstream path and board test procedure.
+- [Phase 15B sticky event LEDs](reports/phase15b_sticky_event_leds.md) documents the event-capture LED update and board test procedure for visible hardware evidence.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
 - [Phase 3 checklist](docs/phase3_checklist.md) tracks Phase 3A through Phase 3D status and evidence.
 - [Supervisor Phase 3 summary](docs/supervisor_phase3_summary.md) summarises the pre-hardware FPGA work and remaining hardware validation.
@@ -307,6 +309,7 @@ Completed work:
 - Phase 14F full custom-ISA style program verification and CPI measurement for the separate six-stage pipeline path
 - Phase 14G Vivado implementation, timing sweep and practical MIPS comparison for the separate six-stage pipeline path
 - Phase 15A slow-enable Basys 3 bring-up wrapper and bitstream for visible LED stepping
+- Phase 15B sticky event LEDs for visible Basys 3 evidence capture
 - Phase 5 memory system
 - CPU top-level program execution wrapper
 - File-loaded Phase 5 program execution test
@@ -318,7 +321,7 @@ Next planned work:
 
 - Physical Basys 3 programming and evidence capture
 - Reset, enable switch and LED sequence validation on the real board
-- Phase 15B physical Basys 3 evidence capture for the Phase 15A slow-enable bitstream
+- Phase 15C physical Basys 3 evidence capture for the sticky-event slow-enable bitstream
 - Supervisor-facing conclusion on the Phase 14G/15A six-stage pipeline result
 - Supervisor review of whether the Phase 8 multi-cycle FPGA path should become the preferred implementation path
 

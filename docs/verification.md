@@ -3160,10 +3160,84 @@ Conclusion:
 
 Phase 15A provides a hardware-observable wrapper for the Phase 14G CPU without changing the CPU core or instruction encodings. It does not replace the Phase 14G performance result; it makes board bring-up practical using the 100 MHz clock and a slow CPU-enable pulse.
 
+## Phase 15B Sticky Event LEDs
+
+Status: Vivado implementation and bitstream generation passed; physical board observation is the next evidence step.
+
+Files changed:
+
+- `rtl/fpga_top_pipeline6_bringup.sv`
+- `reports/phase15b_sticky_event_leds.md`
+- `README.md`
+- `docs/verification.md`
+
+Problem addressed:
+
+- Phase 15A mapped LEDs 9-13 directly to one-cycle event pulses.
+- In slow mode, the CPU advances using one 100 MHz clock-enable pulse.
+- A one-cycle event pulse is about 10 ns wide, so it is not human-visible on the Basys 3 LEDs.
+
+Phase 15B behavior:
+
+- LEDs 9-13 are now sticky event indicators.
+- BTNC reset clears the sticky flags.
+- SW0 pause does not clear the sticky flags.
+- SW1 slow/full-speed mode changes do not clear the sticky flags.
+
+Updated LED mapping:
+
+- `led[3:0]`: fetch PC word index
+- `led[8:4]`: IF/ID, ID/OP, OP/EX, EX/MEM and MEM/WB valid bits
+- `led[9]`: sticky stall/load-use stall observed
+- `led[10]`: sticky redirect observed
+- `led[11]`: sticky retire observed
+- `led[12]`: sticky register-write observed
+- `led[13]`: sticky memory-write observed
+- `led[14]`: slow mode active
+- `led[15]`: run enable active
+
+Vivado implementation:
+
+- Script: `scripts/run_vivado_impl_pipeline6_bringup.tcl`
+- Top: `fpga_top_pipeline6_bringup`
+- Bitstream: `reports/phase15a_bringup_impl/bitstreams/fpga_top_pipeline6_bringup.bit`
+
+Implementation result:
+
+- WNS: +1.472 ns
+- TNS: 0.000 ns
+- WHS: +0.039 ns
+- THS: 0.000 ns
+- LUTs: 1,323
+- FFs: 1,638
+- BRAM: 1 Block RAM Tile / 2 RAMB18
+- DSP: 0
+- Bitstream generation: passed
+
+Hardware test procedure:
+
+1. Program the Phase 15B bring-up bitstream.
+2. Set SW0 = 0.
+3. Set SW1 = 1 for slow mode.
+4. Press and release BTNC reset.
+5. Confirm LEDs 9-13 are initially off.
+6. Set SW0 = 1.
+7. Watch `led[3:0]` and `led[8:4]` step through the sequence.
+8. Confirm `led[11]` turns on after at least one instruction retires.
+9. Confirm `led[12]` turns on after at least one register write occurs, if the loaded program writes a register.
+10. Confirm `led[13]` turns on after a store occurs, if the loaded program contains a store.
+11. Confirm `led[10]` turns on after a branch or jump redirect occurs, if the loaded program contains one.
+12. Turn SW0 off and confirm the CPU freezes but sticky event LEDs remain on.
+13. Press BTNC reset and confirm sticky event LEDs clear.
+
+Conclusion:
+
+Phase 15B makes the bring-up LEDs useful for physical evidence by converting short event pulses into reset-cleared sticky indicators. This is an observability change only; it does not change `cpu_core_pipeline6.sv`, instruction encodings or the Phase 14G performance result.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
-- Capture Phase 15B physical Basys 3 evidence for the Phase 15A slow-enable bitstream.
+- Capture Phase 15C physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

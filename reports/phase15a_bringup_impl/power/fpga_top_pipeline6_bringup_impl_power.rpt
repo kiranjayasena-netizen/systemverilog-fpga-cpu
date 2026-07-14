@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
-| Date             : Tue Jul 14 14:26:10 2026
+| Date             : Tue Jul 14 14:51:06 2026
 | Host             : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
 | Command          : report_power -file reports/phase15a_bringup_impl/power/fpga_top_pipeline6_bringup_impl_power.rpt
 | Design           : fpga_top_pipeline6_bringup
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.084        |
+| Total On-Chip Power (W)  | 0.083        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.012        |
+| Dynamic (W)              | 0.011        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
 | Max Ambient (C)          | 84.6         |
@@ -53,16 +53,16 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.003 |        3 |       --- |             --- |
-| Slice Logic    |    <0.001 |     3094 |       --- |             --- |
-|   LUT as Logic |    <0.001 |     1321 |     20800 |            6.35 |
+| Slice Logic    |    <0.001 |     3100 |       --- |             --- |
+|   LUT as Logic |    <0.001 |     1323 |     20800 |            6.36 |
 |   CARRY4       |    <0.001 |       58 |      8150 |            0.71 |
-|   Register     |    <0.001 |     1633 |     41600 |            3.93 |
+|   Register     |    <0.001 |     1638 |     41600 |            3.94 |
 |   Others       |     0.000 |        8 |       --- |             --- |
-| Signals        |    <0.001 |     2878 |       --- |             --- |
+| Signals        |    <0.001 |     2882 |       --- |             --- |
 | Block RAM      |     0.004 |        1 |        50 |            2.00 |
 | I/O            |     0.004 |       20 |       106 |           18.87 |
 | Static Power   |     0.072 |          |           |                 |
-| Total          |     0.084 |          |           |                 |
+| Total          |     0.083 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -72,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.017 |       0.008 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.017 |       0.007 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.013 |       0.000 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -141,8 +141,8 @@ Table of Contents
 +----------------------------+-----------+
 | Name                       | Power (W) |
 +----------------------------+-----------+
-| fpga_top_pipeline6_bringup |     0.012 |
-|   cpu_inst                 |     0.008 |
+| fpga_top_pipeline6_bringup |     0.011 |
+|   cpu_inst                 |     0.007 |
 |     data_mem_inst          |     0.002 |
 |     instr_mem_inst         |     0.002 |
 +----------------------------+-----------+

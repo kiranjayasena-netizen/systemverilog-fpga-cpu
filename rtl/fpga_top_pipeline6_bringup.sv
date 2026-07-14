@@ -83,6 +83,11 @@ module fpga_top_pipeline6_bringup #(
     logic [31:0] debug_x11;
     logic [31:0] debug_x12;
     logic [31:0] debug_x13;
+    logic        stall_seen;
+    logic        redirect_seen;
+    logic        retire_seen;
+    logic        reg_write_seen;
+    logic        mem_write_seen;
 
     always_ff @(posedge clk) begin
         rst_meta <= rst_btn;
@@ -178,15 +183,41 @@ module fpga_top_pipeline6_bringup #(
         .debug_x13(debug_x13)
     );
 
+    always_ff @(posedge clk) begin
+        if (rst_sync) begin
+            stall_seen     <= 1'b0;
+            redirect_seen  <= 1'b0;
+            retire_seen    <= 1'b0;
+            reg_write_seen <= 1'b0;
+            mem_write_seen <= 1'b0;
+        end else begin
+            if (stall_active || load_use_stall) begin
+                stall_seen <= 1'b1;
+            end
+            if (redirect_valid) begin
+                redirect_seen <= 1'b1;
+            end
+            if (retire_valid) begin
+                retire_seen <= 1'b1;
+            end
+            if (reg_write) begin
+                reg_write_seen <= 1'b1;
+            end
+            if (mem_write) begin
+                mem_write_seen <= 1'b1;
+            end
+        end
+    end
+
     always_comb begin
         // LED debug map for Basys 3 bring-up:
         // led[3:0]   = fetch PC word index, fetch_pc[5:2]
         // led[8:4]   = IF/ID, ID/OP, OP/EX, EX/MEM, MEM/WB valid bits
-        // led[9]     = stall/load-use-stall indicator
-        // led[10]    = redirect pulse
-        // led[11]    = retirement pulse
-        // led[12]    = register-write pulse
-        // led[13]    = memory-write pulse
+        // led[9]     = sticky stall/load-use-stall observed
+        // led[10]    = sticky redirect observed
+        // led[11]    = sticky retirement observed
+        // led[12]    = sticky register write observed
+        // led[13]    = sticky memory write observed
         // led[14]    = slow mode active, synchronized SW1
         // led[15]    = run enabled, synchronized SW0
         led[3:0] = fetch_pc[5:2];
@@ -195,11 +226,11 @@ module fpga_top_pipeline6_bringup #(
         led[6]   = op_ex_valid;
         led[7]   = ex_mem_valid;
         led[8]   = mem_wb_valid;
-        led[9]   = stall_active || load_use_stall;
-        led[10]  = redirect_valid;
-        led[11]  = retire_valid;
-        led[12]  = reg_write;
-        led[13]  = mem_write;
+        led[9]   = stall_seen;
+        led[10]  = redirect_seen;
+        led[11]  = retire_seen;
+        led[12]  = reg_write_seen;
+        led[13]  = mem_write_seen;
         led[14]  = sw_sync[1];
         led[15]  = sw_sync[0];
     end
