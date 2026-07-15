@@ -3558,6 +3558,118 @@ Recommended future work:
 - Phase 16D: UART or ILA output for detailed performance counters.
 - Final report: architecture diagrams, pipeline diagrams, performance plots and board evidence photos.
 
+## Phase 17A Forward-Timing Hardware Profiling Procedure
+
+Status: profiling wrapper and Vivado script added; board counter values pending.
+
+Files added:
+
+- `rtl/fpga_top_pipeline_forwardtiming_profile.sv`
+- `scripts/run_vivado_impl_pipeline_forwardtiming_profile.tcl`
+- `reports/phase17a_forwardtiming_profile.md`
+
+Purpose:
+
+- Profile the Phase 13 forward-timing five-stage CPU because it is the best fixed-100 MHz board-measured path.
+- Measure integer MIPS over a one-second 100 MHz board-clock window.
+- Display CPI x100 as a second 7-segment mode.
+- Preserve the unchanged `cpu_core_pipeline_forwardtiming.sv` RTL.
+
+Board controls:
+
+- BTNC: reset.
+- SW0: run enable.
+- SW1 = 0: display integer MIPS.
+- SW1 = 1: display CPI x100.
+
+Hardware procedure:
+
+1. Build the bitstream with `scripts/run_vivado_impl_pipeline_forwardtiming_profile.tcl`.
+2. Program `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`.
+3. Press and release BTNC reset.
+4. Set SW0 on.
+5. Wait at least two one-second measurement windows.
+6. Read MIPS with SW1 = 0.
+7. Read CPI x100 with SW1 = 1.
+8. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
+
+Expected approximate result:
+
+- MIPS: about 87 at the 100 MHz board clock.
+- CPI x100: about 115.
+
+Front-end check:
+
+- `xvlog` compile passed for the Phase 17A profiling wrapper source order.
+- `xelab` elaboration passed for `fpga_top_pipeline_forwardtiming_profile`.
+- The first sandboxed elaboration built the snapshot but hit the known XSim object-directory cleanup access warning; rerunning with normal filesystem access completed successfully.
+
+## Phase 17C Regression Procedure
+
+Status: no RTL optimisation attempted yet.
+
+Phase 17C is intentionally deferred until Phase 17A hardware counter readings identify the dominant CPI bottleneck. When a future Phase 17C RTL optimisation is attempted, it must use a separate implementation path unless the change is proven small and safe.
+
+Required regression sequence for any future Phase 17C RTL change:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_regression.ps1
+```
+
+Minimum checks to preserve:
+
+- arithmetic execution;
+- LOAD/STORE execution;
+- EX/MEM and MEM/WB forwarding;
+- load-use hazard handling;
+- `x0` protection;
+- BEQ/JUMP redirects and wrong-path protection;
+- invalid opcode safety;
+- NOP safety;
+- performance counter behaviour.
+
+## Phase 17D Forward-Timing Timing Sweep Procedure
+
+Status: timing-sweep script added; sweep not run in this checkpoint.
+
+File added:
+
+- `scripts/run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl`
+- `reports/phase17d_forwardtiming_timing_sweep.md`
+
+Purpose:
+
+- Determine whether the Phase 13 forward-timing CPU can close timing above 100 MHz while preserving its low board-measured CPI.
+
+Default periods:
+
+- 10.000 ns
+- 9.500 ns
+- 9.000 ns
+- 8.750 ns
+- 8.650 ns
+- 8.500 ns
+- 8.250 ns
+- 8.000 ns
+
+Default strategies:
+
+- `default`
+- `fanout_opt`
+- `explore`
+- `physopt`
+
+Run command:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl
+```
+
+Decision rule:
+
+- A period only counts as passing if WNS is non-negative, TNS is zero, hold timing passes and bitstream generation succeeds.
+- Higher-frequency hardware MIPS should not be claimed until a later board clocking experiment measures it physically.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.

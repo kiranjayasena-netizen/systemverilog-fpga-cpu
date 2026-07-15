@@ -77,6 +77,35 @@ Conclusion:
 - For timing closure and estimated peak frequency, Phase 14G is the strongest design.
 - The project demonstrates a real CPU engineering trade-off between CPI and maximum clock frequency.
 
+## Phase 17 Direction
+
+Phase 17 returns to the Phase 13 forward-timing CPU because it is the best fixed-100 MHz board-measured path:
+
+```text
+Phase 13 board-measured throughput ~= 87 MIPS
+Phase 13 implied CPI ~= 1.15
+```
+
+The goal is not to replace the Phase 14G timing evidence. The goal is to understand why Phase 13 retires about 87 million instructions per second at the 100 MHz board clock rather than approaching the 100 MIPS theoretical limit for CPI 1.0.
+
+Phase 17 separates three performance questions:
+
+- Board-measured 100 MHz MIPS: what the Basys 3 physically displays with the fixed board clock.
+- Timing-estimated peak MIPS: what post-route timing suggests if the design is clocked faster.
+- Future high-frequency measured MIPS: what a later MMCM/Clocking Wizard board experiment could physically measure above 100 MHz.
+
+Planned Phase 17 flow:
+
+| Phase | Purpose |
+| --- | --- |
+| Phase 17A | Add a Phase 13 hardware profiler with MIPS and CPI x100 display |
+| Phase 17B | Use profiler counters to rank bottlenecks |
+| Phase 17C | Apply one targeted CPI optimisation only after bottleneck data exists |
+| Phase 17D | Sweep Phase 13 timing to see whether higher clock rates are realistic |
+| Phase 17E | Plan a future high-frequency hardware measurement |
+
+The Phase 17C optimisation is deliberately gated on Phase 17A/17B data. This avoids repeating earlier experiments where a change improved one metric but reduced practical performance overall.
+
 ## Simulation Comparison
 
 Representative simulation results from the project are below. These are not all measured on the same hardware wrapper; they are primarily useful for comparing CPI trends during architecture development.
