@@ -98,6 +98,23 @@ Therefore the display is expected to show approximately:
 
 The exact hardware value depends on the loaded program in instruction memory. Phase 16A currently uses `programs/fpga_led_demo.mem`, so it is a board-clock hardware measurement of that loaded program, not a direct re-run of the Phase 14F benchmark program.
 
+## Physical Board Measurement
+
+The Phase 16A bitstream was programmed on the Basys 3 and the four-digit display showed:
+
+```text
+0063
+```
+
+This is a direct 100 MHz board-clock measurement:
+
+```text
+Hardware MIPS = 63
+CPI = 100 / 63 = approximately 1.59
+```
+
+This measured CPI is close to the Phase 14F/14G simulation CPI estimate of approximately 1.638. The board result should not be confused with the Phase 14G post-route timing estimate of approximately 101.8 MIPS, which assumes the design is clocked at the timing-clean 166.667 MHz point rather than the fixed 100 MHz Basys 3 board clock.
+
 ## 7-Segment Display
 
 The Basys 3 display outputs are active low:

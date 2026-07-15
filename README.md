@@ -10,6 +10,20 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 
 ## Current Status
 
+Current best measured/estimated results:
+
+| Category | Result |
+| --- | ---: |
+| Best 100 MHz board-measured MIPS | Phase 13, approximately 87 MIPS |
+| Phase 14G board-measured MIPS at 100 MHz | approximately 63 MIPS |
+| Phase 14G post-route timing-clean frequency | 166.667 MHz |
+| Phase 14G estimated peak practical MIPS | approximately 101.8 MIPS |
+| Phase 16A 7-seg measured value | `0063` |
+| Target FPGA board | Digilent Basys 3 |
+| FPGA part | `xc7a35tcpg236-1` |
+
+The project now reports both board-measured throughput at the fixed 100 MHz Basys 3 clock and post-route timing-estimated peak throughput. These are intentionally separate because they answer different questions.
+
 - Vivado 2026.1 is installed and licensed with Vivado Basic.
 - Vivado XSim is the main simulator.
 - GitHub is connected to ChatGPT.
@@ -109,14 +123,15 @@ The project starts with small, verified RTL blocks and builds toward an integrat
 - Phase 14G implements the separate six-stage pipeline on the Basys 3 target and passes post-route timing at 6.000 ns. Using the Phase 14F CPI of 1.638, the measured practical estimated throughput is about 101.8 MIPS, so Phase 14G is now the preferred measured implementation result.
 - Phase 15A adds a separate Basys 3 slow-enable bring-up wrapper for the Phase 14G CPU. It maps SW0 to run enable, SW1 to slow mode and LEDs to fetch/pipeline/side-effect debug signals; the 100 MHz bring-up bitstream has been generated.
 - Phase 15B updates the bring-up wrapper with sticky event LEDs; LEDs 9-13 now stay on after stall, redirect, retire, register-write or memory-write events until BTNC reset clears them.
-- Phase 16A adds a separate Basys 3 7-segment hardware MIPS counter wrapper. It counts retired instructions over a one-second 100 MHz board-clock window and displays integer MIPS on the four-digit display; the 100 MHz bitstream has been generated.
+- Phase 16A adds a separate Basys 3 7-segment hardware MIPS counter wrapper. It counts retired instructions over a one-second 100 MHz board-clock window and displays integer MIPS on the four-digit display; the board test showed `0063`, or approximately 63 MIPS at 100 MHz.
 - Phase 16B collects the generated bitstreams for the major CPU implementation paths into a single local comparison bundle under `reports/phase16b_cpu_bitstream_bundle/`.
-- Phase 16C adds full-speed 7-segment MIPS-counter comparison bitstreams for representative CPU families, including the multi-cycle, BRAM multi-cycle, prefetch, Phase 12 pipeline, Phase 13E/13I pipeline and Phase 14G six-stage pipeline paths.
+- Phase 16C adds full-speed 7-segment MIPS-counter comparison bitstreams for representative CPU families. The 100 MHz board-measured comparison shows Phase 13 is strongest at the fixed board clock, while Phase 14G remains strongest for post-route timing-estimated peak throughput.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
 ## Documentation
 
+- [Performance results](docs/performance_results.md) summarise simulation CPI, Basys 3 hardware-measured MIPS, timing-estimated peak throughput and the Phase 13 versus Phase 14G trade-off.
 - [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.

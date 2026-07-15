@@ -3439,6 +3439,125 @@ Conclusion:
 
 Phase 16C makes direct board MIPS comparison practical for the representative CPU families without modifying the CPU cores. All six generated wrappers pass 100 MHz timing and generate bitstreams.
 
+## Final Hardware Performance Summary
+
+Status: Basys 3 hardware MIPS measurements recorded at the fixed 100 MHz board clock.
+
+Hardware-measured MIPS table:
+
+| CPU version | Hardware-measured MIPS at 100 MHz | Calculated CPI |
+| --- | ---: | ---: |
+| Phase 8 MC | 26 | 3.85 |
+| Phase 10 BRAM + MC | 21 | 4.76 |
+| Phase 11E Control Optimised | 35 | 2.86 |
+| Phase 12 Pipeline, 5 Stage | 77 | 1.30 |
+| Phase 13 Forward Timing | 87 | 1.15 |
+| Phase 14G Pipeline, 6 Stage | 63 | 1.59 |
+
+Calculation:
+
+```text
+CPI = 100 / MIPS
+MIPS = clock frequency in MHz / CPI
+```
+
+At the fixed 100 MHz Basys 3 board clock, the Phase 13 five-stage forwarded pipeline produced the best measured hardware throughput, around 87 MIPS. The Phase 14G six-stage pipeline measured around 63 MIPS at the same board clock. This does not mean the six-stage design failed; it shows a CPI versus clock-frequency trade-off.
+
+Phase 13 versus Phase 14G:
+
+- Phase 13 five-stage pipeline:
+  - Hardware measured at 100 MHz: approximately 87 MIPS.
+  - Implied CPI: approximately 1.15.
+  - Strongest result for fixed 100 MHz Basys 3 board operation.
+- Phase 14G six-stage pipeline:
+  - Hardware measured at 100 MHz: approximately 63 MIPS.
+  - Implied CPI: approximately 1.59.
+  - Post-route timing-clean result: 6.000 ns.
+  - Timing-clean frequency: 166.667 MHz.
+  - Simulation CPI used for estimate: 1.638.
+  - Estimated peak practical throughput: 166.667 / 1.638 = approximately 101.8 MIPS.
+
+Break-even calculation:
+
+```text
+required frequency = 87 * 1.638 = approximately 142.5 MHz
+```
+
+Since Phase 14G closed timing at 166.667 MHz, the timing estimate suggests it could exceed Phase 13 if the board implementation is clocked above approximately 142.5 MHz. The current physical hardware MIPS display measurement was performed at 100 MHz.
+
+Conclusion:
+
+- At the fixed 100 MHz board clock, Phase 13 is the best hardware-measured design.
+- For timing closure and estimated peak frequency, Phase 14G is the strongest design.
+- The project demonstrates a real CPU engineering trade-off between CPI and maximum clock frequency.
+
+## Phase 15A/15B Physical Bring-Up Evidence
+
+Status: physical bring-up path prepared and observed through slow stepping and sticky LEDs.
+
+Phase 15A hardware evidence summary:
+
+- Phase 15A added a slow-enable Basys 3 bring-up wrapper.
+- SW0 is run enable.
+- SW1 selects slow mode.
+- BTNC is reset.
+- `LED[3:0]` shows fetch PC word index.
+- `LED[8:4]` shows pipeline valid bits.
+
+Phase 15B hardware evidence summary:
+
+- Phase 15B added sticky event LEDs.
+- `LD10` latches when a branch/jump redirect occurs.
+- `LD11` latches when an instruction retires.
+- `LD12` latches when a register write occurs.
+- The sticky LEDs remain on when SW0 is turned off, proving pause/freeze while preserving evidence.
+- BTNC reset clears the sticky LEDs.
+
+## Phase 16A Physical Hardware MIPS Measurement
+
+Status: Basys 3 board measurement recorded.
+
+Measurement method:
+
+- The FPGA counts retired instructions using the CPU `retire_valid` debug signal.
+- The FPGA counts a one-second measurement window using the 100 MHz board clock.
+- MIPS is calculated as retired instructions in one second divided by 1,000,000.
+- The 7-segment display showed `0063` during the Phase 16A hardware test.
+- This corresponds to approximately 63 MIPS at the 100 MHz board clock.
+- This implies `CPI = 100 / 63 = approximately 1.59`.
+- This is close to the Phase 14F/14G simulation CPI estimate of approximately 1.638.
+
+Hardware test sequence:
+
+1. Program the Phase 16A bitstream.
+2. Confirm DONE/startup status high.
+3. Press BTNC reset.
+4. Set SW0 on for full-speed run.
+5. Wait at least two measurement windows.
+6. Read the 7-segment display.
+7. Observed value: `0063`.
+8. Interpret as approximately 63 MIPS at 100 MHz.
+
+Caution:
+
+The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board clock. It should not be confused with the Phase 14G post-route timing estimate of approximately 101.8 MIPS, which assumes a 166.667 MHz clock.
+
+Limitations:
+
+- The hardware MIPS counter currently measures at the 100 MHz board clock.
+- The Phase 16A measurement does not prove 166.667 MHz physical operation.
+- The measured MIPS depends on the benchmark program loaded into instruction memory.
+- The 7-segment display currently shows integer MIPS, so fractional precision is lost.
+- Future work could add an MMCM/Clocking Wizard experiment to measure at higher hardware frequencies.
+- Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
+
+Recommended future work:
+
+- Phase 16B: benchmark alignment so simulation and hardware use the same workload.
+- Phase 16C: optional MMCM/Clocking Wizard high-frequency hardware MIPS test.
+- Phase 16D: UART or ILA output for detailed performance counters.
+- Final report: architecture diagrams, pipeline diagrams, performance plots and board evidence photos.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
