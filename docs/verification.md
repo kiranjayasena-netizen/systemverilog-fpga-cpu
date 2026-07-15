@@ -3234,10 +3234,215 @@ Conclusion:
 
 Phase 15B makes the bring-up LEDs useful for physical evidence by converting short event pulses into reset-cleared sticky indicators. This is an observability change only; it does not change `cpu_core_pipeline6.sv`, instruction encodings or the Phase 14G performance result.
 
+## Phase 16A Hardware MIPS 7-Segment Counter
+
+Status: Vivado implementation and bitstream generation passed for the 100 MHz Basys 3 hardware MIPS counter wrapper.
+
+Files added:
+
+- `rtl/fpga_top_pipeline6_perf7seg.sv`
+- `scripts/run_vivado_impl_pipeline6_perf7seg.tcl`
+- `reports/phase16a_hardware_mips_7seg.md`
+
+Purpose:
+
+- Count retired instructions from `cpu_core_pipeline6` in real FPGA hardware.
+- Use a one-second measurement window at the normal 100 MHz Basys 3 board clock.
+- Display integer MIPS on the four-digit 7-segment display.
+- Keep Phase 14G timing/performance evidence unchanged.
+
+Top-level wrapper:
+
+- `fpga_top_pipeline6_perf7seg`
+
+Switch and reset mapping:
+
+| Board control | Function |
+| --- | --- |
+| BTNC | synchronized reset |
+| SW0 | full-speed run enable |
+| SW1 | reserved for later display/debug selection |
+
+Measurement convention:
+
+```text
+MIPS = retired instructions in one second / 1,000,000
+```
+
+The CPU runs from the real 100 MHz board clock. SW0 controls the CPU clock-enable input; no fabric-derived CPU clock is created.
+
+Expected approximate display value:
+
+```text
+100 MHz / 1.638 CPI = 61.05 MIPS
+```
+
+The display is therefore expected to show about `0061` when the loaded program has similar CPI behavior. The actual value depends on `programs/fpga_led_demo.mem`.
+
+LED mapping:
+
+| LED | Signal |
+| --- | --- |
+| `led[3:0]` | fetch PC word index |
+| `led[8:4]` | pipeline valid bits |
+| `led[9]` | sticky measurement-window-completed flag |
+| `led[10]` | sticky redirect observed |
+| `led[11]` | sticky retire observed |
+| `led[12]` | sticky register-write observed |
+| `led[13]` | sticky memory-write observed |
+| `led[14]` | measurement active |
+| `led[15]` | run enable |
+
+Vivado command used:
+
+```powershell
+& 'C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat' -mode batch -source scripts/run_vivado_impl_pipeline6_perf7seg.tcl
+```
+
+Implementation result:
+
+| Metric | Result |
+| --- | ---: |
+| Target period | 10.000 ns |
+| WNS | +2.336 ns |
+| TNS | 0.000 ns |
+| WHS | +0.038 ns |
+| THS | 0.000 ns |
+| LUTs | 1,388 |
+| FFs | 1,719 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Total on-chip power estimate | 0.099 W |
+| Bitstream generation | Passed |
+
+Bitstream path:
+
+- `reports/phase16a_perf7seg_impl/bitstreams/fpga_top_pipeline6_perf7seg.bit`
+
+Hardware test procedure:
+
+1. Program the Basys 3 with `reports/phase16a_perf7seg_impl/bitstreams/fpga_top_pipeline6_perf7seg.bit`.
+2. Confirm DONE/startup status is high.
+3. Set `SW0 = 0`.
+4. Press and release BTNC reset.
+5. Confirm the 7-segment display shows `0000` or the reset value.
+6. Set `SW0 = 1`.
+7. Wait at least two seconds for the first one-second measurement window to complete.
+8. Observe the displayed integer MIPS value.
+9. Set `SW0 = 0` and confirm the displayed value remains latched.
+10. Press BTNC reset and confirm the display clears.
+
+Limitations:
+
+- Phase 16A measures the CPU at the 100 MHz board clock only.
+- It does not prove 166.667 MHz physical operation.
+- The measured MIPS depends on the instruction program loaded in instruction memory.
+- Integer display loses fractional precision.
+
+Conclusion:
+
+Phase 16A adds a hardware-visible performance counter wrapper without modifying `cpu_core_pipeline6.sv`, Phase 13E/13I RTL, instruction encodings or Phase 14G timing evidence. The wrapper is ready for board measurement at 100 MHz.
+
+## Phase 16B CPU Bitstream Comparison Bundle
+
+Status: local comparison bundle generated successfully.
+
+Files added:
+
+- `scripts/collect_cpu_comparison_bitstreams.ps1`
+- `reports/phase16b_cpu_bitstream_bundle.md`
+
+Generated local artifacts:
+
+- `reports/phase16b_cpu_bitstream_bundle/manifest.csv`
+- `reports/phase16b_cpu_bitstream_bundle/bitstreams/`
+
+Command used:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\collect_cpu_comparison_bitstreams.ps1
+```
+
+Result:
+
+- 16 selected CPU/bring-up bitstreams were found and copied into the bundle.
+- No selected bitstreams were missing.
+
+Important measurement note:
+
+- `phase16a_pipeline6_perf7seg.bit` is the only bundled bitstream with the 7-segment hardware MIPS counter.
+- Earlier CPU bitstreams are LED/debug or bring-up wrappers unless a dedicated MIPS-counter wrapper is added later.
+- The Phase 16A board reading of about 63 MIPS is close to the expected 100 MHz estimate of about 61 MIPS for CPI 1.638.
+
+Conclusion:
+
+Phase 16B makes board programming and architecture comparison easier by collecting the generated CPU bitstreams into one local bundle. It does not modify CPU RTL and does not create new performance claims.
+
+## Phase 16C Full-Speed MIPS-Counter Comparison Bitstreams
+
+Status: Vivado implementation and bitstream generation passed for six representative full-speed MIPS-counter CPU wrappers.
+
+Files added:
+
+- `rtl/fpga_top_cpu_mips_compare.sv`
+- `scripts/run_vivado_impl_cpu_mips_compare.tcl`
+- `scripts/build_cpu_mips_compare_bitstreams.ps1`
+- `reports/phase16c_cpu_mips_compare_bitstreams.md`
+
+Generated local artifacts:
+
+- `reports/phase16c_cpu_mips_compare_impl/`
+- `reports/phase16c_cpu_mips_compare_bitstreams/`
+
+Command used:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\build_cpu_mips_compare_bitstreams.ps1
+```
+
+The Vivado command needed unsandboxed execution because Vivado performs temporary writeability checks that fail inside the restricted sandbox.
+
+Comparison bitstreams:
+
+| CPU ID | Bitstream | CPU path | 100 MHz timing |
+| ---: | --- | --- | --- |
+| 0 | `phase08_multicycle_perf7seg.bit` | Phase 8G multi-cycle CPU | Pass |
+| 1 | `phase10h_bram_multicycle_perf7seg.bit` | Phase 10H BRAM multi-cycle CPU | Pass |
+| 2 | `phase11e_ctrlopt_prefetch_perf7seg.bit` | Phase 11E ctrlopt prefetch CPU | Pass |
+| 3 | `phase12_pipeline_perf7seg.bit` | Phase 12 five-stage pipeline | Pass |
+| 4 | `phase13e_13i_forwardtiming_perf7seg.bit` | Phase 13E/13I forwarding-timing pipeline | Pass |
+| 5 | `phase14g_pipeline6_perf7seg.bit` | Phase 14G six-stage pipeline | Pass |
+
+Timing summary:
+
+| CPU | WNS | TNS | WHS | THS |
+| --- | ---: | ---: | ---: | ---: |
+| Phase 8G multi-cycle | +0.581 ns | 0.000 ns | +0.046 ns | 0.000 ns |
+| Phase 10H BRAM multi-cycle | +2.799 ns | 0.000 ns | +0.104 ns | 0.000 ns |
+| Phase 11E ctrlopt prefetch | +0.334 ns | 0.000 ns | +0.133 ns | 0.000 ns |
+| Phase 12 pipeline | +0.099 ns | 0.000 ns | +0.035 ns | 0.000 ns |
+| Phase 13E/13I forwardtiming | +0.256 ns | 0.000 ns | +0.038 ns | 0.000 ns |
+| Phase 14G pipeline6 | +2.253 ns | 0.000 ns | +0.056 ns | 0.000 ns |
+
+Board procedure:
+
+1. Program a bitstream from `reports/phase16c_cpu_mips_compare_bitstreams/`.
+2. Set `SW0 = 0`.
+3. Press and release BTNC reset.
+4. Set `SW1 = 1` and confirm the static CPU ID.
+5. Set `SW1 = 0`.
+6. Set `SW0 = 1`.
+7. Wait at least two seconds.
+8. Record the displayed integer MIPS value.
+
+Conclusion:
+
+Phase 16C makes direct board MIPS comparison practical for the representative CPU families without modifying the CPU cores. All six generated wrappers pass 100 MHz timing and generate bitstreams.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
-- Capture Phase 15C physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream.
+- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream and Phase 16C full-speed comparison MIPS bitstreams.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
