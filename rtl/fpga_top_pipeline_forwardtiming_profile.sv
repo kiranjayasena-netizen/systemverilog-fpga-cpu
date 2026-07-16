@@ -91,6 +91,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
     logic [31:0] total_cycles_prev;
     logic [31:0] retired_instructions_prev;
+    logic [31:0] pipeline_fill_cycles_prev;
+    logic [31:0] data_hazard_stall_cycles_prev;
     logic [31:0] load_use_stall_cycles_prev;
     logic [31:0] control_hazard_flush_cycles_prev;
     logic [31:0] instruction_fetch_wait_cycles_prev;
@@ -102,6 +104,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
     (* keep = "true" *) logic [31:0] last_total_cycles_window;
     (* keep = "true" *) logic [31:0] last_retired_window;
+    (* keep = "true" *) logic [31:0] last_pipeline_fill_cycles_window;
+    (* keep = "true" *) logic [31:0] last_data_hazard_stalls_window;
     (* keep = "true" *) logic [31:0] last_load_use_stalls_window;
     (* keep = "true" *) logic [31:0] last_control_flushes_window;
     (* keep = "true" *) logic [31:0] last_fetch_waits_window;
@@ -220,6 +224,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
             total_cycles_prev                  <= 32'd0;
             retired_instructions_prev          <= 32'd0;
+            pipeline_fill_cycles_prev          <= 32'd0;
+            data_hazard_stall_cycles_prev      <= 32'd0;
             load_use_stall_cycles_prev         <= 32'd0;
             control_hazard_flush_cycles_prev   <= 32'd0;
             instruction_fetch_wait_cycles_prev <= 32'd0;
@@ -231,6 +237,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
             last_total_cycles_window           <= 32'd0;
             last_retired_window                <= 32'd0;
+            last_pipeline_fill_cycles_window   <= 32'd0;
+            last_data_hazard_stalls_window     <= 32'd0;
             last_load_use_stalls_window        <= 32'd0;
             last_control_flushes_window        <= 32'd0;
             last_fetch_waits_window            <= 32'd0;
@@ -263,6 +271,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
                 last_total_cycles_window       <= total_cycles - total_cycles_prev;
                 last_retired_window            <= retired_instructions - retired_instructions_prev;
+                last_pipeline_fill_cycles_window <= pipeline_fill_cycles - pipeline_fill_cycles_prev;
+                last_data_hazard_stalls_window <= data_hazard_stall_cycles - data_hazard_stall_cycles_prev;
                 last_load_use_stalls_window    <= load_use_stall_cycles - load_use_stall_cycles_prev;
                 last_control_flushes_window    <= control_hazard_flush_cycles - control_hazard_flush_cycles_prev;
                 last_fetch_waits_window        <= instruction_fetch_wait_cycles - instruction_fetch_wait_cycles_prev;
@@ -274,6 +284,8 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
                 total_cycles_prev                  <= total_cycles;
                 retired_instructions_prev          <= retired_instructions;
+                pipeline_fill_cycles_prev          <= pipeline_fill_cycles;
+                data_hazard_stall_cycles_prev      <= data_hazard_stall_cycles;
                 load_use_stall_cycles_prev         <= load_use_stall_cycles;
                 control_hazard_flush_cycles_prev   <= control_hazard_flush_cycles;
                 instruction_fetch_wait_cycles_prev <= instruction_fetch_wait_cycles;

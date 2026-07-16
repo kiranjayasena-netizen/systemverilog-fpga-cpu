@@ -34,14 +34,14 @@ Source files:
 | --- | --- |
 | BTNC | Synchronized reset |
 | SW0 | Full-speed run enable |
-| SW1 | Reserved; display remains MIPS |
+| SW1 | Seven-segment display mode select |
 
 Display modes:
 
 | SW1 | 7-segment display |
 | ---: | --- |
 | 0 | Integer MIPS, for example `0087` |
-| 1 | Integer MIPS, same as SW1 = 0 |
+| 1 | CPI x100, for example `0115` for CPI 1.15 |
 
 ## LED Mapping
 
@@ -65,6 +65,7 @@ The wrapper uses the existing Phase 13 performance/debug outputs where possible:
 - `retire_valid`
 - `total_cycles`
 - `retired_instructions`
+- `pipeline_fill_cycles`
 - `data_hazard_stall_cycles`
 - `load_use_stall_cycles`
 - `control_hazard_flush_cycles`
@@ -79,14 +80,16 @@ The wrapper counts a one-second measurement window using the 100 MHz board clock
 
 ```text
 MIPS = retired instructions in one second / 1,000,000
-CPI  = total cycles / retired instructions
+CPI x100 = total cycles in window * 100 / retired instructions in window
 ```
 
-The first implementation attempted an optional CPI x100 display, but that created a variable-divider timing path and failed 100 MHz timing. The final bitstream keeps the display timing-safe by showing integer MIPS only. CPI is calculated manually from the displayed value:
+The wrapper avoids a wide same-cycle variable divider on the display path. It calculates CPI x100 from the last integer MIPS value using a small registered one-bit-per-cycle divider:
 
 ```text
-CPI ~= 100 / displayed MIPS
+CPI x100 ~= round(10000 / displayed MIPS)
 ```
+
+This gives `0115` for an `0087` MIPS display value.
 
 ## Expected Result
 
@@ -97,7 +100,7 @@ The current Phase 13 board measurement is approximately:
 | Hardware MIPS at 100 MHz | ~87 |
 | Implied CPI | ~1.15 |
 | Display, SW1 = 0 | `0087` |
-| Display, SW1 = 1 | `0087` |
+| Display, SW1 = 1 | `0115` |
 
 ## Vivado Script
 
@@ -119,7 +122,7 @@ The generated implementation folder should remain local and should not be commit
 
 ## Vivado Result
 
-Vivado implementation and bitstream generation passed after removing the optional CPI divider from the display path.
+Vivado implementation and bitstream generation passed with the registered CPI x100 display mode.
 
 Front-end compile/elaboration check:
 
@@ -133,15 +136,15 @@ Result: passed. The first sandboxed `xelab` invocation built the snapshot but hi
 | Metric | Value |
 | --- | ---: |
 | Target period | 10.000 ns |
-| WNS | +0.391 ns |
+| WNS | +0.313 ns |
 | TNS | 0.000 ns |
-| WHS | +0.089 ns |
+| WHS | +0.037 ns |
 | THS | 0.000 ns |
-| LUTs | 1,489 |
-| FFs | 1,614 |
+| LUTs | 1,495 |
+| FFs | 1,685 |
 | BRAM | 1 Block RAM Tile / 2 RAMB18 |
 | DSP | 0 |
-| Total on-chip power estimate | 0.104 W |
+| Total on-chip power estimate | 0.111 W |
 | Bitstream generation | Passed |
 
 Bitstream path:
@@ -155,14 +158,14 @@ Bitstream path:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. Read the displayed MIPS value.
-7. Calculate CPI as `100 / displayed MIPS`.
-8. Record photo/video evidence for the display and sticky LEDs.
+6. Set SW1 low and read the displayed MIPS value.
+7. Set SW1 high and read CPI x100.
+8. Record photo/video evidence for both display modes and sticky LEDs.
 
 ## Limitations
 
-- The on-board display gives coarse integer MIPS only.
-- CPI must be calculated manually from the displayed MIPS value.
+- The on-board display gives coarse integer MIPS and CPI x100 rounded from integer MIPS.
+- CPI x100 is derived from the integer MIPS display value, so fractional precision is limited.
 - Detailed per-window bottleneck counters are latched internally for future ILA/UART exposure but are not all visible on the first 7-segment wrapper.
 - The measurement is at the fixed 100 MHz board clock.
 - The result depends on the instruction program loaded into instruction memory.

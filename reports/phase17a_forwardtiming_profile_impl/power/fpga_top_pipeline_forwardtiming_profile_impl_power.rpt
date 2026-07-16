@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
-| Date             : Wed Jul 15 14:03:05 2026
+| Date             : Thu Jul 16 11:13:55 2026
 | Host             : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
 | Command          : report_power -file reports/phase17a_forwardtiming_profile_impl/power/fpga_top_pipeline_forwardtiming_profile_impl_power.rpt
 | Design           : fpga_top_pipeline_forwardtiming_profile
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.104        |
+| Total On-Chip Power (W)  | 0.111        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.032        |
+| Dynamic (W)              | 0.039        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
-| Max Ambient (C)          | 84.5         |
-| Junction Temperature (C) | 25.5         |
+| Max Ambient (C)          | 84.4         |
+| Junction Temperature (C) | 25.6         |
 | Confidence Level         | Medium       |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,18 +52,18 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.005 |        3 |       --- |             --- |
-| Slice Logic    |     0.002 |     3561 |       --- |             --- |
-|   LUT as Logic |     0.001 |     1489 |     20800 |            7.16 |
-|   CARRY4       |    <0.001 |       85 |      8150 |            1.04 |
-|   Register     |    <0.001 |     1614 |     41600 |            3.88 |
+| Clocks         |     0.006 |        3 |       --- |             --- |
+| Slice Logic    |     0.002 |     3674 |       --- |             --- |
+|   LUT as Logic |     0.002 |     1495 |     20800 |            7.19 |
+|   CARRY4       |    <0.001 |       94 |      8150 |            1.15 |
+|   Register     |    <0.001 |     1685 |     41600 |            4.05 |
 |   Others       |     0.000 |        8 |       --- |             --- |
-|   F7/F8 Muxes  |     0.000 |      251 |     32600 |            0.77 |
-| Signals        |     0.002 |     2915 |       --- |             --- |
+|   F7/F8 Muxes  |     0.000 |      256 |     32600 |            0.79 |
+| Signals        |     0.003 |     2999 |       --- |             --- |
 | Block RAM      |     0.004 |        1 |        50 |            2.00 |
-| I/O            |     0.019 |       31 |       106 |           29.25 |
+| I/O            |     0.025 |       32 |       106 |           30.19 |
 | Static Power   |     0.072 |          |           |                 |
-| Total          |     0.104 |          |           |                 |
+| Total          |     0.111 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -73,9 +73,9 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.022 |       0.012 |      0.010 |       NA    | Unspecified | NA         |
-| Vccaux    |       1.800 |     0.013 |       0.001 |      0.013 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.006 |       0.005 |      0.001 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.024 |       0.014 |      0.010 |       NA    | Unspecified | NA         |
+| Vccaux    |       1.800 |     0.014 |       0.001 |      0.013 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.008 |       0.007 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -142,7 +142,7 @@ Table of Contents
 +-----------------------------------------+-----------+
 | Name                                    | Power (W) |
 +-----------------------------------------+-----------+
-| fpga_top_pipeline_forwardtiming_profile |     0.032 |
+| fpga_top_pipeline_forwardtiming_profile |     0.039 |
 |   cpu_inst                              |     0.012 |
 |     data_mem_inst                       |     0.002 |
 |     instr_mem_inst                      |     0.003 |

@@ -98,7 +98,7 @@ Planned Phase 17 flow:
 
 | Phase | Purpose |
 | --- | --- |
-| Phase 17A | Add a Phase 13 hardware profiler with MIPS display |
+| Phase 17A | Add a Phase 13 hardware profiler with MIPS and CPI x100 display modes |
 | Phase 17B | Use profiler counters to rank bottlenecks |
 | Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
 | Phase 17D | Recorded that the Phase 17C optimised path fails 10 ns timing, so tighter periods were not useful |

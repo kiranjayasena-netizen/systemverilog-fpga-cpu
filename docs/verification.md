@@ -3572,14 +3572,15 @@ Purpose:
 
 - Profile the Phase 13 forward-timing five-stage CPU because it is the best fixed-100 MHz board-measured path.
 - Measure integer MIPS over a one-second 100 MHz board-clock window.
-- Keep the 7-segment display timing-safe by showing integer MIPS only.
+- Show integer MIPS and CPI x100 on the 7-segment display.
 - Preserve the unchanged `cpu_core_pipeline_forwardtiming.sv` RTL.
 
 Board controls:
 
 - BTNC: reset.
 - SW0: run enable.
-- SW1: reserved; display remains integer MIPS.
+- SW1 = 0: integer MIPS.
+- SW1 = 1: CPI x100.
 
 Hardware procedure:
 
@@ -3588,22 +3589,22 @@ Hardware procedure:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. Read the displayed MIPS value.
-7. Calculate CPI as `100 / displayed MIPS`.
+6. Set SW1 low and read the displayed MIPS value.
+7. Set SW1 high and read CPI x100.
 8. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
 
 Expected approximate result:
 
 - MIPS: about 87 at the 100 MHz board clock.
-- CPI: about 1.15 after manual calculation.
+- CPI x100 display: about 115.
 
 Front-end check:
 
 - `xvlog` compile passed for the Phase 17A profiling wrapper source order.
 - `xelab` elaboration passed for `fpga_top_pipeline_forwardtiming_profile`.
 - The first sandboxed elaboration built the snapshot but hit the known XSim object-directory cleanup access warning; rerunning with normal filesystem access completed successfully.
-- Vivado implementation and bitstream generation passed at 10.000 ns after removing the optional CPI divider from the display path.
-- Timing result: WNS +0.391 ns, TNS 0.000 ns, WHS +0.089 ns, THS 0.000 ns.
+- Vivado implementation and bitstream generation passed at 10.000 ns with the registered CPI x100 display mode.
+- Timing result: WNS +0.313 ns, TNS 0.000 ns, WHS +0.037 ns, THS 0.000 ns.
 - Bitstream: `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`.
 
 ## Phase 17C Regression Procedure
