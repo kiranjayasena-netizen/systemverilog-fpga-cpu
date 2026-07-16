@@ -7,11 +7,13 @@
 #   PHASE17D_PERIODS    space-separated periods, for example "10.000 9.500 9.000"
 #   PHASE17D_STRATEGIES space-separated strategies: default fanout_opt explore physopt
 #
-# Generated outputs are written under reports/phase17d_forwardtiming_timing_sweep/
+# Generated outputs are written under reports/phase17d_forwardtiming_timing_sweep_impl/
 # and should not be committed wholesale.
 
 set FPGA_PART "xc7a35tcpg236-1"
 set XDC_FILE "constraints/basys3.xdc"
+# The original Phase 13 forward-timing CPU uses this top. The older
+# fpga_top_pipeline wrapper is the Phase 12 pipeline_full path.
 set TOP_MODULE "fpga_top_pipeline_forwardtiming"
 
 if {[info exists ::env(PHASE17D_PERIODS)] && $::env(PHASE17D_PERIODS) ne ""} {
@@ -26,7 +28,7 @@ if {[info exists ::env(PHASE17D_STRATEGIES)] && $::env(PHASE17D_STRATEGIES) ne "
     set STRATEGIES [list "default" "fanout_opt" "explore" "physopt"]
 }
 
-set SWEEP_ROOT "reports/phase17d_forwardtiming_timing_sweep"
+set SWEEP_ROOT "reports/phase17d_forwardtiming_timing_sweep_impl"
 file mkdir $SWEEP_ROOT
 
 proc emit_period_xdc {src_xdc period out_xdc} {

@@ -84,9 +84,20 @@ Phase 17 returns to the Phase 13 forward-timing CPU because it is the best fixed
 ```text
 Phase 13 board-measured throughput ~= 87 MIPS
 Phase 13 implied CPI ~= 1.15
+Phase 13 control-flush display ~= 1250, or 12.50%
 ```
 
 The goal is not to replace the Phase 14G timing evidence. The goal is to understand why Phase 13 retires about 87 million instructions per second at the 100 MHz board clock rather than approaching the 100 MIPS theoretical limit for CPI 1.0.
+
+The Phase 17B hardware profiler confirmed:
+
+| Metric | Display | Meaning |
+| --- | ---: | --- |
+| MIPS | 0087 | approximately 87 MIPS |
+| CPI x100 | 0115 | approximately 1.15 CPI |
+| Control flush percentage x100 | 1250 | approximately 12.50% |
+
+The control-flush reading explains most of the gap between the ideal 100 MIPS and the measured 87 MIPS fixed-clock result.
 
 Phase 17 separates three performance questions:
 
@@ -101,18 +112,25 @@ Planned Phase 17 flow:
 | Phase 17A | Add a Phase 13 hardware profiler with MIPS and CPI x100 display modes |
 | Phase 17B | Expand hardware display modes for load-use, control-flush, fetch-wait and memory-wait bottleneck readings |
 | Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
-| Phase 17D | Recorded that the Phase 17C optimised path fails 10 ns timing, so tighter periods were not useful |
+| Phase 17D | Swept the original Phase 13 forward-timing path above 100 MHz |
 | Phase 17E | Plan a future high-frequency hardware measurement |
 
-The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. It is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
+The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. The original Phase 13 core already had ID-stage fast-JUMP handling, so the experiment instead tried a direct EX-stage redirect target request. That path was too timing-expensive and is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
 
-The existing Phase 13I timing-clean result of 115.607 MHz is important for Phase 17D. If the confirmed board-implied CPI of about 1.15 holds at that higher clock, the estimated throughput would be:
+The existing Phase 13I timing-clean result of 115.607 MHz is important for Phase 17D. If the confirmed board-implied CPI of about 1.15 holds at that higher clock, the estimated throughput is:
 
 ```text
 115.607 MHz / 1.15 CPI = approximately 100.5 MIPS
 ```
 
-This is a timing estimate, not a physical high-frequency board measurement. A future MMCM/Clocking Wizard hardware test is needed to prove it on the Basys 3.
+Phase 17D ran the next important target, 8.500 ns, on the original Phase 13 forward-timing CPU. The result was:
+
+| Period | Frequency | Strategy | WNS | TNS | WHS | Status | Estimated MIPS using CPI 1.15 |
+| ---: | ---: | --- | ---: | ---: | ---: | --- | ---: |
+| 8.650 ns | 115.607 MHz | fanout_opt | +0.059 ns | 0.000 ns | +0.057 ns | pass | 100.5 |
+| 8.500 ns | 117.647 MHz | fanout_opt | -0.412 ns | -36.784 ns | +0.009 ns | failed setup | invalid |
+
+This means 100 MIPS is timing-supported for the original Phase 13 CPU, but beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D. This is still a timing estimate, not a physical high-frequency board measurement. A future MMCM/Clocking Wizard hardware test is needed to prove it on the Basys 3.
 
 ## Simulation Comparison
 

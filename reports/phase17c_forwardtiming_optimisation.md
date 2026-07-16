@@ -6,6 +6,16 @@ Phase 17C created a separate experimental optimisation path for the Phase 13 for
 
 The goal was to reduce CPI without modifying the known-good Phase 13E/13I RTL.
 
+After Phase 17B board profiling, the measured Phase 13 hardware baseline is:
+
+| Metric | Board display | Meaning |
+| --- | ---: | --- |
+| MIPS | `0087` | approximately 87 MIPS at 100 MHz |
+| CPI x100 | `0115` | approximately 1.15 CPI |
+| Control flush percentage x100 | `1250` | approximately 12.50% of cycles |
+
+This confirms that control-hazard recovery is the main measured CPI target.
+
 ## Files Added
 
 - `rtl/cpu_core_pipeline_forwardtiming_opt.sv`
@@ -33,7 +43,7 @@ The existing load-use detector already avoids the common false-stall cases:
 - no stall when the following instruction does not use `rs2`;
 - no stall for invalid instructions.
 
-Therefore this experiment targeted control-flow recovery instead of removing useful forwarding or changing load-use behaviour.
+The baseline already contains ID-stage fast-JUMP request logic, so Phase 17C could not honestly be described as moving unconditional JUMP from EX to ID. That optimisation was already present. Therefore this experiment targeted the remaining EX-stage redirect recovery path instead of removing useful forwarding or changing load-use behaviour.
 
 ## RTL Change
 

@@ -126,7 +126,7 @@ The project now reports both board-measured throughput at the fixed 100 MHz Basy
 - Phase 16A adds a separate Basys 3 7-segment hardware MIPS counter wrapper. It counts retired instructions over a one-second 100 MHz board-clock window and displays integer MIPS on the four-digit display; the board test showed `0063`, or approximately 63 MIPS at 100 MHz.
 - Phase 16B collects the generated bitstreams for the major CPU implementation paths into a single local comparison bundle under `reports/phase16b_cpu_bitstream_bundle/`.
 - Phase 16C adds full-speed 7-segment MIPS-counter comparison bitstreams for representative CPU families. The 100 MHz board-measured comparison shows Phase 13 is strongest at the fixed board clock, while Phase 14G remains strongest for post-route timing-estimated peak throughput.
-- Phase 17 starts focused optimisation of the Phase 13 forward-timing CPU because it is the best fixed-100 MHz board-measured path. Phase 17A adds a hardware profiling wrapper and 100 MHz bitstream, Phase 17B expands SW3:SW1 display modes for MIPS, CPI x100, stall percentages and control-flow event counts, Phase 17C tests a direct EX-stage branch-target request optimisation that improves simulation CPI slightly but fails 10 ns timing, Phase 17D records timing-sweep status for the five-stage path, and Phase 17E plans future high-frequency hardware measurement.
+- Phase 17 starts focused optimisation of the Phase 13 forward-timing CPU because it is the best fixed-100 MHz board-measured path. Phase 17A adds a hardware profiling wrapper and 100 MHz bitstream, Phase 17B confirmed `0087` MIPS, `0115` CPI x100 and `1250` control-flush x100 on hardware, Phase 17C tests a direct EX-stage branch-target request optimisation that improves simulation CPI slightly but fails 10 ns timing, Phase 17D confirms the original Phase 13 path is timing-clean at 8.650 ns but fails at 8.500 ns, and Phase 17E plans future high-frequency hardware measurement.
 - ALU, register file, program counter, instruction memory, fetch unit, instruction decoder, control unit and Phase 5 waveform images have been generated.
 - Documentation scaffolding has been added under `docs/`.
 
@@ -181,8 +181,10 @@ The project now reports both board-measured throughput at the fixed 100 MHz Basy
 - [Phase 16B CPU bitstream bundle](reports/phase16b_cpu_bitstream_bundle.md) documents the local comparison bitstream bundle and which files are MIPS-display capable versus LED/debug-only.
 - [Phase 16C full-speed MIPS-counter bitstreams](reports/phase16c_cpu_mips_compare_bitstreams.md) documents the representative CPU 7-segment MIPS bitstreams, CPU IDs and 100 MHz timing results.
 - [Phase 17A forward-timing profiler](reports/phase17a_forwardtiming_profile.md) documents the Phase 13 hardware MIPS profiling wrapper and bitstream.
-- [Phase 17B bottleneck analysis](reports/phase17b_forwardtiming_bottleneck_analysis.md) provides the table to fill from Phase 17A hardware counter readings.
+- [Phase 17B bottleneck analysis](reports/phase17b_forwardtiming_bottleneck_analysis.md) records the confirmed 87 MIPS, CPI x100 0115 and control-flush x100 1250 board readings.
 - [Phase 17C optimisation experiment](reports/phase17c_forwardtiming_optimisation.md) records the separate direct EX-stage branch-target request experiment, its small simulation CPI improvement and its failed 10 ns timing result.
+- [Phase 17C control-hazard optimisation](reports/phase17c_forwardtiming_control_optimisation.md) records the hardware control-flush bottleneck, confirms JUMP was already early in the baseline, and explains why the attempted direct EX redirect path was rejected.
+- [Phase 17D original forward-timing sweep](reports/phase17d_forwardtiming_timing_sweep.md) documents the original Phase 13 timing boundary: 8.650 ns passes, 8.500 ns fails, giving about 100.5 timing-estimated MIPS using CPI 1.15.
 - [Phase 17D optimised timing sweep](reports/phase17d_forwardtiming_opt_timing_sweep.md) documents why the Phase 17C optimised path was not swept tighter after failing 10 ns setup timing.
 - [Phase 17E high-frequency hardware test plan](reports/phase17e_high_frequency_hardware_test_plan.md) plans a future MMCM/Clocking Wizard hardware measurement phase.
 - [FPGA implementation plan](docs/fpga_implementation_plan.md) explains the Phase 3 FPGA wrapper, LED debug mapping and Vivado build scripts.
@@ -343,7 +345,7 @@ Completed work:
 - Phase 17A hardware profiling wrapper for the Phase 13 forward-timing CPU
 - Phase 17B bottleneck-analysis framework
 - Phase 17C direct EX-stage branch-target request experiment, simulation pass and timing failure
-- Phase 17D timing-sweep script/status for the Phase 17C optimised path
+- Phase 17D timing sweep for the original Phase 13 forward-timing path: 8.650 ns pass and 8.500 ns fail
 - Phase 17E high-frequency hardware measurement plan
 - Phase 5 memory system
 - CPU top-level program execution wrapper

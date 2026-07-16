@@ -3560,7 +3560,7 @@ Recommended future work:
 
 ## Phase 17A Forward-Timing Hardware Profiling Procedure
 
-Status: profiling wrapper and Vivado script added; board counter values pending.
+Status: profiling wrapper and Vivado script added; board MIPS/CPI/control-flush readings recorded.
 
 Files added:
 
@@ -3600,11 +3600,12 @@ Hardware procedure:
 8. Cycle through modes `010` through `111` and record the values.
 9. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
 
-Expected approximate result:
+Recorded board result:
 
-- MIPS: about 87 at the 100 MHz board clock.
-- CPI x100 display: about 115.
-- Other modes should be treated as measured bottleneck data and recorded from the board.
+- MIPS mode `000`: `0087`, about 87 MIPS at the 100 MHz board clock.
+- CPI x100 mode `001`: `0115`, about 1.15 CPI.
+- Control-flush percentage x100 mode `011`: `1250`, about 12.50%.
+- Other modes should still be treated as measured bottleneck data and recorded from the board.
 
 Front-end check:
 
@@ -3617,7 +3618,7 @@ Front-end check:
 
 ## Phase 17B Forward-Timing Bottleneck Display
 
-Status: profiler display modes added; board readings pending.
+Status: profiler display modes added; first board bottleneck readings recorded.
 
 Phase 17B extends the Phase 17A wrapper instead of changing CPU RTL. The original `cpu_core_pipeline_forwardtiming.sv` remains unchanged.
 
@@ -3636,9 +3637,19 @@ Display mode table:
 
 The percentage modes use a one-second 100 MHz window. A display value of `0050` means 0.50%, and `0100` means 1.00%.
 
+Recorded readings:
+
+| SW3:SW1 | Display | Recorded value | Meaning |
+| --- | --- | ---: | --- |
+| 000 | MIPS | 0087 | approximately 87 MIPS |
+| 001 | CPI x100 | 0115 | approximately 1.15 CPI |
+| 011 | Control-flush percentage x100 | 1250 | approximately 12.50% |
+
+Conclusion: control hazards are the first measured CPI bottleneck for Phase 17C.
+
 ## Phase 17C Regression Procedure
 
-Status: focused XSim passed; full local regression was started but interrupted before completion.
+Status: focused XSim passed; full local regression was not rerun for this documentation update.
 
 Phase 17C created a separate optimised copy of the Phase 13 forward-timing pipeline:
 
@@ -3653,6 +3664,11 @@ Optimisation tested:
 - direct EX-stage branch-target request for taken BEQ redirects;
 - existing ID-stage fast JUMP behaviour preserved;
 - load-use detection and forwarding behaviour otherwise preserved.
+
+Baseline inspection:
+
+- The original Phase 13 forward-timing core already has ID-stage fast-JUMP request/redirect logic.
+- Phase 17C therefore did not move JUMP from EX to ID; it tested the next possible control-hazard optimisation, a direct EX-stage redirect target request.
 
 Focused command sequence:
 
@@ -3671,6 +3687,7 @@ Focused XSim result:
 - Aggregate CPI: 1.329.
 - Aggregate MIPS at 100 MHz from simulation CPI: 75.236.
 - Console output included `Phase 17C forwardtiming_opt PIPELINE TEST PASSED`.
+- Focused XSim was rerun successfully on 2026-07-16.
 
 Vivado implementation:
 
@@ -3686,48 +3703,58 @@ Decision:
 - The direct branch-compare/redirect path into instruction BRAM is too timing-expensive.
 - Phase 13E/13I remains the preferred five-stage CPU path.
 
-## Phase 17D Forward-Timing Timing Sweep Procedure
+## Phase 17D Original Forward-Timing Timing Sweep
 
-Status: optimised-path sweep script added; sweep stopped after the 10.000 ns implementation failed setup timing.
+Status: original Phase 13 path timing boundary recorded.
 
-File added:
+Files:
 
-- `scripts/run_vivado_impl_pipeline_forwardtiming_opt_sweep.tcl`
-- `reports/phase17d_forwardtiming_opt_timing_sweep.md`
+- `scripts/run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl`
+- `reports/phase17d_forwardtiming_timing_sweep.md`
 
 Purpose:
 
-- Determine whether the Phase 17C optimised forward-timing CPU can close timing at or above 100 MHz.
-
-Default periods:
-
-- 10.000 ns
-- 9.500 ns
-- 9.000 ns
-- 8.750 ns
-- 8.650 ns
-- 8.500 ns
-- 8.250 ns
-- 8.000 ns
+- Determine whether the original Phase 13 forward-timing CPU can close timing above the 100 MHz board clock.
+- Use the confirmed board CPI of about 1.15 to estimate whether higher-frequency operation can reach about 100 MIPS.
+- Keep the failed Phase 17C opt copy out of the preferred hardware path.
 
 Run command:
 
 ```powershell
-vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_opt_sweep.tcl
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl
 ```
 
-Decision rule:
+Targeted run example:
 
-- A period only counts as passing if WNS is non-negative, TNS is zero, hold timing passes and bitstream generation succeeds.
-- Higher-frequency hardware MIPS should not be claimed until a later board clocking experiment measures it physically.
+```powershell
+$env:PHASE17D_PERIODS = "8.500"
+$env:PHASE17D_STRATEGIES = "fanout_opt"
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl
+```
 
-Actual result:
+Timing interpretation:
 
-| Period | WNS | TNS | WHS | THS | Status |
-| ---: | ---: | ---: | ---: | ---: | --- |
-| 10.000 ns | -0.552 ns | -2.159 ns | +0.088 ns | 0.000 ns | Failed setup |
+- A timing point is valid only when WNS >= 0, TNS = 0, WHS >= 0 and THS = 0.
+- Generated bitstream alone is not enough; the 8.500 ns run generated a bitstream but failed setup timing and is therefore invalid as a performance result.
 
-Tighter periods were not run because the design already failed the 100 MHz baseline constraint.
+Result:
+
+| Period | Frequency | Strategy | WNS | TNS | WHS | THS | Status |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: | --- |
+| 8.650 ns | 115.607 MHz | fanout_opt | +0.059 ns | 0.000 ns | +0.057 ns | 0.000 ns | pass |
+| 8.500 ns | 117.647 MHz | fanout_opt | -0.412 ns | -36.784 ns | +0.009 ns | 0.000 ns | failed setup |
+
+Estimated MIPS with the confirmed hardware CPI:
+
+```text
+115.607 MHz / 1.15 CPI = approximately 100.5 MIPS
+```
+
+Conclusion:
+
+- 100 MIPS is timing-supported for the original Phase 13 CPU at the 8.650 ns passing point.
+- Beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D because the 8.500 ns run failed.
+- A future MMCM/Clocking Wizard hardware test is needed before claiming a physical board measurement above 100 MHz.
 
 ## Future Verification Work
 

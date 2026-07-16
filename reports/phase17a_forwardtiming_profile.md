@@ -97,16 +97,17 @@ CPI x100 ~= round(10000 / displayed MIPS)
 
 This gives `0115` for an `0087` MIPS display value.
 
-## Expected Result
+## Recorded Result
 
-The current Phase 13 board measurement is approximately:
+The current Phase 13 board measurement is:
 
-| Metric | Expected |
+| Metric | Value |
 | --- | ---: |
-| Hardware MIPS at 100 MHz | ~87 |
-| Implied CPI | ~1.15 |
+| Hardware MIPS at 100 MHz | 87 |
+| Implied CPI | 1.15 |
 | Display mode 000 | `0087` |
 | Display mode 001 | `0115` |
+| Display mode 011 | `1250` control-flush percentage x100 |
 
 ## Vivado Script
 
@@ -164,9 +165,10 @@ Bitstream path:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. Set SW1 low and read the displayed MIPS value.
-7. Set SW1 high and read CPI x100.
-8. Record photo/video evidence for both display modes and sticky LEDs.
+6. Set SW3:SW1 to `000` and read the displayed MIPS value.
+7. Set SW3:SW1 to `001` and read CPI x100.
+8. Set SW3:SW1 to `011` and read control-flush percentage x100.
+9. Record photo/video evidence for the display modes and sticky LEDs.
 
 ## Limitations
 

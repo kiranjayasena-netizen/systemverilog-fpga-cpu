@@ -8,12 +8,14 @@ Phase 17B is the analysis step after the Phase 17A hardware profiling wrapper. I
 
 | Metric | Value | Interpretation |
 | --- | ---: | --- |
-| Measured MIPS | ~87 | Current best fixed-100 MHz board result |
-| Implied CPI | ~1.15 | `100 / 87` |
+| Measured MIPS | 87 | Current best fixed-100 MHz board result |
+| Implied CPI | 1.15 | `100 / 87` |
+| CPI x100 display | 0115 | Board profiler reading |
+| Control flush percentage x100 | 1250 | Board profiler reading; about 12.50% |
 | Retired instructions/window | ~87,000,000 | Implied by 87 MIPS over one second |
 | Lost cycles/window | ~13,000,000 | Approximate gap from 100 MIPS ideal |
 
-The exact lost-cycle breakdown needs Phase 17A board profiling data.
+The control-flush display accounts for nearly the whole gap between the 100 MHz single-issue ideal and the observed 87 MIPS board result.
 
 ## Phase 17B Display Modes
 
@@ -32,9 +34,9 @@ Display modes:
 | Display mode | Metric | FPGA value | Interpretation |
 |---|---|---:|---|
 | 000 | MIPS | 87 | Baseline throughput |
-| 001 | CPI x100 | TBD | Expected around 115 |
+| 001 | CPI x100 | 115 | Confirmed board reading |
 | 010 | Load-use stall % x100 | TBD | Data hazard cost |
-| 011 | Control flush % x100 | TBD | Branch/jump cost |
+| 011 | Control flush % x100 | 1250 | Confirmed board reading; about 12.50% |
 | 100 | Fetch wait % x100 | TBD | Instruction fetch cost |
 | 101 | Memory wait % x100 | TBD | Data memory cost |
 | 110 | Branch/jump events | TBD | Control-flow activity |
@@ -106,17 +108,13 @@ Post-route result at the 10.000 ns / 100 MHz board clock:
 | DSP | 0 |
 | Bitstream generation | Passed |
 
-## Likely Bottleneck Ranking Before Board Counter Readout
+## Bottleneck Ranking After Board Readout
 
-Expected order, based on the existing Phase 13 pipeline architecture and prior simulation/timing work:
+Confirmed first-order bottleneck:
 
-1. Load-use stalls.
-2. Control hazard flushes.
-3. Instruction fetch waits.
-4. Memory waits.
-5. Pipeline fill/drain overhead.
+1. Control hazard flushes: 12.50%.
 
-This ranking is a hypothesis. Phase 17C should not change RTL until the Phase 17A hardware counter data confirms the dominant source.
+Remaining values should still be recorded from the board, but the control-flush reading is large enough to justify Phase 17C targeting branch/jump recovery first.
 
 ## CPI Versus Timing Classification
 
@@ -143,4 +141,4 @@ Recommended optimisation choice after counters are available:
 
 ## Current Conclusion
 
-Phase 17B currently records the expected analysis framework and known 87 MIPS / CPI 1.15 result. The bottleneck conclusion remains pending until the Phase 17A profiling bitstream is run on hardware and the counter values are recorded.
+Phase 17B now records the confirmed 87 MIPS / CPI 1.15 result and the control-flush display value of `1250`, meaning about 12.50% of cycles. That makes control hazards the first Phase 17C optimisation target.
