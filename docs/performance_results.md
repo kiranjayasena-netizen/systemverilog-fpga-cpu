@@ -113,7 +113,7 @@ Planned Phase 17 flow:
 | Phase 17B | Expand hardware display modes for load-use, control-flush, fetch-wait and memory-wait bottleneck readings |
 | Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
 | Phase 17D | Swept the original Phase 13 forward-timing path above 100 MHz |
-| Phase 17E | Plan a future high-frequency hardware measurement |
+| Phase 17E | Build a 115 MHz MMCM-driven hardware MIPS wrapper for the original Phase 13 CPU |
 
 The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. The original Phase 13 core already had ID-stage fast-JUMP handling, so the experiment instead tried a direct EX-stage redirect target request. That path was too timing-expensive and is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
 
@@ -130,7 +130,23 @@ Phase 17D ran the next important target, 8.500 ns, on the original Phase 13 forw
 | 8.650 ns | 115.607 MHz | fanout_opt | +0.059 ns | 0.000 ns | +0.057 ns | pass | 100.5 |
 | 8.500 ns | 117.647 MHz | fanout_opt | -0.412 ns | -36.784 ns | +0.009 ns | failed setup | invalid |
 
-This means 100 MIPS is timing-supported for the original Phase 13 CPU, but beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D. This is still a timing estimate, not a physical high-frequency board measurement. A future MMCM/Clocking Wizard hardware test is needed to prove it on the Basys 3.
+This means 100 MIPS is timing-supported for the original Phase 13 CPU, but beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D. This is still a timing estimate, not a physical high-frequency board measurement.
+
+Phase 17E converts that estimate into a board-testable bitstream. It uses an RTL-instantiated MMCM to generate a 115.000 MHz CPU clock from the 100 MHz Basys 3 clock, keeps the original Phase 13 CPU RTL unchanged, and displays measured MIPS on the 7-segment display. The implementation is timing-clean:
+
+| CPU clock | WNS | TNS | WHS | THS | LUTs | FFs | BRAM | DSP | Bitstream |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- |
+| 115.000 MHz | +0.008 ns | 0.000 ns | +0.035 ns | 0.000 ns | 1,829 | 2,072 | 1 tile / 2 RAMB18 | 0 | generated |
+
+Expected board readings for Phase 17E are:
+
+| Display mode | Expected value | Meaning |
+| --- | ---: | --- |
+| MIPS | `0100` | approximately 100 MIPS if CPI remains near 1.15 |
+| CPI x100 | `0115` | approximately 1.15 CPI |
+| Control flush x100 | `1250` | approximately 12.50%, if workload behaviour remains similar |
+
+The Phase 17E physical board result remains TBD until the 115 MHz bitstream is programmed and observed on the Basys 3.
 
 ## Simulation Comparison
 

@@ -1,0 +1,61 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Thu Jul 16 13:54:22 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_clocks -file reports/phase17e_mmcm_mips_impl/timing/fpga_top_pipeline_forwardtiming_mmcm_mips_clocks.rpt
+| Design       : fpga_top_pipeline_forwardtiming_mmcm_mips
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Physopt postRoute
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Report
+
+
+Attributes
+  P: Propagated
+  G: Generated
+  A: Auto-derived
+  R: Renamed
+  V: Virtual
+  I: Inverted
+  S: Pin phase-shifted with Latency mode
+
+Clock          Period(ns)  Waveform(ns)    Attributes  Sources
+sys_clk_pin    10.000      {0.000 5.000}   P           {clk}
+clkfb          50.000      {0.000 25.000}  P,G,A       {cpu_clk_mmcm/CLKFBOUT}
+cpu_clk_unbuf  8.696       {0.000 4.348}   P,G,A       {cpu_clk_mmcm/CLKOUT0}
+
+
+====================================================
+Generated Clocks
+====================================================
+
+Generated Clock     : clkfb
+Master Source       : cpu_clk_mmcm/CLKIN1
+Master Clock        : sys_clk_pin
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 20.000 40.000}
+Generated Sources   : {cpu_clk_mmcm/CLKFBOUT}
+
+Generated Clock     : cpu_clk_unbuf
+Master Source       : cpu_clk_mmcm/CLKIN1
+Master Clock        : sys_clk_pin
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 -0.652 -1.304}
+Generated Sources   : {cpu_clk_mmcm/CLKOUT0}
+
+
+
+====================================================
+User Uncertainty
+====================================================
+
+
+
+====================================================
+User Jitter
+====================================================
+
+

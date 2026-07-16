@@ -3756,10 +3756,91 @@ Conclusion:
 - Beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D because the 8.500 ns run failed.
 - A future MMCM/Clocking Wizard hardware test is needed before claiming a physical board measurement above 100 MHz.
 
+## Phase 17E MMCM High-Frequency MIPS Test
+
+Status: Vivado implementation and bitstream generation passed for a 115 MHz MMCM-driven hardware MIPS wrapper around the original Phase 13 forward-timing CPU.
+
+Files:
+
+- `rtl/fpga_top_pipeline_forwardtiming_mmcm_mips.sv`
+- `scripts/run_vivado_impl_pipeline_forwardtiming_mmcm_mips.tcl`
+- `reports/phase17e_mmcm_high_frequency_mips_test.md`
+
+Purpose:
+
+- Physically test the original Phase 13 forward-timing CPU above the fixed 100 MHz Basys 3 board clock.
+- Keep the original `cpu_core_pipeline_forwardtiming.sv` unchanged.
+- Generate a 115.000 MHz CPU clock from the 100 MHz board clock using an RTL-instantiated 7-series MMCM.
+- Display measured integer MIPS on the Basys 3 7-segment display.
+
+Clocking:
+
+- Input board clock: 100.000 MHz.
+- MMCM VCO: 920 MHz.
+- Generated CPU clock: 115.000 MHz.
+- Measurement window: `CPU_CLOCK_HZ = 115_000_000` CPU-clock cycles.
+
+Run command:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_mmcm_mips.tcl
+```
+
+Vivado result:
+
+| Metric | Value |
+| --- | ---: |
+| CPU clock | 8.696 ns / 115.000 MHz |
+| WNS | +0.008 ns |
+| TNS | 0.000 ns |
+| WHS | +0.035 ns |
+| THS | 0.000 ns |
+| LUTs | 1,829 |
+| FFs | 2,072 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| MMCM | 1 |
+| Bitstream | generated |
+
+Bitstream path:
+
+- `reports/phase17e_mmcm_mips_impl/bitstreams/fpga_top_pipeline_forwardtiming_mmcm_mips.bit`
+
+Display modes:
+
+| SW3:SW1 | 7-segment display |
+| ---: | --- |
+| 000 | measured integer MIPS, expected around `0100` if CPI remains near 1.15 |
+| 001 | CPI x100, expected around `0115` |
+| 010 | load-use stall percentage x100 |
+| 011 | control-flush percentage x100, expected around `1250` if workload behaviour is similar |
+| 100 | instruction-fetch wait percentage x100 |
+| 101 | memory-wait percentage x100 |
+| 110 | generated-clock debug value `0115` |
+| 111 | measured integer MIPS |
+
+Hardware test procedure:
+
+1. Program `reports/phase17e_mmcm_mips_impl/bitstreams/fpga_top_pipeline_forwardtiming_mmcm_mips.bit`.
+2. Press and release BTNC reset.
+3. Confirm LED0 is on, indicating MMCM lock.
+4. Set SW0 = 1 to run the CPU.
+5. Wait at least two one-second measurement windows.
+6. Set SW3:SW1 = `000` and record the MIPS value. Expected value is around `0100`.
+7. Set SW3:SW1 = `001` and record CPI x100. Expected value is around `0115`.
+8. Set SW3:SW1 = `011` and record control-flush x100. Expected value is around `1250`.
+9. Capture photo/video evidence.
+
+Interpretation:
+
+- The implementation is timing-clean at the generated 115 MHz CPU clock.
+- The final Phase 17E hardware MIPS value must come from the physical 7-segment reading.
+- The 115 MHz wrapper is separate from Phase 14G/15/16 and does not modify those RTL paths.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
-- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream and Phase 16C full-speed comparison MIPS bitstreams.
+- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream, Phase 16C full-speed comparison MIPS bitstreams and Phase 17E 115 MHz MMCM MIPS bitstream.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
