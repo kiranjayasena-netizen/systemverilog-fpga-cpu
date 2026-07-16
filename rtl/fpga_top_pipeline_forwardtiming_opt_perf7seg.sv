@@ -1,4 +1,4 @@
-module fpga_top_pipeline_forwardtiming_profile #(
+module fpga_top_pipeline_forwardtiming_opt_perf7seg #(
     parameter string       IMEM_INIT_FILE = "programs/fpga_led_demo.mem",
     parameter int unsigned IMEM_DEPTH = 256,
     parameter int unsigned DMEM_DEPTH = 256,
@@ -15,7 +15,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
 );
 
     localparam int unsigned MILLION_REMAINDER_WIDTH = $clog2(MIPS_DIVISOR);
-    localparam int unsigned CPI_DIV_WIDTH = 14;
 
     logic rst_meta;
     logic rst_sync;
@@ -71,18 +70,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
     logic [15:0] mips_accumulator;
     logic [15:0] mips_value;
     logic        measurement_window_seen;
-
-    logic        cpi_div_active;
-    logic [3:0]  cpi_div_bit;
-    logic [13:0] cpi_div_numerator;
-    logic [13:0] cpi_div_denominator;
-    logic [13:0] cpi_div_remainder;
-    logic [13:0] cpi_div_quotient;
-    logic [13:0] cpi_x100_value;
-    logic [14:0] cpi_div_remainder_candidate;
-    logic [14:0] cpi_div_subtract_result;
-    logic [13:0] cpi_div_remainder_next;
-    logic [13:0] cpi_div_quotient_next;
 
     logic [MILLION_REMAINDER_WIDTH-1:0] retired_million_remainder_next;
     logic [15:0] mips_accumulator_next;
@@ -185,22 +172,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
     assign mips_accumulator_next = mips_accumulator + {15'd0, retire_million_wrap};
     assign retired_counter_next = retired_counter + {31'd0, retire_valid};
 
-    // CPI x100 is displayed as 10000 / integer_MIPS, rounded to nearest.
-    // This one-bit-per-cycle divider avoids a wide variable divide on the
-    // seven-segment display path.
-    assign cpi_div_remainder_candidate = {cpi_div_remainder, cpi_div_numerator[cpi_div_bit]};
-    assign cpi_div_subtract_result = cpi_div_remainder_candidate - {1'b0, cpi_div_denominator};
-
-    always_comb begin
-        cpi_div_remainder_next = cpi_div_remainder_candidate[13:0];
-        cpi_div_quotient_next = cpi_div_quotient;
-
-        if (cpi_div_remainder_candidate >= {1'b0, cpi_div_denominator}) begin
-            cpi_div_remainder_next = cpi_div_subtract_result[13:0];
-            cpi_div_quotient_next[cpi_div_bit] = 1'b1;
-        end
-    end
-
     always_ff @(posedge clk) begin
         if (rst_sync) begin
             cycle_counter              <= 32'd0;
@@ -210,13 +181,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
             mips_accumulator           <= 16'd0;
             mips_value                 <= 16'd0;
             measurement_window_seen    <= 1'b0;
-            cpi_div_active             <= 1'b0;
-            cpi_div_bit                <= 4'd0;
-            cpi_div_numerator          <= 14'd0;
-            cpi_div_denominator        <= 14'd1;
-            cpi_div_remainder          <= 14'd0;
-            cpi_div_quotient           <= 14'd0;
-            cpi_x100_value             <= 14'd0;
 
             total_cycles_prev                  <= 32'd0;
             retired_instructions_prev          <= 32'd0;
@@ -249,18 +213,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
                 mips_value                <= mips_accumulator_next;
                 measurement_window_seen   <= 1'b1;
 
-                if (mips_accumulator_next != 16'd0) begin
-                    cpi_div_active      <= 1'b1;
-                    cpi_div_bit         <= 4'd13;
-                    cpi_div_numerator   <= 14'd10000 + {1'b0, mips_accumulator_next[13:1]};
-                    cpi_div_denominator <= mips_accumulator_next[13:0];
-                    cpi_div_remainder   <= 14'd0;
-                    cpi_div_quotient    <= 14'd0;
-                end else begin
-                    cpi_div_active      <= 1'b0;
-                    cpi_x100_value      <= 14'd0;
-                end
-
                 last_total_cycles_window       <= total_cycles - total_cycles_prev;
                 last_retired_window            <= retired_instructions - retired_instructions_prev;
                 last_load_use_stalls_window    <= load_use_stall_cycles - load_use_stall_cycles_prev;
@@ -287,18 +239,6 @@ module fpga_top_pipeline_forwardtiming_profile #(
                 retired_counter           <= retired_counter_next;
                 retired_million_remainder <= retired_million_remainder_next;
                 mips_accumulator          <= mips_accumulator_next;
-
-                if (cpi_div_active) begin
-                    cpi_div_remainder <= cpi_div_remainder_next;
-                    cpi_div_quotient  <= cpi_div_quotient_next;
-
-                    if (cpi_div_bit == 4'd0) begin
-                        cpi_div_active <= 1'b0;
-                        cpi_x100_value <= cpi_div_quotient_next;
-                    end else begin
-                        cpi_div_bit <= cpi_div_bit - 4'd1;
-                    end
-                end
             end
         end
     end
@@ -333,7 +273,7 @@ module fpga_top_pipeline_forwardtiming_profile #(
         end
     end
 
-    cpu_core_pipeline_forwardtiming #(
+    cpu_core_pipeline_forwardtiming_opt #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE(IMEM_INIT_FILE)
@@ -382,10 +322,9 @@ module fpga_top_pipeline_forwardtiming_profile #(
         .wrong_path_instructions_flushed(wrong_path_instructions_flushed)
     );
 
-    // SW1 selects display mode:
-    //   0: integer MIPS measured over the previous one-second window
-    //   1: CPI x100, computed from the last integer MIPS value
-    assign display_value = sw_sync[1] ? {2'd0, cpi_x100_value} : mips_value;
+    // Keep the display timing-safe: the hardware profiler shows integer MIPS
+    // in both switch positions. CPI can be calculated as 100 / displayed MIPS.
+    assign display_value = mips_value;
     assign display_clamped = (display_value > 16'd9999) ? 14'd9999 : display_value[13:0];
     assign bcd_digits = bin14_to_bcd4(display_clamped);
     assign digit_select = refresh_counter[16:15];

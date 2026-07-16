@@ -1,55 +1,146 @@
-# Phase 17C Forward-Timing Optimisation Decision
+# Phase 17C Forward-Timing Optimisation Experiment
 
 ## Purpose
 
-Phase 17C is reserved for a targeted CPI optimisation of the Phase 13 forward-timing five-stage CPU after Phase 17A/17B identify the dominant lost-cycle source.
+Phase 17C created a separate experimental optimisation path for the Phase 13 forward-timing five-stage CPU. The fixed-100 MHz board result for the Phase 13 path is approximately 87 MIPS, implying CPI around 1.15 on the loaded hardware demo program.
 
-## Status
+The goal was to reduce CPI without modifying the known-good Phase 13E/13I RTL.
 
-Deferred.
-
-No CPU RTL has been changed in Phase 17C because the requested optimisation should be based on measured hardware bottleneck data. The current available board result gives throughput and implied CPI, but it does not yet expose the stall/flush/fetch-wait breakdown required to choose the right optimisation.
-
-## Why No RTL Optimisation Was Made Yet
-
-The user goal is to improve the best fixed-100 MHz board-measured path without unsupported claims. Blind changes would risk:
-
-- increasing CPI, as Phase 13D did when decode-time WB-to-ID bypass was removed;
-- hurting timing by adding target-buffer or control-flow complexity;
-- optimising for the wrong workload;
-- weakening the known-good Phase 13E/13I path.
-
-## Optimisation Options To Use After Phase 17A Data
-
-| Measured bottleneck | Candidate optimisation |
-| --- | --- |
-| Load-use stalls dominate | Refine load-use detection so only true consumers stall |
-| Control flushes dominate | Reduce conservative redirect penalty while preserving wrong-path protection |
-| Fetch waits dominate | Inspect fetch-buffer behavior and avoid unnecessary frontend bubbles |
-| Program mix dominates | Create a hardware benchmark program aligned with the simulation benchmark |
-
-## Required Verification For A Future RTL Change
-
-Any future Phase 17C RTL optimisation should use a separate path, for example:
+## Files Added
 
 - `rtl/cpu_core_pipeline_forwardtiming_opt.sv`
 - `rtl/fpga_top_pipeline_forwardtiming_opt.sv`
 - `tb/tb_cpu_core_pipeline_forwardtiming_opt.sv`
 - `scripts/run_vivado_impl_pipeline_forwardtiming_opt.tcl`
+- `scripts/run_vivado_impl_pipeline_forwardtiming_opt_sweep.tcl`
 
-Required checks:
+## Baseline Preserved
 
-- arithmetic execution still works;
-- LOAD/STORE still works;
-- forwarding still works;
-- load-use hazards still work;
-- `x0` remains protected;
-- BEQ/JUMP still work;
-- invalid opcodes and NOP remain safe;
-- performance counters remain meaningful;
-- full XSim regression passes;
-- 10 ns Vivado implementation passes.
+The original Phase 13 forward-timing files were not modified:
+
+- `rtl/cpu_core_pipeline_forwardtiming.sv`
+- `rtl/fpga_top_pipeline_forwardtiming.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming.sv`
+
+Phase 14G, Phase 15A/15B and Phase 16A RTL were also left untouched.
+
+## Bottleneck Targeted
+
+The existing load-use detector already avoids the common false-stall cases:
+
+- no stall when the producer is `x0`;
+- no stall when the following instruction does not use `rs1`;
+- no stall when the following instruction does not use `rs2`;
+- no stall for invalid instructions.
+
+Therefore this experiment targeted control-flow recovery instead of removing useful forwarding or changing load-use behaviour.
+
+## RTL Change
+
+The experimental core directly launches an EX-stage redirect target request to instruction BRAM when a taken BEQ resolves in EX.
+
+Baseline flow:
+
+```text
+BEQ taken in EX
+-> register redirect_pending_valid
+-> request target on a later cycle
+-> capture synchronous instruction response
+```
+
+Phase 17C experimental flow:
+
+```text
+BEQ taken in EX
+-> drive ex_redirect_target onto instruction_addr in the same cycle
+-> save fetch_pending_pc = ex_redirect_target
+-> capture the synchronous target response on the following usable cycle
+```
+
+The existing ID-stage fast JUMP mechanism is preserved.
+
+## Focused XSim Result
+
+Command sequence used:
+
+```powershell
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_pipeline_forwardtiming_opt.sv tb\tb_cpu_core_pipeline_forwardtiming_opt.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_pipeline_forwardtiming_opt -s tb_cpu_core_pipeline_forwardtiming_opt_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_pipeline_forwardtiming_opt_sim -runall
+```
+
+`xelab` built the snapshot but returned the known XSim object-directory cleanup warning. `xsim` ran successfully.
+
+Result:
+
+| Metric | Phase 13E baseline | Phase 17C opt |
+| --- | ---: | ---: |
+| Tests run | 3,232 | 3,217 |
+| Tests failed | 0 | 0 |
+| Aggregate cycles | 427 | 424 |
+| Aggregate retired | 319 | 319 |
+| Aggregate CPI | 1.339 | 1.329 |
+| MIPS at 100 MHz from simulation CPI | 74.707 | 75.236 |
+
+The experiment improves the existing aggregate simulation workload by 3 cycles. That is a small CPI gain, not a large fixed-100 MHz board-throughput improvement.
+
+## Vivado 100 MHz Result
+
+Implementation command:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_opt.tcl
+```
+
+The first sandboxed run failed before synthesis because Vivado could not complete its writeability probe. The rerun with normal filesystem access completed synthesis, implementation, report generation and bitstream generation.
+
+Final post-route timing did not meet the 10.000 ns constraint:
+
+| Metric | Value |
+| --- | ---: |
+| Target period | 10.000 ns |
+| WNS | -0.552 ns |
+| TNS | -2.159 ns |
+| WHS | +0.088 ns |
+| THS | 0.000 ns |
+| LUTs | 1,387 |
+| FFs | 1,469 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Power estimate | 0.093 W |
+| Bitstream generated | Yes, but not timing-clean |
+
+Generated bitstream path:
+
+- `reports/phase17c_forwardtiming_opt_impl/bitstreams/fpga_top_pipeline_forwardtiming_opt.bit`
+
+This bitstream should not be used as an accepted 100 MHz performance result because setup timing failed.
+
+## Critical Path
+
+Worst setup path:
+
+- Source: `cpu_inst/mem_wb_reg_reg[rd][2]/C`
+- Destination: `cpu_inst/instr_mem_inst/instruction_reg/RSTRAMB`
+- Slack: `-0.552 ns`
+- Data path delay: `10.163 ns`
+- Logic delay: `2.821 ns`
+- Route delay: `7.342 ns`
+- Logic levels: 13
+
+Interpretation:
+
+The direct EX redirect request connects writeback/decode-bypass state through branch comparison and redirect selection into the instruction-BRAM address/control path. This is exactly the timing risk that earlier Phase 13 branch-prefetch work avoided.
 
 ## Decision
 
-Phase 17C optimisation is intentionally deferred until Phase 17A hardware counter readings identify the dominant CPI bottleneck. Phase 13E/13I remains the known-good five-stage path.
+Phase 17C is functionally correct in simulation but is not accepted as a hardware improvement because it fails the 100 MHz post-route setup timing requirement.
+
+The Phase 13E/13I forward-timing implementation remains the preferred five-stage CPU path.
+
+## Recommended Next Step
+
+Do not keep the direct EX redirect request as the preferred design. The next useful work is either:
+
+- expose more Phase 17A hardware counters through UART/ILA or additional display modes, then optimise the measured dominant bottleneck; or
+- pursue a timing-safe control-flow technique, such as registered target prefetch, only if the hardware counter data proves control flushes dominate.

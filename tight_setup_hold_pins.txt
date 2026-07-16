@@ -1,6 +1,28 @@
-+====================+===================+==========================================+
-| Launch Setup Clock | Launch Hold Clock | Pin                                      |
-+====================+===================+==========================================+
-| sys_clk_pin        | sys_clk_pin       | cpu_inst/op_ex_reg_reg[store_data][19]/D |
-| sys_clk_pin        | sys_clk_pin       | cpu_inst/op_ex_reg_reg[store_data][1]/D  |
-+--------------------+-------------------+------------------------------------------+
++====================+===================+============================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                                        |
++====================+===================+============================================+
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_buffer_valid_reg/D          |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][30]/D  |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[26]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[30]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][26]/D  |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[31]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[branch]/D           |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[25]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[mem_write]/D        |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[29]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[28]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/fetch_pc_reg[27]/D                |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[reg_write]/D        |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][5]/D   |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[10]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[15]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_valid_reg/D      |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[operand_a][23]/D    |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[operand_a][21]/D    |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][0]/D   |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/id_ex_reg_reg[operand_a][29]/D    |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][1]/D   |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][3]/D   |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/ex_mem_reg_reg[alu_result][6]/D   |
++--------------------+-------------------+--------------------------------------------+

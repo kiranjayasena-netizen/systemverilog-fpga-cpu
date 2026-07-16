@@ -34,14 +34,14 @@ Source files:
 | --- | --- |
 | BTNC | Synchronized reset |
 | SW0 | Full-speed run enable |
-| SW1 | 7-segment display mode |
+| SW1 | Reserved; display remains MIPS |
 
 Display modes:
 
 | SW1 | 7-segment display |
 | ---: | --- |
 | 0 | Integer MIPS, for example `0087` |
-| 1 | CPI x100, for example `0115` for CPI 1.15 |
+| 1 | Integer MIPS, same as SW1 = 0 |
 
 ## LED Mapping
 
@@ -82,13 +82,11 @@ MIPS = retired instructions in one second / 1,000,000
 CPI  = total cycles / retired instructions
 ```
 
-The 7-segment CPI display uses the integer measured MIPS value:
+The first implementation attempted an optional CPI x100 display, but that created a variable-divider timing path and failed 100 MHz timing. The final bitstream keeps the display timing-safe by showing integer MIPS only. CPI is calculated manually from the displayed value:
 
 ```text
-CPI x100 ~= 10000 / measured_mips
+CPI ~= 100 / displayed MIPS
 ```
-
-This is intentionally coarse, but suitable for board-level feedback.
 
 ## Expected Result
 
@@ -99,7 +97,7 @@ The current Phase 13 board measurement is approximately:
 | Hardware MIPS at 100 MHz | ~87 |
 | Implied CPI | ~1.15 |
 | Display, SW1 = 0 | `0087` |
-| Display, SW1 = 1 | `0115` |
+| Display, SW1 = 1 | `0087` |
 
 ## Vivado Script
 
@@ -121,7 +119,7 @@ The generated implementation folder should remain local and should not be commit
 
 ## Vivado Result
 
-Vivado implementation has not been run as part of this documentation checkpoint.
+Vivado implementation and bitstream generation passed after removing the optional CPI divider from the display path.
 
 Front-end compile/elaboration check:
 
@@ -132,20 +130,23 @@ C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat fpga_top_pipeline_forwardtiming_pr
 
 Result: passed. The first sandboxed `xelab` invocation built the snapshot but hit the known XSim object-directory cleanup access warning. The rerun with normal filesystem access completed successfully.
 
-Placeholder table for the implementation result:
-
 | Metric | Value |
 | --- | ---: |
 | Target period | 10.000 ns |
-| WNS | TBD |
-| TNS | TBD |
-| WHS | TBD |
-| THS | TBD |
-| LUTs | TBD |
-| FFs | TBD |
-| BRAM | TBD |
-| DSP | TBD |
-| Bitstream generation | TBD |
+| WNS | +0.391 ns |
+| TNS | 0.000 ns |
+| WHS | +0.089 ns |
+| THS | 0.000 ns |
+| LUTs | 1,489 |
+| FFs | 1,614 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Total on-chip power estimate | 0.104 W |
+| Bitstream generation | Passed |
+
+Bitstream path:
+
+- `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`
 
 ## Hardware Test Procedure
 
@@ -154,13 +155,14 @@ Placeholder table for the implementation result:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. With SW1 = 0, read the displayed MIPS value.
-7. With SW1 = 1, read the displayed CPI x100 value.
+6. Read the displayed MIPS value.
+7. Calculate CPI as `100 / displayed MIPS`.
 8. Record photo/video evidence for the display and sticky LEDs.
 
 ## Limitations
 
-- The on-board display gives coarse integer MIPS and integer CPI x100.
+- The on-board display gives coarse integer MIPS only.
+- CPI must be calculated manually from the displayed MIPS value.
 - Detailed per-window bottleneck counters are latched internally for future ILA/UART exposure but are not all visible on the first 7-segment wrapper.
 - The measurement is at the fixed 100 MHz board clock.
 - The result depends on the instruction program loaded into instruction memory.

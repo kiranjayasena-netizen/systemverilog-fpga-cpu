@@ -307,6 +307,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_forwardtiming_regression_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 17C forward-timing optimised experiment" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_forwardtiming_opt.sv", "tb/tb_cpu_core_pipeline_forwardtiming_opt.sv") `
+    -Top "tb_cpu_core_pipeline_forwardtiming_opt" `
+    -Snapshot "tb_cpu_core_pipeline_forwardtiming_opt_regression_sim"
+
+Invoke-XsimTest `
     -Name "Phase 13F control-flow target-buffer experiment" `
     -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_targetbuf.sv", "tb/tb_cpu_core_pipeline_targetbuf.sv") `
     -Top "tb_cpu_core_pipeline_targetbuf" `

@@ -98,13 +98,13 @@ Planned Phase 17 flow:
 
 | Phase | Purpose |
 | --- | --- |
-| Phase 17A | Add a Phase 13 hardware profiler with MIPS and CPI x100 display |
+| Phase 17A | Add a Phase 13 hardware profiler with MIPS display |
 | Phase 17B | Use profiler counters to rank bottlenecks |
-| Phase 17C | Apply one targeted CPI optimisation only after bottleneck data exists |
-| Phase 17D | Sweep Phase 13 timing to see whether higher clock rates are realistic |
+| Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
+| Phase 17D | Recorded that the Phase 17C optimised path fails 10 ns timing, so tighter periods were not useful |
 | Phase 17E | Plan a future high-frequency hardware measurement |
 
-The Phase 17C optimisation is deliberately gated on Phase 17A/17B data. This avoids repeating earlier experiments where a change improved one metric but reduced practical performance overall.
+The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. It is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
 
 ## Simulation Comparison
 
@@ -121,6 +121,7 @@ Representative simulation results from the project are below. These are not all 
 | Phase 13A fast-JUMP pipeline | 427 | 319 | 1.339 | 74.707 |
 | Phase 13B BEQ-prefetch pipeline | 424 | 319 | 1.329 | 75.236 |
 | Phase 13E / 13I forwarding-timing pipeline | 427 | 319 | 1.339 | 74.707 |
+| Phase 17C direct EX redirect experiment | 424 | 319 | 1.329 | 75.236 |
 | Phase 14F / 14G six-stage pipeline | 95 | 58 | 1.638 | 61.050 |
 
 The original single-cycle-style CPU has excellent simulated CPI, but the early FPGA implementation did not meet 100 MHz timing. Later designs trade CPI, timing closure and BRAM structure against each other.

@@ -3572,15 +3572,14 @@ Purpose:
 
 - Profile the Phase 13 forward-timing five-stage CPU because it is the best fixed-100 MHz board-measured path.
 - Measure integer MIPS over a one-second 100 MHz board-clock window.
-- Display CPI x100 as a second 7-segment mode.
+- Keep the 7-segment display timing-safe by showing integer MIPS only.
 - Preserve the unchanged `cpu_core_pipeline_forwardtiming.sv` RTL.
 
 Board controls:
 
 - BTNC: reset.
 - SW0: run enable.
-- SW1 = 0: display integer MIPS.
-- SW1 = 1: display CPI x100.
+- SW1: reserved; display remains integer MIPS.
 
 Hardware procedure:
 
@@ -3589,57 +3588,86 @@ Hardware procedure:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. Read MIPS with SW1 = 0.
-7. Read CPI x100 with SW1 = 1.
+6. Read the displayed MIPS value.
+7. Calculate CPI as `100 / displayed MIPS`.
 8. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
 
 Expected approximate result:
 
 - MIPS: about 87 at the 100 MHz board clock.
-- CPI x100: about 115.
+- CPI: about 1.15 after manual calculation.
 
 Front-end check:
 
 - `xvlog` compile passed for the Phase 17A profiling wrapper source order.
 - `xelab` elaboration passed for `fpga_top_pipeline_forwardtiming_profile`.
 - The first sandboxed elaboration built the snapshot but hit the known XSim object-directory cleanup access warning; rerunning with normal filesystem access completed successfully.
+- Vivado implementation and bitstream generation passed at 10.000 ns after removing the optional CPI divider from the display path.
+- Timing result: WNS +0.391 ns, TNS 0.000 ns, WHS +0.089 ns, THS 0.000 ns.
+- Bitstream: `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`.
 
 ## Phase 17C Regression Procedure
 
-Status: no RTL optimisation attempted yet.
+Status: focused XSim passed; full local regression was started but interrupted before completion.
 
-Phase 17C is intentionally deferred until Phase 17A hardware counter readings identify the dominant CPI bottleneck. When a future Phase 17C RTL optimisation is attempted, it must use a separate implementation path unless the change is proven small and safe.
+Phase 17C created a separate optimised copy of the Phase 13 forward-timing pipeline:
 
-Required regression sequence for any future Phase 17C RTL change:
+- `rtl/cpu_core_pipeline_forwardtiming_opt.sv`
+- `rtl/fpga_top_pipeline_forwardtiming_opt.sv`
+- `tb/tb_cpu_core_pipeline_forwardtiming_opt.sv`
+
+The original Phase 13E/13I files were not modified.
+
+Optimisation tested:
+
+- direct EX-stage branch-target request for taken BEQ redirects;
+- existing ID-stage fast JUMP behaviour preserved;
+- load-use detection and forwarding behaviour otherwise preserved.
+
+Focused command sequence:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\run_xsim_regression.ps1
+C:\AMDDesignTools\2026.1\Vivado\bin\xvlog.bat -sv rtl\cpu_defs_pkg.sv rtl\bram_instr_mem.sv rtl\bram_data_mem.sv rtl\cpu_core_pipeline_forwardtiming_opt.sv tb\tb_cpu_core_pipeline_forwardtiming_opt.sv
+C:\AMDDesignTools\2026.1\Vivado\bin\xelab.bat tb_cpu_core_pipeline_forwardtiming_opt -s tb_cpu_core_pipeline_forwardtiming_opt_sim
+C:\AMDDesignTools\2026.1\Vivado\bin\xsim.bat tb_cpu_core_pipeline_forwardtiming_opt_sim -runall
 ```
 
-Minimum checks to preserve:
+Focused XSim result:
 
-- arithmetic execution;
-- LOAD/STORE execution;
-- EX/MEM and MEM/WB forwarding;
-- load-use hazard handling;
-- `x0` protection;
-- BEQ/JUMP redirects and wrong-path protection;
-- invalid opcode safety;
-- NOP safety;
-- performance counter behaviour.
+- Tests run: 3,217.
+- Tests failed: 0.
+- Aggregate cycles: 424.
+- Aggregate retired instructions: 319.
+- Aggregate CPI: 1.329.
+- Aggregate MIPS at 100 MHz from simulation CPI: 75.236.
+- Console output included `Phase 17C forwardtiming_opt PIPELINE TEST PASSED`.
+
+Vivado implementation:
+
+- Script: `scripts/run_vivado_impl_pipeline_forwardtiming_opt.tcl`.
+- Target period: 10.000 ns.
+- Bitstream generation completed, but timing failed setup.
+- WNS -0.552 ns, TNS -2.159 ns, WHS +0.088 ns, THS 0.000 ns.
+- LUTs 1,387, FFs 1,469, BRAM 1 Block RAM Tile / 2 RAMB18, DSP 0.
+
+Decision:
+
+- Phase 17C is functionally correct in simulation but is not an accepted hardware improvement.
+- The direct branch-compare/redirect path into instruction BRAM is too timing-expensive.
+- Phase 13E/13I remains the preferred five-stage CPU path.
 
 ## Phase 17D Forward-Timing Timing Sweep Procedure
 
-Status: timing-sweep script added; sweep not run in this checkpoint.
+Status: optimised-path sweep script added; sweep stopped after the 10.000 ns implementation failed setup timing.
 
 File added:
 
-- `scripts/run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl`
-- `reports/phase17d_forwardtiming_timing_sweep.md`
+- `scripts/run_vivado_impl_pipeline_forwardtiming_opt_sweep.tcl`
+- `reports/phase17d_forwardtiming_opt_timing_sweep.md`
 
 Purpose:
 
-- Determine whether the Phase 13 forward-timing CPU can close timing above 100 MHz while preserving its low board-measured CPI.
+- Determine whether the Phase 17C optimised forward-timing CPU can close timing at or above 100 MHz.
 
 Default periods:
 
@@ -3652,23 +3680,24 @@ Default periods:
 - 8.250 ns
 - 8.000 ns
 
-Default strategies:
-
-- `default`
-- `fanout_opt`
-- `explore`
-- `physopt`
-
 Run command:
 
 ```powershell
-vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_timing_sweep.tcl
+vivado -mode batch -source scripts\run_vivado_impl_pipeline_forwardtiming_opt_sweep.tcl
 ```
 
 Decision rule:
 
 - A period only counts as passing if WNS is non-negative, TNS is zero, hold timing passes and bitstream generation succeeds.
 - Higher-frequency hardware MIPS should not be claimed until a later board clocking experiment measures it physically.
+
+Actual result:
+
+| Period | WNS | TNS | WHS | THS | Status |
+| ---: | ---: | ---: | ---: | ---: | --- |
+| 10.000 ns | -0.552 ns | -2.159 ns | +0.088 ns | 0.000 ns | Failed setup |
+
+Tighter periods were not run because the design already failed the 100 MHz baseline constraint.
 
 ## Future Verification Work
 
