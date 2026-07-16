@@ -34,14 +34,20 @@ Source files:
 | --- | --- |
 | BTNC | Synchronized reset |
 | SW0 | Full-speed run enable |
-| SW1 | Seven-segment display mode select |
+| SW3:SW1 | Seven-segment display mode select |
 
 Display modes:
 
-| SW1 | 7-segment display |
+| SW3:SW1 | 7-segment display |
 | ---: | --- |
-| 0 | Integer MIPS, for example `0087` |
-| 1 | CPI x100, for example `0115` for CPI 1.15 |
+| 000 | Integer MIPS, for example `0087` |
+| 001 | CPI x100, for example `0115` for CPI 1.15 |
+| 010 | Load-use stall percentage x100 |
+| 011 | Control-flush percentage x100 |
+| 100 | Instruction-fetch wait percentage x100 |
+| 101 | Memory-wait percentage x100 |
+| 110 | Branch/jump event count, modulo 10000 |
+| 111 | Retired instruction count in millions |
 
 ## LED Mapping
 
@@ -99,8 +105,8 @@ The current Phase 13 board measurement is approximately:
 | --- | ---: |
 | Hardware MIPS at 100 MHz | ~87 |
 | Implied CPI | ~1.15 |
-| Display, SW1 = 0 | `0087` |
-| Display, SW1 = 1 | `0115` |
+| Display mode 000 | `0087` |
+| Display mode 001 | `0115` |
 
 ## Vivado Script
 
@@ -122,7 +128,7 @@ The generated implementation folder should remain local and should not be commit
 
 ## Vivado Result
 
-Vivado implementation and bitstream generation passed with the registered CPI x100 display mode.
+Vivado implementation and bitstream generation passed with the expanded Phase 17B display modes.
 
 Front-end compile/elaboration check:
 
@@ -136,15 +142,15 @@ Result: passed. The first sandboxed `xelab` invocation built the snapshot but hi
 | Metric | Value |
 | --- | ---: |
 | Target period | 10.000 ns |
-| WNS | +0.313 ns |
+| WNS | +0.191 ns |
 | TNS | 0.000 ns |
 | WHS | +0.037 ns |
 | THS | 0.000 ns |
-| LUTs | 1,495 |
-| FFs | 1,685 |
+| LUTs | 1,784 |
+| FFs | 2,289 |
 | BRAM | 1 Block RAM Tile / 2 RAMB18 |
 | DSP | 0 |
-| Total on-chip power estimate | 0.111 W |
+| Total on-chip power estimate | 0.118 W |
 | Bitstream generation | Passed |
 
 Bitstream path:
@@ -164,7 +170,7 @@ Bitstream path:
 
 ## Limitations
 
-- The on-board display gives coarse integer MIPS and CPI x100 rounded from integer MIPS.
+- The on-board display gives coarse integer MIPS, CPI x100 and bottleneck percentage/event modes.
 - CPI x100 is derived from the integer MIPS display value, so fractional precision is limited.
 - Detailed per-window bottleneck counters are latched internally for future ILA/UART exposure but are not all visible on the first 7-segment wrapper.
 - The measurement is at the fixed 100 MHz board clock.

@@ -3579,8 +3579,14 @@ Board controls:
 
 - BTNC: reset.
 - SW0: run enable.
-- SW1 = 0: integer MIPS.
-- SW1 = 1: CPI x100.
+- SW3:SW1 = 000: integer MIPS.
+- SW3:SW1 = 001: CPI x100.
+- SW3:SW1 = 010: load-use stall percentage x100.
+- SW3:SW1 = 011: control-flush percentage x100.
+- SW3:SW1 = 100: instruction-fetch wait percentage x100.
+- SW3:SW1 = 101: memory-wait percentage x100.
+- SW3:SW1 = 110: branch/jump events modulo 10000.
+- SW3:SW1 = 111: retired instruction count in millions.
 
 Hardware procedure:
 
@@ -3589,23 +3595,46 @@ Hardware procedure:
 3. Press and release BTNC reset.
 4. Set SW0 on.
 5. Wait at least two one-second measurement windows.
-6. Set SW1 low and read the displayed MIPS value.
-7. Set SW1 high and read CPI x100.
-8. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
+6. Set SW3:SW1 to `000` and read the displayed MIPS value.
+7. Set SW3:SW1 to `001` and read CPI x100.
+8. Cycle through modes `010` through `111` and record the values.
+9. Record the result in `reports/phase17b_forwardtiming_bottleneck_analysis.md`.
 
 Expected approximate result:
 
 - MIPS: about 87 at the 100 MHz board clock.
 - CPI x100 display: about 115.
+- Other modes should be treated as measured bottleneck data and recorded from the board.
 
 Front-end check:
 
 - `xvlog` compile passed for the Phase 17A profiling wrapper source order.
 - `xelab` elaboration passed for `fpga_top_pipeline_forwardtiming_profile`.
 - The first sandboxed elaboration built the snapshot but hit the known XSim object-directory cleanup access warning; rerunning with normal filesystem access completed successfully.
-- Vivado implementation and bitstream generation passed at 10.000 ns with the registered CPI x100 display mode.
-- Timing result: WNS +0.313 ns, TNS 0.000 ns, WHS +0.037 ns, THS 0.000 ns.
+- Vivado implementation and bitstream generation passed at 10.000 ns with the expanded Phase 17B display modes.
+- Timing result after Phase 17B display expansion: WNS +0.191 ns, TNS 0.000 ns, WHS +0.037 ns, THS 0.000 ns.
 - Bitstream: `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`.
+
+## Phase 17B Forward-Timing Bottleneck Display
+
+Status: profiler display modes added; board readings pending.
+
+Phase 17B extends the Phase 17A wrapper instead of changing CPU RTL. The original `cpu_core_pipeline_forwardtiming.sv` remains unchanged.
+
+Display mode table:
+
+| SW3:SW1 | Display |
+| --- | --- |
+| 000 | MIPS |
+| 001 | CPI x100 |
+| 010 | Load-use stall percentage x100 |
+| 011 | Control-flush percentage x100 |
+| 100 | Instruction-fetch wait percentage x100 |
+| 101 | Memory-wait percentage x100 |
+| 110 | Branch/jump event count modulo 10000 |
+| 111 | Retired instruction count in millions |
+
+The percentage modes use a one-second 100 MHz window. A display value of `0050` means 0.50%, and `0100` means 1.00%.
 
 ## Phase 17C Regression Procedure
 

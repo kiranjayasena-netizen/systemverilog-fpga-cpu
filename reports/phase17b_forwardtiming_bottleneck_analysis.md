@@ -15,6 +15,46 @@ Phase 17B is the analysis step after the Phase 17A hardware profiling wrapper. I
 
 The exact lost-cycle breakdown needs Phase 17A board profiling data.
 
+## Phase 17B Display Modes
+
+Phase 17B extends the Phase 17A hardware profiler display so the board can show the likely cycle-loss sources directly.
+
+Controls:
+
+| Switch | Function |
+| --- | --- |
+| SW0 | CPU run enable |
+| SW3:SW1 | Seven-segment display mode |
+| BTNC | Reset |
+
+Display modes:
+
+| Display mode | Metric | FPGA value | Interpretation |
+|---|---|---:|---|
+| 000 | MIPS | 87 | Baseline throughput |
+| 001 | CPI x100 | TBD | Expected around 115 |
+| 010 | Load-use stall % x100 | TBD | Data hazard cost |
+| 011 | Control flush % x100 | TBD | Branch/jump cost |
+| 100 | Fetch wait % x100 | TBD | Instruction fetch cost |
+| 101 | Memory wait % x100 | TBD | Data memory cost |
+| 110 | Branch/jump events | TBD | Control-flow activity |
+| 111 | Retired instruction count in millions | TBD | Sanity check; should match MIPS for a one-second window |
+
+Percentage modes use the 100 MHz one-second measurement window:
+
+```text
+percentage_x100 = event_cycles * 10000 / 100,000,000
+```
+
+The wrapper implements this as one displayed count per 10,000 event cycles, avoiding a wide runtime divider. For example:
+
+| Display | Meaning |
+| ---: | --- |
+| 0000 | 0.00% |
+| 0050 | 0.50% |
+| 0100 | 1.00% |
+| 1250 | 12.50% |
+
 ## Hardware Counter Table
 
 Fill this table after running the Phase 17A profiling bitstream.
@@ -32,6 +72,39 @@ Fill this table after running the Phase 17A profiling bitstream.
 | Not-taken branches | TBD | Control-flow mix |
 | Jumps | TBD | Control-flow mix |
 | Wrong-path instructions flushed | TBD | Redirect penalty evidence |
+
+## Hardware Test Procedure
+
+1. Build the profiler bitstream with `scripts/run_vivado_impl_pipeline_forwardtiming_profile.tcl`.
+2. Program `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`.
+3. Press and release BTNC reset.
+4. Set SW0 on.
+5. Wait at least two one-second measurement windows.
+6. Read each display mode by changing SW3:SW1.
+7. Record mode `000` first; it should still show about `0087`.
+8. Record mode `001`; it should show about `0115`.
+9. Fill the display-mode table above.
+
+## Implementation Result
+
+The expanded Phase 17B-capable profiler bitstream was generated through the Phase 17A profiler script:
+
+- Script: `scripts/run_vivado_impl_pipeline_forwardtiming_profile.tcl`
+- Bitstream: `reports/phase17a_forwardtiming_profile_impl/bitstreams/fpga_top_pipeline_forwardtiming_profile.bit`
+
+Post-route result at the 10.000 ns / 100 MHz board clock:
+
+| Metric | Value |
+| --- | ---: |
+| WNS | +0.191 ns |
+| TNS | 0.000 ns |
+| WHS | +0.037 ns |
+| THS | 0.000 ns |
+| LUTs | 1,784 |
+| FFs | 2,289 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Bitstream generation | Passed |
 
 ## Likely Bottleneck Ranking Before Board Counter Readout
 

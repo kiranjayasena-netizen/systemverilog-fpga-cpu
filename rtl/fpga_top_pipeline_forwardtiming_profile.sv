@@ -7,7 +7,7 @@ module fpga_top_pipeline_forwardtiming_profile #(
 ) (
     input  logic        clk,
     input  logic        rst_btn,
-    input  logic [1:0]  sw,
+    input  logic [3:0]  sw,
     output logic [15:0] led,
     output logic [6:0]  seg,
     output logic [3:0]  an,
@@ -16,12 +16,14 @@ module fpga_top_pipeline_forwardtiming_profile #(
 
     localparam int unsigned MILLION_REMAINDER_WIDTH = $clog2(MIPS_DIVISOR);
     localparam int unsigned CPI_DIV_WIDTH = 14;
+    localparam int unsigned PERCENT_STEP_CYCLES = 10_000;
 
     logic rst_meta;
     logic rst_sync;
-    logic [1:0] sw_meta;
-    logic [1:0] sw_sync;
+    logic [3:0] sw_meta;
+    logic [3:0] sw_sync;
     logic cpu_enable;
+    logic [2:0] display_mode;
 
     logic [31:0] fetch_pc;
     logic [31:0] instruction_addr;
@@ -83,6 +85,43 @@ module fpga_top_pipeline_forwardtiming_profile #(
     logic [14:0] cpi_div_subtract_result;
     logic [13:0] cpi_div_remainder_next;
     logic [13:0] cpi_div_quotient_next;
+
+    logic [31:0] sample_load_use_stall_cycles;
+    logic [31:0] sample_control_hazard_flush_cycles;
+    logic [31:0] sample_instruction_fetch_wait_cycles;
+    logic [31:0] sample_memory_wait_cycles;
+    logic [31:0] sample_taken_branches;
+    logic [31:0] sample_not_taken_branches;
+    logic [31:0] sample_jumps;
+
+    logic load_use_event;
+    logic control_flush_event;
+    logic fetch_wait_event;
+    logic memory_wait_event;
+    logic branch_jump_event;
+
+    logic [15:0] load_use_pct_accum;
+    logic [15:0] control_flush_pct_accum;
+    logic [15:0] fetch_wait_pct_accum;
+    logic [15:0] memory_wait_pct_accum;
+    logic [15:0] branch_jump_count_accum;
+
+    logic [13:0] load_use_pct_remainder;
+    logic [13:0] control_flush_pct_remainder;
+    logic [13:0] fetch_wait_pct_remainder;
+    logic [13:0] memory_wait_pct_remainder;
+
+    logic [15:0] load_use_pct_x100_value;
+    logic [15:0] control_flush_pct_x100_value;
+    logic [15:0] fetch_wait_pct_x100_value;
+    logic [15:0] memory_wait_pct_x100_value;
+    logic [15:0] branch_jump_count_value;
+
+    logic [29:0] load_use_pct_next;
+    logic [29:0] control_flush_pct_next;
+    logic [29:0] fetch_wait_pct_next;
+    logic [29:0] memory_wait_pct_next;
+    logic [15:0] branch_jump_count_next;
 
     logic [MILLION_REMAINDER_WIDTH-1:0] retired_million_remainder_next;
     logic [15:0] mips_accumulator_next;
@@ -170,6 +209,32 @@ module fpga_top_pipeline_forwardtiming_profile #(
         end
     endfunction
 
+    function automatic logic [29:0] advance_percent_x100(
+        input logic [15:0] accum,
+        input logic [13:0] remainder,
+        input logic        event_active
+    );
+        logic [15:0] accum_next;
+        logic [13:0] remainder_next;
+        begin
+            accum_next = accum;
+            remainder_next = remainder;
+
+            if (event_active) begin
+                if (remainder == PERCENT_STEP_CYCLES - 1) begin
+                    remainder_next = 14'd0;
+                    if (accum != 16'd9999) begin
+                        accum_next = accum + 16'd1;
+                    end
+                end else begin
+                    remainder_next = remainder + 14'd1;
+                end
+            end
+
+            advance_percent_x100 = {accum_next, remainder_next};
+        end
+    endfunction
+
     always_ff @(posedge clk) begin
         rst_meta <= rst_btn;
         rst_sync <= rst_meta;
@@ -178,6 +243,15 @@ module fpga_top_pipeline_forwardtiming_profile #(
     end
 
     assign cpu_enable = sw_sync[0];
+    assign display_mode = sw_sync[3:1];
+
+    assign load_use_event = load_use_stall_cycles != sample_load_use_stall_cycles;
+    assign control_flush_event = control_hazard_flush_cycles != sample_control_hazard_flush_cycles;
+    assign fetch_wait_event = instruction_fetch_wait_cycles != sample_instruction_fetch_wait_cycles;
+    assign memory_wait_event = memory_wait_cycles != sample_memory_wait_cycles;
+    assign branch_jump_event = (taken_branches != sample_taken_branches) ||
+                               (not_taken_branches != sample_not_taken_branches) ||
+                               (jumps != sample_jumps);
 
     assign retire_million_wrap = retire_valid &&
                                  (retired_million_remainder == MIPS_DIVISOR - 1);
@@ -194,6 +268,23 @@ module fpga_top_pipeline_forwardtiming_profile #(
     // seven-segment display path.
     assign cpi_div_remainder_candidate = {cpi_div_remainder, cpi_div_numerator[cpi_div_bit]};
     assign cpi_div_subtract_result = cpi_div_remainder_candidate - {1'b0, cpi_div_denominator};
+    assign load_use_pct_next = advance_percent_x100(load_use_pct_accum,
+                                                     load_use_pct_remainder,
+                                                     load_use_event);
+    assign control_flush_pct_next = advance_percent_x100(control_flush_pct_accum,
+                                                         control_flush_pct_remainder,
+                                                         control_flush_event);
+    assign fetch_wait_pct_next = advance_percent_x100(fetch_wait_pct_accum,
+                                                      fetch_wait_pct_remainder,
+                                                      fetch_wait_event);
+    assign memory_wait_pct_next = advance_percent_x100(memory_wait_pct_accum,
+                                                       memory_wait_pct_remainder,
+                                                       memory_wait_event);
+    assign branch_jump_count_next = branch_jump_event
+                                  ? ((branch_jump_count_accum == 16'd9999)
+                                     ? 16'd0
+                                     : branch_jump_count_accum + 16'd1)
+                                  : branch_jump_count_accum;
 
     always_comb begin
         cpi_div_remainder_next = cpi_div_remainder_candidate[13:0];
@@ -221,6 +312,27 @@ module fpga_top_pipeline_forwardtiming_profile #(
             cpi_div_remainder          <= 14'd0;
             cpi_div_quotient           <= 14'd0;
             cpi_x100_value             <= 14'd0;
+            sample_load_use_stall_cycles         <= 32'd0;
+            sample_control_hazard_flush_cycles   <= 32'd0;
+            sample_instruction_fetch_wait_cycles <= 32'd0;
+            sample_memory_wait_cycles            <= 32'd0;
+            sample_taken_branches                <= 32'd0;
+            sample_not_taken_branches            <= 32'd0;
+            sample_jumps                         <= 32'd0;
+            load_use_pct_accum                   <= 16'd0;
+            control_flush_pct_accum              <= 16'd0;
+            fetch_wait_pct_accum                 <= 16'd0;
+            memory_wait_pct_accum                <= 16'd0;
+            branch_jump_count_accum              <= 16'd0;
+            load_use_pct_remainder               <= 14'd0;
+            control_flush_pct_remainder          <= 14'd0;
+            fetch_wait_pct_remainder             <= 14'd0;
+            memory_wait_pct_remainder            <= 14'd0;
+            load_use_pct_x100_value              <= 16'd0;
+            control_flush_pct_x100_value         <= 16'd0;
+            fetch_wait_pct_x100_value            <= 16'd0;
+            memory_wait_pct_x100_value           <= 16'd0;
+            branch_jump_count_value              <= 16'd0;
 
             total_cycles_prev                  <= 32'd0;
             retired_instructions_prev          <= 32'd0;
@@ -282,6 +394,22 @@ module fpga_top_pipeline_forwardtiming_profile #(
                 last_jumps_window              <= jumps - jumps_prev;
                 last_wrong_path_flushed_window <= wrong_path_instructions_flushed - wrong_path_flushed_prev;
 
+                load_use_pct_x100_value      <= load_use_pct_next[29:14];
+                control_flush_pct_x100_value <= control_flush_pct_next[29:14];
+                fetch_wait_pct_x100_value    <= fetch_wait_pct_next[29:14];
+                memory_wait_pct_x100_value   <= memory_wait_pct_next[29:14];
+                branch_jump_count_value      <= branch_jump_count_next;
+
+                load_use_pct_accum           <= 16'd0;
+                control_flush_pct_accum      <= 16'd0;
+                fetch_wait_pct_accum         <= 16'd0;
+                memory_wait_pct_accum        <= 16'd0;
+                branch_jump_count_accum      <= 16'd0;
+                load_use_pct_remainder       <= 14'd0;
+                control_flush_pct_remainder  <= 14'd0;
+                fetch_wait_pct_remainder     <= 14'd0;
+                memory_wait_pct_remainder    <= 14'd0;
+
                 total_cycles_prev                  <= total_cycles;
                 retired_instructions_prev          <= retired_instructions;
                 pipeline_fill_cycles_prev          <= pipeline_fill_cycles;
@@ -294,11 +422,36 @@ module fpga_top_pipeline_forwardtiming_profile #(
                 not_taken_branches_prev            <= not_taken_branches;
                 jumps_prev                         <= jumps;
                 wrong_path_flushed_prev            <= wrong_path_instructions_flushed;
+
+                sample_load_use_stall_cycles         <= load_use_stall_cycles;
+                sample_control_hazard_flush_cycles   <= control_hazard_flush_cycles;
+                sample_instruction_fetch_wait_cycles <= instruction_fetch_wait_cycles;
+                sample_memory_wait_cycles            <= memory_wait_cycles;
+                sample_taken_branches                <= taken_branches;
+                sample_not_taken_branches            <= not_taken_branches;
+                sample_jumps                         <= jumps;
             end else begin
                 cycle_counter             <= cycle_counter + 32'd1;
                 retired_counter           <= retired_counter_next;
                 retired_million_remainder <= retired_million_remainder_next;
                 mips_accumulator          <= mips_accumulator_next;
+                load_use_pct_accum        <= load_use_pct_next[29:14];
+                load_use_pct_remainder    <= load_use_pct_next[13:0];
+                control_flush_pct_accum   <= control_flush_pct_next[29:14];
+                control_flush_pct_remainder <= control_flush_pct_next[13:0];
+                fetch_wait_pct_accum      <= fetch_wait_pct_next[29:14];
+                fetch_wait_pct_remainder  <= fetch_wait_pct_next[13:0];
+                memory_wait_pct_accum     <= memory_wait_pct_next[29:14];
+                memory_wait_pct_remainder <= memory_wait_pct_next[13:0];
+                branch_jump_count_accum   <= branch_jump_count_next;
+
+                sample_load_use_stall_cycles         <= load_use_stall_cycles;
+                sample_control_hazard_flush_cycles   <= control_hazard_flush_cycles;
+                sample_instruction_fetch_wait_cycles <= instruction_fetch_wait_cycles;
+                sample_memory_wait_cycles            <= memory_wait_cycles;
+                sample_taken_branches                <= taken_branches;
+                sample_not_taken_branches            <= not_taken_branches;
+                sample_jumps                         <= jumps;
 
                 if (cpi_div_active) begin
                     cpi_div_remainder <= cpi_div_remainder_next;
@@ -394,10 +547,19 @@ module fpga_top_pipeline_forwardtiming_profile #(
         .wrong_path_instructions_flushed(wrong_path_instructions_flushed)
     );
 
-    // SW1 selects display mode:
-    //   0: integer MIPS measured over the previous one-second window
-    //   1: CPI x100, computed from the last integer MIPS value
-    assign display_value = sw_sync[1] ? {2'd0, cpi_x100_value} : mips_value;
+    always_comb begin
+        unique case (display_mode)
+            3'b000: display_value = mips_value;
+            3'b001: display_value = {2'd0, cpi_x100_value};
+            3'b010: display_value = load_use_pct_x100_value;
+            3'b011: display_value = control_flush_pct_x100_value;
+            3'b100: display_value = fetch_wait_pct_x100_value;
+            3'b101: display_value = memory_wait_pct_x100_value;
+            3'b110: display_value = branch_jump_count_value;
+            default: display_value = mips_value;
+        endcase
+    end
+
     assign display_clamped = (display_value > 16'd9999) ? 14'd9999 : display_value[13:0];
     assign bcd_digits = bin14_to_bcd4(display_clamped);
     assign digit_select = refresh_counter[16:15];

@@ -99,12 +99,20 @@ Planned Phase 17 flow:
 | Phase | Purpose |
 | --- | --- |
 | Phase 17A | Add a Phase 13 hardware profiler with MIPS and CPI x100 display modes |
-| Phase 17B | Use profiler counters to rank bottlenecks |
+| Phase 17B | Expand hardware display modes for load-use, control-flush, fetch-wait and memory-wait bottleneck readings |
 | Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
 | Phase 17D | Recorded that the Phase 17C optimised path fails 10 ns timing, so tighter periods were not useful |
 | Phase 17E | Plan a future high-frequency hardware measurement |
 
 The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. It is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
+
+The existing Phase 13I timing-clean result of 115.607 MHz is important for Phase 17D. If the confirmed board-implied CPI of about 1.15 holds at that higher clock, the estimated throughput would be:
+
+```text
+115.607 MHz / 1.15 CPI = approximately 100.5 MIPS
+```
+
+This is a timing estimate, not a physical high-frequency board measurement. A future MMCM/Clocking Wizard hardware test is needed to prove it on the Basys 3.
 
 ## Simulation Comparison
 

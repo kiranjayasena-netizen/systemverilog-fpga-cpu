@@ -17,7 +17,7 @@ set TOP_MODULE "fpga_top_pipeline_forwardtiming"
 if {[info exists ::env(PHASE17D_PERIODS)] && $::env(PHASE17D_PERIODS) ne ""} {
     set PERIODS [split $::env(PHASE17D_PERIODS)]
 } else {
-    set PERIODS [list "10.000" "9.500" "9.000" "8.750" "8.650" "8.500" "8.250" "8.000"]
+    set PERIODS [list "10.000" "9.500" "9.000" "8.750" "8.650" "8.500" "8.250" "8.000" "7.750" "7.500"]
 }
 
 if {[info exists ::env(PHASE17D_STRATEGIES)] && $::env(PHASE17D_STRATEGIES) ne ""} {

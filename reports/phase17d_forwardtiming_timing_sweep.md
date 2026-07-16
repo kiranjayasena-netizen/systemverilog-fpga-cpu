@@ -20,6 +20,8 @@ Default periods:
 - 8.500 ns
 - 8.250 ns
 - 8.000 ns
+- 7.750 ns
+- 7.500 ns
 
 Default strategies:
 
@@ -69,7 +71,7 @@ These estimates are only valid if the same workload CPI holds at the higher cloc
 
 ## Sweep Result Table
 
-Vivado sweep has not been run as part of this checkpoint. Fill in this table after running the script.
+A full new multi-strategy sweep has not been run as part of this checkpoint. Fill in this table after running the script.
 
 | Strategy | Period | Fmax | Pass/fail | WNS | TNS | WHS | THS | LUTs | FFs | BRAM | DSP | Bitstream |
 | --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -88,6 +90,14 @@ The best existing Phase 13I result is:
 | WHS | +0.057 ns |
 | BRAM | 1 Block RAM Tile / 2 RAMB18 |
 | Practical MIPS using simulation CPI 1.339 | ~86.4 |
+
+Using the confirmed 100 MHz board-implied CPI of about 1.15, this same verified 115.607 MHz timing point would correspond to:
+
+```text
+115.607 MHz / 1.15 CPI = 100.5 MIPS
+```
+
+This is a timing-estimated result only. A future high-frequency hardware clocking test is still required before claiming a physical board measurement above 100 MHz.
 
 The Phase 17D sweep should determine whether this path can be pushed further for the board-measured Phase 13 workload.
 
