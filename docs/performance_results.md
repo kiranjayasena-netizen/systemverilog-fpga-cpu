@@ -6,7 +6,7 @@ The project now has three distinct kinds of performance evidence:
 
 - Self-checking Vivado XSim simulations prove custom-ISA correctness and measure CPI.
 - Vivado post-route timing reports show the highest timing-clean clock frequencies reached by each FPGA implementation path.
-- Basys 3 hardware measurements use FPGA-resident counters and the 7-segment display to measure real board throughput at the fixed 100 MHz board clock.
+- Basys 3 hardware measurements use FPGA-resident counters and the 7-segment display to measure real board throughput, first at the fixed 100 MHz board clock and later with an MMCM-generated 115 MHz CPU clock.
 
 The main performance formula is:
 
@@ -18,15 +18,15 @@ MIPS = clock frequency in MHz / CPI
 
 | Category | Result |
 | --- | ---: |
+| Best physical FPGA-measured MIPS | Phase 17E, approximately 100 MIPS at 115.000 MHz |
 | Best 100 MHz board-measured MIPS | Phase 13, approximately 87 MIPS |
 | Phase 14G board-measured MIPS at 100 MHz | approximately 63 MIPS |
-| Phase 14G post-route timing-clean frequency | 166.667 MHz |
-| Phase 14G estimated peak practical MIPS | approximately 101.8 MIPS |
-| Phase 16A 7-seg measured value | `0063` |
+| Phase 14G timing-estimated peak practical MIPS | approximately 101.8 MIPS |
+| Phase 17E 7-seg measured value | `0100` |
 | Target FPGA board | Digilent Basys 3 |
 | FPGA part | `xc7a35tcpg236-1` |
 
-The project now reports both board-measured throughput at the fixed 100 MHz Basys 3 clock and post-route timing-estimated peak throughput. These are intentionally separate because they answer different questions.
+The project now reports fixed-100 MHz board throughput, high-frequency MMCM board throughput and post-route timing-estimated peak throughput. These are intentionally separate because they answer different questions.
 
 ## Hardware-Measured Board Results
 
@@ -51,17 +51,36 @@ At the fixed 100 MHz Basys 3 board clock, the Phase 13 five-stage forwarded pipe
 
 A deeper pipeline does not automatically produce more MIPS at the same clock frequency. The six-stage pipeline can improve maximum clock frequency by reducing logic per stage, but it can also increase pipeline overhead, branch/jump flush penalties, load-use penalties and fill/drain overhead. Therefore, at 100 MHz, the design with the lower CPI wins.
 
+## Phase 17E Hardware-Measured 100 MIPS Result
+
+Phase 17E physically confirmed the 100 MIPS milestone on the Basys 3.
+
+| Item | Value |
+| --- | ---: |
+| CPU | Original Phase 13 forward-timing five-stage pipeline |
+| Clock source | RTL-instantiated MMCM |
+| Generated CPU clock | 115.000 MHz |
+| Measurement window | 115,000,000 generated CPU-clock cycles |
+| Display mode | SW3:SW1 = `000` |
+| Observed 7-seg value | `0100` |
+| Interpretation | approximately 100 MIPS |
+
+This confirms the Phase 17D timing-supported estimate. Phase 17D showed that the original Phase 13 path passed timing at 8.650 ns / 115.607 MHz, giving approximately 100.5 MIPS using the board-measured CPI of 1.15. Phase 17E then tested the same idea physically using a 115 MHz MMCM-generated CPU clock.
+
+The Phase 17E value remains just below the Phase 14G timing-estimated peak result of approximately 101.8 MIPS. The important distinction is that Phase 17E's approximately 100 MIPS value is a real board measurement, while Phase 14G's 101.8 MIPS value is based on post-route timing and simulation CPI and has not been physically measured at 166.667 MHz.
+
 ## Phase 13 Versus Phase 14G
 
 | Metric | Phase 13 five-stage pipeline | Phase 14G six-stage pipeline |
 | --- | ---: | ---: |
 | Hardware measured at 100 MHz | approximately 87 MIPS | approximately 63 MIPS |
 | Implied hardware CPI | approximately 1.15 | approximately 1.59 |
+| Best physical measured result | Phase 17E: approximately 100 MIPS at 115 MHz | not physically measured above 100 MHz |
 | Post-route timing-clean frequency | 115.607 MHz in Phase 13I | 166.667 MHz |
 | Simulation CPI used for timing estimate | 1.339 | 1.638 |
 | Estimated peak practical MIPS | approximately 86.4 MIPS | approximately 101.8 MIPS |
 
-Phase 13 is the strongest result for fixed 100 MHz Basys 3 board operation. Phase 14G is the strongest result for timing closure and estimated peak frequency.
+Phase 13 is the strongest physically measured result after the Phase 17E MMCM test. Phase 14G is still the strongest timing-estimated result, but its 101.8 MIPS estimate has not yet been demonstrated on the board at 166.667 MHz.
 
 Break-even calculation for Phase 14G versus the Phase 13 board-measured result:
 
@@ -69,12 +88,13 @@ Break-even calculation for Phase 14G versus the Phase 13 board-measured result:
 required frequency = 87 MIPS * 1.638 CPI = 142.5 MHz
 ```
 
-Since Phase 14G closed timing at 166.667 MHz, the timing estimate suggests it could exceed Phase 13 if the board implementation is clocked above approximately 142.5 MHz. The current physical hardware MIPS display measurement was performed at 100 MHz.
+Since Phase 14G closed timing at 166.667 MHz, the timing estimate suggests it could exceed the 100 MHz Phase 13 result if the board implementation is clocked above approximately 142.5 MHz. Phase 17E now shows that the Phase 13 path can also be physically measured above 100 MHz, reaching about 100 MIPS at 115 MHz.
 
 Conclusion:
 
 - At the fixed 100 MHz board clock, Phase 13 is the best hardware-measured design.
-- For timing closure and estimated peak frequency, Phase 14G is the strongest design.
+- Across all physical FPGA measurements so far, Phase 17E's 115 MHz Phase 13 result is the best real board result at about 100 MIPS.
+- For timing closure and estimated peak frequency, Phase 14G remains the strongest design at about 101.8 estimated MIPS.
 - The project demonstrates a real CPU engineering trade-off between CPI and maximum clock frequency.
 
 ## Phase 17 Direction
@@ -103,9 +123,9 @@ Phase 17 separates three performance questions:
 
 - Board-measured 100 MHz MIPS: what the Basys 3 physically displays with the fixed board clock.
 - Timing-estimated peak MIPS: what post-route timing suggests if the design is clocked faster.
-- Future high-frequency measured MIPS: what a later MMCM/Clocking Wizard board experiment could physically measure above 100 MHz.
+- High-frequency measured MIPS: what the Phase 17E MMCM board experiment physically measures above 100 MHz.
 
-Planned Phase 17 flow:
+Phase 17 flow:
 
 | Phase | Purpose |
 | --- | --- |
@@ -132,21 +152,21 @@ Phase 17D ran the next important target, 8.500 ns, on the original Phase 13 forw
 
 This means 100 MIPS is timing-supported for the original Phase 13 CPU, but beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D. This is still a timing estimate, not a physical high-frequency board measurement.
 
-Phase 17E converts that estimate into a board-testable bitstream. It uses an RTL-instantiated MMCM to generate a 115.000 MHz CPU clock from the 100 MHz Basys 3 clock, keeps the original Phase 13 CPU RTL unchanged, and displays measured MIPS on the 7-segment display. The implementation is timing-clean:
+Phase 17E converted that estimate into a board-tested bitstream. It uses an RTL-instantiated MMCM to generate a 115.000 MHz CPU clock from the 100 MHz Basys 3 clock, keeps the original Phase 13 CPU RTL unchanged, and displays measured MIPS on the 7-segment display. The implementation is timing-clean:
 
 | CPU clock | WNS | TNS | WHS | THS | LUTs | FFs | BRAM | DSP | Bitstream |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- |
 | 115.000 MHz | +0.008 ns | 0.000 ns | +0.035 ns | 0.000 ns | 1,829 | 2,072 | 1 tile / 2 RAMB18 | 0 | generated |
 
-Expected board readings for Phase 17E are:
+Confirmed board readings for Phase 17E:
 
-| Display mode | Expected value | Meaning |
+| Display mode | Value | Meaning |
 | --- | ---: | --- |
-| MIPS | `0100` | approximately 100 MIPS if CPI remains near 1.15 |
+| MIPS | `0100` | approximately 100 MIPS |
 | CPI x100 | `0115` | approximately 1.15 CPI |
-| Control flush x100 | `1250` | approximately 12.50%, if workload behaviour remains similar |
+| Control flush x100 | `1250` | approximately 12.50% |
 
-The Phase 17E physical board result remains TBD until the 115 MHz bitstream is programmed and observed on the Basys 3.
+The Phase 17E physical board result confirms approximately 100 MIPS on the original Phase 13 forward-timing CPU.
 
 ## Simulation Comparison
 
@@ -214,16 +234,17 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 
 ## Limitations
 
-- The hardware MIPS counter currently measures at the 100 MHz board clock.
+- Phase 16A measured at the 100 MHz board clock.
 - The Phase 16A measurement does not prove 166.667 MHz physical operation.
 - The measured MIPS depends on the benchmark program loaded into instruction memory.
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.
-- Future work could add an MMCM or Clocking Wizard experiment to measure at higher hardware frequencies.
+- Phase 16A measured at the 100 MHz board clock; Phase 17E adds a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU.
+- Future work could test additional MMCM frequencies or use UART/ILA for richer counter output.
 - Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
 
 ## Recommended Future Work
 
 - Phase 16B: benchmark alignment so simulation and hardware use the same workload.
-- Phase 16C: optional MMCM or Clocking Wizard high-frequency hardware MIPS test.
-- Phase 16D: UART or ILA output for detailed performance counters.
+- Additional MMCM frequency tests around the Phase 13 timing boundary.
+- UART or ILA output for detailed hardware performance counters.
 - Final report: architecture diagrams, pipeline diagrams, performance plots and board evidence photos.

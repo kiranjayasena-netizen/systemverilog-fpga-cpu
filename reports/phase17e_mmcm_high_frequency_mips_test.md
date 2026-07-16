@@ -98,10 +98,10 @@ For example, if the MIPS display is `0100`, CPI x100 should be close to `0115`.
 
 | SW3:SW1 | Display |
 | ---: | --- |
-| 000 | measured integer MIPS, expected around `0100` |
-| 001 | CPI x100, expected around `0115` |
+| 000 | measured integer MIPS, confirmed `0100` |
+| 001 | CPI x100, confirmed `0115` |
 | 010 | load-use stall percentage x100 |
-| 011 | control-flush percentage x100, expected around `1250` if workload behaviour is similar |
+| 011 | control-flush percentage x100, confirmed `1250` |
 | 100 | instruction-fetch wait percentage x100 |
 | 101 | memory-wait percentage x100 |
 | 110 | generated-clock debug value `0115` |
@@ -173,6 +173,30 @@ Bitstream path:
 
 - `reports/phase17e_mmcm_mips_impl/bitstreams/fpga_top_pipeline_forwardtiming_mmcm_mips.bit`
 
+## Confirmed Board Observation
+
+Recorded after Phase 17E board test:
+
+| Item | Observation |
+| --- | --- |
+| Board | Digilent Basys 3 |
+| FPGA part | `xc7a35tcpg236-1` |
+| CPU | Original Phase 13 forward-timing five-stage pipeline |
+| CPU clock | 115.000 MHz MMCM-generated clock |
+| Run control | SW0 = 1 |
+| Display mode | SW3:SW1 = `000` |
+| 7-segment display | `0100` |
+| Interpretation | approximately 100 MIPS |
+
+Additional confirmed display modes:
+
+| SW3:SW1 | Display | Meaning |
+| ---: | ---: | --- |
+| 001 | `0115` | CPI x100, approximately 1.15 CPI |
+| 011 | `1250` | control-flush percentage x100, approximately 12.50% |
+
+This is the first physical hardware evidence for approximately 100 MIPS in the project.
+
 ## Hardware Test Procedure
 
 1. Run `scripts/run_vivado_impl_pipeline_forwardtiming_mmcm_mips.tcl`.
@@ -182,24 +206,26 @@ Bitstream path:
 5. Confirm LED0 is on, meaning the MMCM is locked.
 6. Set SW0 = 1 to run the CPU.
 7. Wait at least two one-second measurement windows.
-8. Set SW3:SW1 = `000` and record MIPS. Expected value is around `0100`.
-9. Set SW3:SW1 = `001` and record CPI x100. Expected value is around `0115`.
-10. Set SW3:SW1 = `011` and record control-flush x100. Expected value is around `1250` if workload behaviour is similar.
+8. Set SW3:SW1 = `000` and record MIPS. Confirmed value: `0100`.
+9. Set SW3:SW1 = `001` and record CPI x100. Confirmed value: `0115`.
+10. Set SW3:SW1 = `011` and record control-flush x100. Confirmed value: `1250`.
 11. Capture photo/video evidence of the 7-segment display.
 
 ## Limitations
 
-- The bitstream is timing-clean, but the final MIPS value still needs board observation.
-- The expected `0100` assumes the 100 MHz board CPI remains close to 1.15 at 115 MHz.
-- The measurement program is still the FPGA demo program used by the Phase 13/17 hardware wrappers.
 - The 7-segment display shows integer MIPS, so fractional precision is lost.
+- The measurement program is still the FPGA demo program used by the Phase 13/17 hardware wrappers.
+- The result is for the custom FPGA demo workload.
+- CPI/control-flush modes should also be photographed or filmed as supporting evidence.
+- 115 MHz operation is timing-clean but has small positive setup slack.
 
 ## Recommended Next Step
 
-Program the Phase 17E bitstream on the Basys 3 and record:
+Archive photo/video evidence for:
 
-- MIPS mode `000`
-- CPI x100 mode `001`
-- control-flush x100 mode `011`
+- MIPS mode `000`: `0100`
+- CPI x100 mode `001`: `0115`
+- control-flush x100 mode `011`: `1250`
+- LED0 MMCM lock indication
 
-If the board displays around `0100`, Phase 17E becomes the first physical hardware evidence for approximately 100 MIPS on this project.
+The Phase 17E board test displayed `0100` in MIPS mode. This confirms approximately 100 MIPS hardware operation for the original Phase 13 forward-timing CPU when clocked by the 115 MHz MMCM output.

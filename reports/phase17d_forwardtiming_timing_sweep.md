@@ -123,6 +123,12 @@ Estimated performance using the confirmed board CPI:
 
 This is timing-supported, but it is not yet a physical high-frequency board measurement.
 
+## Phase 17E Follow-Up
+
+Phase 17E followed up this timing sweep with a separate MMCM hardware wrapper. The wrapper generated a 115.000 MHz CPU clock, programmed successfully on the Basys 3 and displayed `0100` MIPS on the 7-segment display in mode SW3:SW1 = `000`.
+
+This physically confirms the 100 MIPS estimate from the 8.650 ns / 115.607 MHz timing-supported point while keeping the original Phase 13 forward-timing CPU RTL unchanged.
+
 ## Best Failing Timing Point
 
 New Phase 17D targeted run:
@@ -171,11 +177,11 @@ Phase 17D does not support beating the Phase 14G estimated 101.8 MIPS result, be
 
 ## Limitations
 
-- The 100.5 MIPS value is timing-estimated using the hardware-measured 100 MHz CPI.
-- It is not yet a direct Basys 3 board measurement above 100 MHz.
+- The 100.5 MIPS value remains the timing-estimated value at the 115.607 MHz timing point.
+- Phase 17E provides the direct Basys 3 board measurement near that point: `0100` MIPS at a 115.000 MHz MMCM-generated CPU clock.
 - The Phase 13 hardware CPI was measured on the FPGA demo workload; if the workload changes, CPI may change.
 - Generated Vivado outputs are local evidence and should not be committed wholesale.
 
 ## Recommended Next Step
 
-Proceed to an MMCM / Clocking Wizard hardware test only if the goal is to physically demonstrate the Phase 13 CPU above 100 MHz. The first practical target is around 115.6 MHz, matching the verified 8.650 ns timing point. That should display approximately `0100` MIPS if the board workload CPI remains close to 1.15.
+Use the Phase 17E board result as the physical evidence for the 100 MIPS milestone, then capture photo/video evidence of the `0100` MIPS display, `0115` CPI x100 display, `1250` control-flush display and LED0 MMCM lock indication.

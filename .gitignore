@@ -39,6 +39,7 @@ obj_dir/
 *.bin
 *.dcp
 *.ltx
+reports/*_impl/
 
 # Temporary/editor files
 *.tmp

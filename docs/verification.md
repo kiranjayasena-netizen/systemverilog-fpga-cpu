@@ -3544,11 +3544,11 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 
 Limitations:
 
-- The hardware MIPS counter currently measures at the 100 MHz board clock.
+- Phase 16A measures at the 100 MHz board clock.
 - The Phase 16A measurement does not prove 166.667 MHz physical operation.
 - The measured MIPS depends on the benchmark program loaded into instruction memory.
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.
-- Future work could add an MMCM/Clocking Wizard experiment to measure at higher hardware frequencies.
+- Phase 17E adds a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU.
 - Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
 
 Recommended future work:
@@ -3754,11 +3754,11 @@ Conclusion:
 
 - 100 MIPS is timing-supported for the original Phase 13 CPU at the 8.650 ns passing point.
 - Beating the Phase 14G estimated 101.8 MIPS is not timing-supported by Phase 17D because the 8.500 ns run failed.
-- A future MMCM/Clocking Wizard hardware test is needed before claiming a physical board measurement above 100 MHz.
+- Phase 17E provides the follow-up physical board measurement above 100 MHz.
 
 ## Phase 17E MMCM High-Frequency MIPS Test
 
-Status: Vivado implementation and bitstream generation passed for a 115 MHz MMCM-driven hardware MIPS wrapper around the original Phase 13 forward-timing CPU.
+Status: Vivado implementation, bitstream generation and Basys 3 board test passed for a 115 MHz MMCM-driven hardware MIPS wrapper around the original Phase 13 forward-timing CPU.
 
 Files:
 
@@ -3810,10 +3810,10 @@ Display modes:
 
 | SW3:SW1 | 7-segment display |
 | ---: | --- |
-| 000 | measured integer MIPS, expected around `0100` if CPI remains near 1.15 |
-| 001 | CPI x100, expected around `0115` |
+| 000 | measured integer MIPS, confirmed `0100` |
+| 001 | CPI x100, confirmed `0115` |
 | 010 | load-use stall percentage x100 |
-| 011 | control-flush percentage x100, expected around `1250` if workload behaviour is similar |
+| 011 | control-flush percentage x100, confirmed `1250` |
 | 100 | instruction-fetch wait percentage x100 |
 | 101 | memory-wait percentage x100 |
 | 110 | generated-clock debug value `0115` |
@@ -3826,15 +3826,23 @@ Hardware test procedure:
 3. Confirm LED0 is on, indicating MMCM lock.
 4. Set SW0 = 1 to run the CPU.
 5. Wait at least two one-second measurement windows.
-6. Set SW3:SW1 = `000` and record the MIPS value. Expected value is around `0100`.
-7. Set SW3:SW1 = `001` and record CPI x100. Expected value is around `0115`.
-8. Set SW3:SW1 = `011` and record control-flush x100. Expected value is around `1250`.
+6. Set SW3:SW1 = `000` and record the MIPS value. Confirmed value: `0100`.
+7. Set SW3:SW1 = `001` and record CPI x100. Confirmed value: `0115`.
+8. Set SW3:SW1 = `011` and record control-flush x100. Confirmed value: `1250`.
 9. Capture photo/video evidence.
+
+Board result:
+
+| Display mode | Observed value | Meaning |
+| --- | ---: | --- |
+| MIPS | `0100` | approximately 100 MIPS at 115 MHz |
+| CPI x100 | `0115` | approximately 1.15 CPI |
+| Control flush x100 | `1250` | approximately 12.50% |
 
 Interpretation:
 
 - The implementation is timing-clean at the generated 115 MHz CPU clock.
-- The final Phase 17E hardware MIPS value must come from the physical 7-segment reading.
+- The physical 7-segment reading confirms approximately 100 MIPS for the original Phase 13 CPU at 115 MHz.
 - The 115 MHz wrapper is separate from Phase 14G/15/16 and does not modify those RTL paths.
 
 ## Future Verification Work
