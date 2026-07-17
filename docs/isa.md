@@ -2,6 +2,8 @@
 
 This project uses a small custom 32-bit instruction format. The goal is to keep the instruction set easy to inspect in simulation while the CPU datapath is being built up from simple verified RTL blocks.
 
+The final project summary and performance comparison are recorded in `reports/final_project_summary.md` and `docs/performance_results.md`; the instruction encodings below remain unchanged throughout the CPU variants.
+
 ## Instruction Format
 
 Every instruction is 32 bits wide.

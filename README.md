@@ -136,6 +136,7 @@ Phase 17E physically verified the high-frequency Phase 13 forward-timing CPU on 
 ## Documentation
 
 - [Performance results](docs/performance_results.md) summarise simulation CPI, Basys 3 hardware-measured MIPS, timing-estimated peak throughput and the Phase 13 versus Phase 14G trade-off.
+- [Final project summary](reports/final_project_summary.md) gives a book-ready close-out of the architecture evolution, verification strategy, FPGA bring-up and final performance results.
 - [ISA reference](docs/isa.md) documents the custom 32-bit instruction format, opcode map, immediate sign extension and branch/jump target calculation.
 - [Architecture overview](docs/architecture.md) explains the CPU datapath at a beginner-friendly level.
 - [Architecture notes](docs/architecture_notes.md) track lower-level design notes as the implementation evolves.
@@ -215,7 +216,7 @@ The script runs the current Vivado XSim testbenches for the RTL modules and CPU 
 
 ## Phase 3 FPGA Implementation Preparation
 
-Phase 3 prepares the CPU for the Digilent Basys 3 without changing CPU behaviour. Phase 3A covers the FPGA wrapper and constraints, Phase 3B covers slow LED-visible stepping and pre-hardware synthesis, Phase 3C covers routed implementation and bitstream generation, and Phase 3D is hardware bring-up, pending until the physical board arrives.
+Phase 3 prepared the CPU for the Digilent Basys 3 without changing CPU behaviour. Phase 3A covered the FPGA wrapper and constraints, Phase 3B covered slow LED-visible stepping and pre-hardware synthesis, Phase 3C covered routed implementation and bitstream generation, and later hardware phases completed physical board bring-up.
 
 - `rtl/fpga_top.sv` instantiates `cpu_core` and maps PC, opcode, control and ALU debug signals onto `led[15:0]`.
 - `programs/fpga_led_demo.mem` provides a small looping demo program for LED bring-up.
@@ -229,7 +230,7 @@ Phase 3 prepares the CPU for the Digilent Basys 3 without changing CPU behaviour
 - `docs/fpga_led_expected_sequence.md` provides a pre-hardware LED checklist for the demo program.
 - `reports/phase3b_slow_tick_synthesis_summary.md` records the slow-tick wrapper synthesis result.
 - `reports/phase3c_implementation_summary.md` records the first routed implementation and bitstream-generation result.
-- `reports/phase3_prehardware_validation.md` separates completed pre-board evidence from pending physical hardware validation.
+- `reports/phase3_prehardware_validation.md` separates early completed pre-board evidence from the later physical hardware validation phases.
 - `docs/phase3_checklist.md` tracks completed pre-hardware tasks and Phase 3D hardware tasks that remain blocked until the board arrives.
 - `reports/phase3_build_reproducibility.md` records the commands and generated outputs needed to reproduce the Phase 3 builds.
 

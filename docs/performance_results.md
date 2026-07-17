@@ -133,7 +133,7 @@ Phase 17 flow:
 | Phase 17B | Expand hardware display modes for load-use, control-flush, fetch-wait and memory-wait bottleneck readings |
 | Phase 17C | Tested a direct EX-stage branch-target request optimisation in a separate CPU copy |
 | Phase 17D | Swept the original Phase 13 forward-timing path above 100 MHz |
-| Phase 17E | Build a 115 MHz MMCM-driven hardware MIPS wrapper for the original Phase 13 CPU |
+| Phase 17E | Confirmed approximately 100 MIPS on hardware with a 115 MHz MMCM-driven Phase 13 CPU |
 
 The Phase 17C experiment improved aggregate simulation CPI slightly, from 1.339 to 1.329, but failed post-route 10 ns timing with WNS -0.552 ns and TNS -2.159 ns. The original Phase 13 core already had ID-stage fast-JUMP handling, so the experiment instead tried a direct EX-stage redirect target request. That path was too timing-expensive and is therefore not accepted as a hardware performance improvement. Phase 13E/13I remains the preferred five-stage CPU implementation.
 
@@ -234,7 +234,6 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 
 ## Limitations
 
-- Phase 16A measured at the 100 MHz board clock.
 - The Phase 16A measurement does not prove 166.667 MHz physical operation.
 - The measured MIPS depends on the benchmark program loaded into instruction memory.
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.

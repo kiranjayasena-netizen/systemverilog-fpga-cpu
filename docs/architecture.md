@@ -4,6 +4,8 @@ This CPU is a simple educational 32-bit soft-core written in SystemVerilog. It i
 
 The design is intentionally small. It is meant to make the CPU datapath easy to understand before adding more advanced features such as pipelining, hazards, interrupts, caches, or a bus interface.
 
+For the final measured FPGA result and the later pipeline variants, see `reports/final_project_summary.md` and `docs/performance_results.md`.
+
 ## Main Blocks
 
 The CPU core is built from these RTL modules:

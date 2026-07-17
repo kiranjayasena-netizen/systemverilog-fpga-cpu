@@ -1557,7 +1557,7 @@ Waveform notes:
 
 Conclusion:
 
-The Phase 10A performance benchmark test passed. It provides simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU while hardware bring-up remains pending.
+The Phase 10A performance benchmark test passed. It provides simulation-based CPI, MIPS and runtime estimates for the separate multi-cycle CPU; later phases add the physical board measurements.
 
 ## Phase 10B Single-Cycle-Style CPU Performance Benchmarking
 
