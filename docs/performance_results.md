@@ -6,7 +6,7 @@ The project now has three distinct kinds of performance evidence:
 
 - Self-checking Vivado XSim simulations prove custom-ISA correctness and measure CPI.
 - Vivado post-route timing reports show the highest timing-clean clock frequencies reached by each FPGA implementation path.
-- Basys 3 hardware measurements use FPGA-resident counters and the 7-segment display to measure real board throughput, first at the fixed 100 MHz board clock and later with an MMCM-generated 115 MHz CPU clock.
+- Basys 3 hardware measurements use FPGA-resident counters and the 7-segment display to measure real board throughput, first at the fixed 100 MHz board clock and later with MMCM-generated higher CPU clocks.
 
 The main performance formula is:
 
@@ -18,10 +18,13 @@ MIPS = clock frequency in MHz / CPI
 
 | Category | Result |
 | --- | ---: |
-| Best physical FPGA-measured MIPS | Phase 17E, approximately 100 MIPS at 115.000 MHz |
+| Best physical FPGA-measured MIPS | Phase 19A, approximately 102 MIPS at 117.000 MHz |
 | Best 100 MHz board-measured MIPS | Phase 13, approximately 87 MIPS |
 | Phase 14G board-measured MIPS at 100 MHz | approximately 63 MIPS |
+| Phase 14G high-frequency board-measured MIPS | Phase 19B, approximately 101 MIPS at 160.000 MHz |
 | Phase 14G timing-estimated peak practical MIPS | approximately 101.8 MIPS |
+| Phase 19A 7-seg measured value | `0102` |
+| Phase 19B 7-seg measured value | `0101` |
 | Phase 17E 7-seg measured value | `0100` |
 | Target FPGA board | Digilent Basys 3 |
 | FPGA part | `xc7a35tcpg236-1` |
@@ -67,7 +70,41 @@ Phase 17E physically confirmed the 100 MIPS milestone on the Basys 3.
 
 This confirms the Phase 17D timing-supported estimate. Phase 17D showed that the original Phase 13 path passed timing at 8.650 ns / 115.607 MHz, giving approximately 100.5 MIPS using the board-measured CPI of 1.15. Phase 17E then tested the same idea physically using a 115 MHz MMCM-generated CPU clock.
 
-The Phase 17E value remains just below the Phase 14G timing-estimated peak result of approximately 101.8 MIPS. The important distinction is that Phase 17E's approximately 100 MIPS value is a real board measurement, while Phase 14G's 101.8 MIPS value is based on post-route timing and simulation CPI and has not been physically measured at 166.667 MHz.
+The Phase 17E value was the first physical 100 MIPS board result. Phase 19A later extended the same original Phase 13 CPU path to approximately 102 MIPS at 117 MHz.
+
+## Phase 19A Hardware-Measured 102 MIPS Result
+
+Phase 19A extended the Phase 17E high-frequency hardware wrapper for the original Phase 13 CPU and physically measured a higher integer MIPS value.
+
+| Item | Value |
+| --- | ---: |
+| CPU | Original Phase 13 forward-timing five-stage pipeline |
+| Clock source | RTL-instantiated MMCM |
+| Generated CPU clock | 117.000 MHz |
+| Measurement window | 117,000,000 generated CPU-clock cycles |
+| Display mode | SW3:SW1 = `000` |
+| Observed 7-seg value | `0102` |
+| Interpretation | approximately 102 MIPS |
+| Timing result | WNS +0.016 ns, TNS 0.000 ns, WHS +0.114 ns, THS 0.000 ns |
+
+This is the best physical FPGA-measured result currently recorded in the project. The display is integer MIPS, so the result should be stated as approximately 102 MIPS, not as an exact fractional value.
+
+## Phase 19B High-Frequency Six-Stage Hardware Result
+
+Phase 19B physically measured the Phase 14G six-stage CPU above the fixed 100 MHz board clock.
+
+| Item | Value |
+| --- | ---: |
+| CPU | Phase 14G six-stage pipeline |
+| Clock source | RTL-instantiated MMCM |
+| Generated CPU clock | 160.000 MHz |
+| Measurement window | 160,000,000 generated CPU-clock cycles |
+| Display mode | SW3:SW1 = `000` |
+| Observed 7-seg value | `0101` |
+| Interpretation | approximately 101 MIPS |
+| Timing result | WNS +0.139 ns, TNS 0.000 ns, WHS +0.038 ns, THS 0.000 ns |
+
+This is the first physical high-frequency board measurement for the six-stage path. It does not prove the older Phase 14G 166.667 MHz / approximately 101.8 MIPS timing estimate, because the Phase 19B 166.667 MHz hardware-measurement wrapper failed setup timing.
 
 ## Phase 18 Benchmark Alignment
 
@@ -94,18 +131,48 @@ The aligned benchmark is heavier than the earlier Phase 17E FPGA demo workload, 
 
 The Phase 18 board test displayed `0093` in MIPS mode at 115 MHz. This matches the XSim prediction of 93.001 MIPS within the integer precision of the 7-segment display.
 
+## Phase 19 Past-100-MIPS Results
+
+Phase 19 created new high-frequency wrappers and produced two physical board measurements above 100 MIPS.
+
+Phase 19A sweeps the original Phase 13 forward-timing CPU slightly above 115 MHz using separate MMCM wrappers:
+
+| Target clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 115.500 MHz | +0.015 ns | 0.000 ns | +0.034 ns | 0.000 ns | generated | not recorded |
+| 116.000 MHz | +0.062 ns | 0.000 ns | +0.035 ns | 0.000 ns | generated | not recorded |
+| 116.500 MHz | +0.013 ns | 0.000 ns | +0.094 ns | 0.000 ns | generated | not recorded |
+| 117.000 MHz | +0.016 ns | 0.000 ns | +0.114 ns | 0.000 ns | generated | `0102` |
+
+Phase 19B creates high-frequency hardware-test wrappers for the Phase 14G six-stage CPU:
+
+| Target clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 150.000 MHz | +0.182 ns | 0.000 ns | +0.033 ns | 0.000 ns | generated | not recorded |
+| 155.000 MHz | +0.096 ns | 0.000 ns | +0.033 ns | 0.000 ns | generated | not recorded |
+| 160.000 MHz | +0.139 ns | 0.000 ns | +0.038 ns | 0.000 ns | generated | `0101` |
+| 166.667 MHz | -0.102 ns | -0.287 ns | +0.098 ns | 0.000 ns | skipped | invalid |
+
+Phase 19C records the aligned-benchmark requirement: with Phase 18 CPI = 1.236552, the aligned benchmark needs 123.655 MHz to reach 100 MIPS. At 115 MHz, that same benchmark would need CPI 1.15 or better.
+
+Phase 19 should be read with the benchmark/program clearly identified:
+
+- Phase 19A 117 MHz is a confirmed physical Phase 13 demo-workload result: `0102`.
+- Phase 19B 160 MHz is a confirmed physical Phase 14G demo-workload result: `0101`.
+- The 166.667 MHz Phase 19B wrapper failed setup timing and is not valid hardware evidence.
+
 ## Phase 13 Versus Phase 14G
 
 | Metric | Phase 13 five-stage pipeline | Phase 14G six-stage pipeline |
 | --- | ---: | ---: |
 | Hardware measured at 100 MHz | approximately 87 MIPS | approximately 63 MIPS |
 | Implied hardware CPI | approximately 1.15 | approximately 1.59 |
-| Best physical measured result | Phase 17E: approximately 100 MIPS at 115 MHz | not physically measured above 100 MHz |
+| Best physical measured result | Phase 19A: approximately 102 MIPS at 117 MHz | Phase 19B: approximately 101 MIPS at 160 MHz |
 | Post-route timing-clean frequency | 115.607 MHz in Phase 13I | 166.667 MHz |
 | Simulation CPI used for timing estimate | 1.339 | 1.638 |
 | Estimated peak practical MIPS | approximately 86.4 MIPS | approximately 101.8 MIPS |
 
-Phase 13 is the strongest physically measured result after the Phase 17E MMCM test. Phase 14G is still the strongest timing-estimated result, but its 101.8 MIPS estimate has not yet been demonstrated on the board at 166.667 MHz.
+Phase 13 is the strongest physically measured result after the Phase 19A MMCM test. Phase 14G is physically measured at approximately 101 MIPS in Phase 19B, but its older 166.667 MHz / approximately 101.8 MIPS estimate has not been demonstrated on the board because the 166.667 MHz Phase 19B measurement wrapper failed timing.
 
 Break-even calculation for Phase 14G versus the Phase 13 board-measured result:
 
@@ -113,13 +180,14 @@ Break-even calculation for Phase 14G versus the Phase 13 board-measured result:
 required frequency = 87 MIPS * 1.638 CPI = 142.5 MHz
 ```
 
-Since Phase 14G closed timing at 166.667 MHz, the timing estimate suggests it could exceed the 100 MHz Phase 13 result if the board implementation is clocked above approximately 142.5 MHz. Phase 17E now shows that the Phase 13 path can also be physically measured above 100 MHz, reaching about 100 MIPS at 115 MHz.
+Since Phase 14G closed timing at 166.667 MHz in its earlier implementation path, the timing estimate suggested it could exceed the 100 MHz Phase 13 result if the board implementation were clocked above approximately 142.5 MHz. Phase 19B physically tested the six-stage CPU at 160 MHz and displayed `0101`, but the 166.667 MHz measurement wrapper did not close timing.
 
 Conclusion:
 
 - At the fixed 100 MHz board clock, Phase 13 is the best hardware-measured design.
-- Across all physical FPGA measurements so far, Phase 17E's 115 MHz Phase 13 result is the best real board result at about 100 MIPS.
-- For timing closure and estimated peak frequency, Phase 14G remains the strongest design at about 101.8 estimated MIPS.
+- Across all physical FPGA measurements so far, Phase 19A's 117 MHz Phase 13 result is the best real board result at about 102 MIPS.
+- Phase 19B gives the best six-stage physical measurement so far at about 101 MIPS.
+- The older Phase 14G 166.667 MHz / 101.8 MIPS result remains timing-estimated only.
 - The project demonstrates a real CPU engineering trade-off between CPI and maximum clock frequency.
 
 ## Phase 17 Direction
@@ -262,13 +330,13 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 - The Phase 16A measurement does not prove 166.667 MHz physical operation.
 - The measured MIPS depends on the benchmark program loaded into instruction memory.
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.
-- Phase 16A measured at the 100 MHz board clock; Phase 17E adds a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU.
+- Phase 16A measured at the 100 MHz board clock; Phase 17E added a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU; Phase 19A extended that path to 117 MHz.
 - Future work could test additional MMCM frequencies or use UART/ILA for richer counter output.
 - Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
 
 ## Recommended Future Work
 
-- Phase 16B: benchmark alignment so simulation and hardware use the same workload.
-- Additional MMCM frequency tests around the Phase 13 timing boundary.
+- Capture photo/video evidence for the Phase 19A `0102` and Phase 19B `0101` board displays.
+- Consider a stricter benchmark-aligned Phase 19 follow-up if the final benchmark, rather than the demo workload, must exceed 100 MIPS.
 - UART or ILA output for detailed hardware performance counters.
 - Final report: architecture diagrams, pipeline diagrams, performance plots and board evidence photos.

@@ -6,23 +6,26 @@ SystemVerilog FPGA soft-core CPU project targeting the Digilent Basys 3 board.
 
 This repository builds a simple custom FPGA CPU from small verified RTL blocks, then follows the design through simulation, FPGA implementation, timing closure, board bring-up and hardware performance measurement.
 
-Final milestone: Phase 17E physically measured approximately 100 MIPS on the Basys 3 by running the original Phase 13 forward-timing CPU from an MMCM-generated 115 MHz clock. The 7-segment display showed `0100` in MIPS mode.
+Final milestone: Phase 19A physically measured approximately 102 MIPS on the Basys 3 by running the original Phase 13 forward-timing CPU from an MMCM-generated 117 MHz clock. The 7-segment display showed `0102` in MIPS mode.
 
 ## Current Best Results
 
 | Category | Result |
 | --- | ---: |
-| Best physical FPGA-measured MIPS | Phase 17E, approximately 100 MIPS at 115.000 MHz |
+| Best physical FPGA-measured MIPS | Phase 19A, approximately 102 MIPS at 117.000 MHz |
 | Best 100 MHz board-measured MIPS | Phase 13, approximately 87 MIPS |
 | Phase 14G board-measured MIPS at 100 MHz | approximately 63 MIPS |
+| Phase 14G high-frequency board-measured MIPS | Phase 19B, approximately 101 MIPS at 160.000 MHz |
 | Phase 14G timing-estimated peak practical MIPS | approximately 101.8 MIPS |
+| Phase 19A 7-seg measured value | `0102` |
+| Phase 19B 7-seg measured value | `0101` |
 | Phase 17E 7-seg measured value | `0100` |
 | Target FPGA board | Digilent Basys 3 |
 | FPGA part | `xc7a35tcpg236-1` |
 
-Phase 17E physically verified the high-frequency Phase 13 forward-timing CPU on the Basys 3. The design used an MMCM-generated 115 MHz CPU clock and a MIPS counter calibrated to a 115,000,000-cycle one-second measurement window. The seven-segment display showed `0100`, corresponding to approximately 100 MIPS.
+Phase 19A physically verified the high-frequency Phase 13 forward-timing CPU on the Basys 3 at 117 MHz. The design used an MMCM-generated CPU clock and a MIPS counter calibrated to a 117,000,000-cycle one-second measurement window. The seven-segment display showed `0102`, corresponding to approximately 102 MIPS.
 
-The Phase 17E result is the best real board-measured result. Phase 14G remains the strongest timing-estimated result at approximately 101.8 MIPS, but that value has not been physically measured at 166.667 MHz.
+The Phase 19A result is the best real board-measured result. Phase 19B also physically measured the Phase 14G six-stage CPU at approximately 101 MIPS using a 160 MHz generated clock. Phase 14G's 166.667 MHz / approximately 101.8 MIPS value remains timing-estimated only because the Phase 19B 166.667 MHz hardware-measurement wrapper did not meet setup timing.
 
 Phase 18 adds a benchmark-aligned flow using the same `programs/final_benchmark.mem` image in XSim and on the FPGA. The aligned simulation predicts approximately 93.0 MIPS at 115 MHz for that benchmark; the Phase 18 board test displayed `0093`, confirming close simulation-to-hardware agreement for the shared workload.
 
@@ -91,6 +94,24 @@ The Phase 18 bitstream is written locally under:
 reports/phase18_benchmark_aligned_impl/bitstreams/fpga_top_phase18_forwardtiming_mmcm_benchmark.bit
 ```
 
+## Phase 19 Past-100-MIPS Results
+
+Phase 19 creates separate high-frequency board-test wrappers. The 117 MHz Phase 19A bitstream and 160 MHz Phase 19B bitstream have now been physically tested on the Basys 3.
+
+```powershell
+vivado -mode batch -source scripts/run_vivado_impl_phase19a_forwardtiming_mmcm_117p0.tcl
+vivado -mode batch -source scripts/run_vivado_impl_phase19b_pipeline6_mmcm_160.tcl
+```
+
+Useful bitstreams:
+
+```text
+reports/phase19a_frequency_sweep_impl/117p0/bitstreams/fpga_top_phase19a_forwardtiming_mmcm_117p0.bit
+reports/phase19b_pipeline6_mmcm_impl/160/bitstreams/fpga_top_phase19b_pipeline6_mmcm_160.bit
+```
+
+Phase 19A closed timing for the original Phase 13 CPU up to 117.000 MHz and displayed `0102`, approximately 102 MIPS. Phase 19B closed timing for the Phase 14G six-stage CPU up to 160.000 MHz and displayed `0101`, approximately 101 MIPS. The 166.667 MHz Phase 19B wrapper missed setup timing and is not valid board evidence.
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -99,6 +120,9 @@ reports/phase18_benchmark_aligned_impl/bitstreams/fpga_top_phase18_forwardtiming
 | [reports/final_project_summary.md](reports/final_project_summary.md) | Final book-ready project summary |
 | [reports/phase17e_mmcm_high_frequency_mips_test.md](reports/phase17e_mmcm_high_frequency_mips_test.md) | Final 100 MIPS hardware result |
 | [reports/phase18_sim_fpga_benchmark_alignment.md](reports/phase18_sim_fpga_benchmark_alignment.md) | Shared simulation/FPGA benchmark alignment |
+| [reports/phase19a_phase17e_frequency_sweep.md](reports/phase19a_phase17e_frequency_sweep.md) | Phase 19A 117 MHz / 102 MIPS hardware result |
+| [reports/phase19b_phase14g_high_frequency_hardware_mips.md](reports/phase19b_phase14g_high_frequency_hardware_mips.md) | Phase 19B 160 MHz / 101 MIPS six-stage hardware result |
+| [reports/phase19_past_100mips_plan.md](reports/phase19_past_100mips_plan.md) | Honest plan for pushing beyond 100 MIPS |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |
@@ -121,7 +145,7 @@ reports/phase18_benchmark_aligned_impl/bitstreams/fpga_top_phase18_forwardtiming
 
 ## Repository Status
 
-- Main hardware milestone reached: approximately 100 MIPS physically measured on Basys 3 in Phase 17E.
+- Main hardware milestone reached: approximately 102 MIPS physically measured on Basys 3 in Phase 19A.
 - Generated Vivado outputs, bitstreams, checkpoints and implementation folders are not tracked.
 - A license should be added before making the repository public.
 

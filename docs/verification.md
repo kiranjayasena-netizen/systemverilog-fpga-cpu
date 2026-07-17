@@ -3935,10 +3935,87 @@ Board result:
 
 Do not compare the Phase 18 display directly against Phase 17E `0100` unless noting that the benchmark program changed.
 
+## Phase 19 Past-100-MIPS Hardware Candidates
+
+Status: Vivado timing sweeps completed for separate Phase 19 wrappers. Board measurements recorded for the 117 MHz Phase 19A wrapper and 160 MHz Phase 19B wrapper.
+
+Phase 19A files:
+
+- `rtl/fpga_top_phase19a_forwardtiming_mmcm_mips.sv`
+- `rtl/fpga_top_phase19a_forwardtiming_mmcm_targets.sv`
+- `scripts/run_vivado_impl_phase19a_forwardtiming_mmcm_115p5.tcl`
+- `scripts/run_vivado_impl_phase19a_forwardtiming_mmcm_116p0.tcl`
+- `scripts/run_vivado_impl_phase19a_forwardtiming_mmcm_116p5.tcl`
+- `scripts/run_vivado_impl_phase19a_forwardtiming_mmcm_117p0.tcl`
+- `reports/phase19a_phase17e_frequency_sweep.md`
+
+Phase 19A timing result:
+
+| Target clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 115.500 MHz | +0.015 ns | 0.000 ns | +0.034 ns | 0.000 ns | generated | not recorded |
+| 116.000 MHz | +0.062 ns | 0.000 ns | +0.035 ns | 0.000 ns | generated | not recorded |
+| 116.500 MHz | +0.013 ns | 0.000 ns | +0.094 ns | 0.000 ns | generated | not recorded |
+| 117.000 MHz | +0.016 ns | 0.000 ns | +0.114 ns | 0.000 ns | generated | `0102` |
+
+Phase 19B files:
+
+- `rtl/fpga_top_phase19b_pipeline6_mmcm_mips.sv`
+- `scripts/run_vivado_impl_phase19b_pipeline6_mmcm_150.tcl`
+- `scripts/run_vivado_impl_phase19b_pipeline6_mmcm_155.tcl`
+- `scripts/run_vivado_impl_phase19b_pipeline6_mmcm_160.tcl`
+- `scripts/run_vivado_impl_phase19b_pipeline6_mmcm_166p667.tcl`
+- `reports/phase19b_phase14g_high_frequency_hardware_mips.md`
+
+Phase 19B timing result:
+
+| Target clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 150.000 MHz | +0.182 ns | 0.000 ns | +0.033 ns | 0.000 ns | generated | not recorded |
+| 155.000 MHz | +0.096 ns | 0.000 ns | +0.033 ns | 0.000 ns | generated | not recorded |
+| 160.000 MHz | +0.139 ns | 0.000 ns | +0.038 ns | 0.000 ns | generated | `0101` |
+| 166.667 MHz | -0.102 ns | -0.287 ns | +0.098 ns | 0.000 ns | skipped | invalid |
+
+Useful build commands:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase19a_forwardtiming_mmcm_117p0.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase19b_pipeline6_mmcm_160.tcl
+```
+
+Tested bitstreams:
+
+- `reports/phase19a_frequency_sweep_impl/117p0/bitstreams/fpga_top_phase19a_forwardtiming_mmcm_117p0.bit`
+- `reports/phase19b_pipeline6_mmcm_impl/160/bitstreams/fpga_top_phase19b_pipeline6_mmcm_160.bit`
+
+Recorded board results:
+
+| Bitstream | Display mode | Observed value | Meaning |
+| --- | --- | ---: | --- |
+| Phase 19A 117 MHz Phase 13 wrapper | SW3:SW1 = `000` | `0102` | approximately 102 MIPS |
+| Phase 19B 160 MHz Phase 14G wrapper | SW3:SW1 = `000` | `0101` | approximately 101 MIPS |
+
+Hardware test procedure:
+
+1. Program one timing-clean Phase 19 bitstream.
+2. Press and release BTNC reset.
+3. Confirm LED0 is on for MMCM lock.
+4. Set SW0 = 1 to run.
+5. Set SW3:SW1 = `000` for MIPS mode.
+6. Wait at least two one-second measurement windows.
+7. Record the 7-segment display.
+8. Capture photo/video evidence.
+9. Record the physical MIPS result with the tested bitstream and display mode.
+
+Timing warning:
+
+- The Phase 19B 166.667 MHz wrapper failed setup timing and is not valid for board measurement.
+- Timing-clean bitstream generation makes a candidate valid for testing, but physical MIPS should still be documented from the FPGA display.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
-- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream, Phase 16C full-speed comparison MIPS bitstreams and Phase 17E 115 MHz MMCM MIPS bitstream.
+- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream, Phase 16C full-speed comparison MIPS bitstreams, Phase 17E 115 MHz MMCM MIPS bitstream, Phase 19A `0102` result and Phase 19B `0101` result.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.

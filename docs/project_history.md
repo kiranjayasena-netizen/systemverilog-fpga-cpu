@@ -148,3 +148,13 @@ Phase 18 created a shared benchmark flow so simulation and FPGA measurements can
 The Phase 18 XSim run measured 20,000 enabled cycles, 16,174 retired instructions and CPI 1.236552. That predicts approximately 93.0 MIPS at 115 MHz for the aligned benchmark.
 
 The Phase 18 FPGA wrapper closed timing at 115 MHz and generated a bitstream. The Basys 3 board measurement displayed `0093`, matching the simulation prediction of approximately 93.0 MIPS for the final benchmark.
+
+## Phase 19 Past-100-MIPS Attempts
+
+Phase 19 keeps the confirmed Phase 17E result honest by separating timing-clean candidates from physical board measurements, then records the successful Phase 19A and Phase 19B board readings.
+
+Phase 19A created separate MMCM wrappers for the original Phase 13 forward-timing CPU at 115.5, 116.0, 116.5 and 117.0 MHz. All four targets closed timing and generated bitstreams. The 117.0 MHz board test displayed `0102`, approximately 102 MIPS, making Phase 19A the strongest real board-measured result.
+
+Phase 19B created a high-frequency MMCM/MIPS-counter wrapper for the Phase 14G six-stage CPU. The 150, 155 and 160 MHz targets closed timing and generated bitstreams. The 160 MHz board test displayed `0101`, approximately 101 MIPS. The 166.667 MHz target failed setup timing in the new hardware-measurement wrapper, so it is not valid board evidence.
+
+Phase 19C documented the aligned-benchmark requirement. With the Phase 18 CPI of 1.236552, the aligned benchmark needs about 123.655 MHz to reach 100 MIPS, or it needs CPI to improve to 1.15 or better at 115 MHz.
