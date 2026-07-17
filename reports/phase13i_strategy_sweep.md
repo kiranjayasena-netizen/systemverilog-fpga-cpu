@@ -129,7 +129,7 @@ That transcript completed successfully with `All XSim regression tests completed
 
 ## Decision
 
-Phase 13I should replace the Phase 13H timing result as the current preferred measured implementation result because:
+Phase 13I should replace the Phase 13H timing result as the current preferred timing-closure result because:
 
 - practical estimated MIPS improves from about 84.4 to about 86.4;
 - timing is fully passing at 8.650 ns;

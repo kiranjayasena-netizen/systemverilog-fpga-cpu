@@ -170,7 +170,7 @@ Phase 19 should be read with the benchmark/program clearly identified:
 | Best physical measured result | Phase 19A: approximately 102 MIPS at 117 MHz | Phase 19B: approximately 101 MIPS at 160 MHz |
 | Post-route timing-clean frequency | 115.607 MHz in Phase 13I | 166.667 MHz |
 | Simulation CPI used for timing estimate | 1.339 | 1.638 |
-| Estimated peak practical MIPS | approximately 86.4 MIPS | approximately 101.8 MIPS |
+| Historical simulation-CPI timing estimate | approximately 86.4 MIPS | approximately 101.8 MIPS |
 
 Phase 13 is the strongest physically measured result after the Phase 19A MMCM test. Phase 14G is physically measured at approximately 101 MIPS in Phase 19B, but its older 166.667 MHz / approximately 101.8 MIPS estimate has not been demonstrated on the board because the 166.667 MHz Phase 19B measurement wrapper failed timing.
 

@@ -45,8 +45,8 @@ All scripts use the shared helper:
 
 | Target clock | Period | WNS | TNS | WHS | THS | LUTs | FFs | BRAM | DSP | Bitstream | Valid for board test | Board MIPS |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- | --- | ---: |
-| 150.000 MHz | 6.667 ns | +0.182 ns | 0.000 ns | +0.033 ns | 0.000 ns | 1,426 | 1,757 | 1 tile / 2 RAMB18 | 0 | generated | yes | TBD |
-| 155.000 MHz | 6.452 ns | +0.096 ns | 0.000 ns | +0.033 ns | 0.000 ns | 1,430 | 1,757 | 1 tile / 2 RAMB18 | 0 | generated | yes | TBD |
+| 150.000 MHz | 6.667 ns | +0.182 ns | 0.000 ns | +0.033 ns | 0.000 ns | 1,426 | 1,757 | 1 tile / 2 RAMB18 | 0 | generated | yes | not recorded |
+| 155.000 MHz | 6.452 ns | +0.096 ns | 0.000 ns | +0.033 ns | 0.000 ns | 1,430 | 1,757 | 1 tile / 2 RAMB18 | 0 | generated | yes | not recorded |
 | 160.000 MHz | 6.250 ns | +0.139 ns | 0.000 ns | +0.038 ns | 0.000 ns | 1,412 | 1,764 | 1 tile / 2 RAMB18 | 0 | generated | yes | `0101` |
 | 166.667 MHz | 6.000 ns | -0.102 ns | -0.287 ns | +0.098 ns | 0.000 ns | 1,416 | 1,765 | 1 tile / 2 RAMB18 | 0 | skipped | no | invalid |
 

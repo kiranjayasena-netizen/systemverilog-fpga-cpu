@@ -40,7 +40,7 @@ The project uses a compact custom 32-bit ISA with:
 - `x0` hardwired to zero
 - Safe invalid-opcode handling
 
-The final physically measured 100 MIPS result uses the Phase 13 five-stage forward-timing pipeline. The project also includes multi-cycle, BRAM-aware, prefetch, five-stage pipeline and six-stage pipeline variants for comparison.
+The final physically measured 102 MIPS result uses the Phase 13 five-stage forward-timing pipeline at 117 MHz. The project also includes multi-cycle, BRAM-aware, prefetch, five-stage pipeline and six-stage pipeline variants for comparison.
 
 ## Hardware Platform
 
@@ -63,9 +63,9 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 
 The regression script runs the self-checking Vivado XSim testbenches used throughout the project.
 
-## Build The Final Phase 17E Bitstream
+## Build the Phase 17E 100 MIPS Baseline
 
-The final high-frequency hardware MIPS wrapper is built with:
+The earlier 115 MHz / 100 MIPS baseline wrapper is built with:
 
 ```powershell
 vivado -mode batch -source scripts/run_vivado_impl_pipeline_forwardtiming_mmcm_mips.tcl

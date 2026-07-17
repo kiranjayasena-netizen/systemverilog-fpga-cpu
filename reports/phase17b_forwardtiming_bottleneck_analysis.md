@@ -35,12 +35,12 @@ Display modes:
 |---|---|---:|---|
 | 000 | MIPS | 87 | Baseline throughput |
 | 001 | CPI x100 | 115 | Confirmed board reading |
-| 010 | Load-use stall % x100 | TBD | Data hazard cost |
+| 010 | Load-use stall % x100 | not recorded | Data hazard cost |
 | 011 | Control flush % x100 | 1250 | Confirmed board reading; about 12.50% |
-| 100 | Fetch wait % x100 | TBD | Instruction fetch cost |
-| 101 | Memory wait % x100 | TBD | Data memory cost |
-| 110 | Branch/jump events | TBD | Control-flow activity |
-| 111 | Retired instruction count in millions | TBD | Sanity check; should match MIPS for a one-second window |
+| 100 | Fetch wait % x100 | not recorded | Instruction fetch cost |
+| 101 | Memory wait % x100 | not recorded | Data memory cost |
+| 110 | Branch/jump events | not recorded | Control-flow activity |
+| 111 | Retired instruction count in millions | not recorded | Sanity check; should match MIPS for a one-second window |
 
 Percentage modes use the 100 MHz one-second measurement window:
 
@@ -59,21 +59,21 @@ The wrapper implements this as one displayed count per 10,000 event cycles, avoi
 
 ## Hardware Counter Table
 
-Fill this table after running the Phase 17A profiling bitstream.
+The main MIPS/CPI/control-flush readings were recorded from the board. The lower-level raw event counters below were not recorded before Phase 19 moved the project focus to high-frequency hardware testing.
 
 | Metric | Value | Interpretation |
 | --- | ---: | --- |
-| Measured MIPS | TBD | Throughput at 100 MHz |
-| Implied CPI | TBD | `100 / measured MIPS` |
-| Retired instructions/window | TBD | Instructions per second |
-| Load-use stall cycles | TBD | Data hazard cost |
-| Control flush cycles | TBD | Branch/jump cost |
-| Memory wait cycles | TBD | Memory cost |
-| Fetch wait cycles | TBD | Instruction-fetch cost |
-| Taken branches | TBD | Control-flow mix |
-| Not-taken branches | TBD | Control-flow mix |
-| Jumps | TBD | Control-flow mix |
-| Wrong-path instructions flushed | TBD | Redirect penalty evidence |
+| Measured MIPS | 87 | Throughput at 100 MHz |
+| Implied CPI | 1.15 | `100 / measured MIPS` |
+| Retired instructions/window | ~87,000,000 | Instructions per second, implied by MIPS mode |
+| Load-use stall cycles | not recorded | Data hazard cost |
+| Control flush cycles | ~12,500,000 | Inferred from control-flush percentage x100 = `1250` |
+| Memory wait cycles | not recorded | Memory cost |
+| Fetch wait cycles | not recorded | Instruction-fetch cost |
+| Taken branches | not recorded | Control-flow mix |
+| Not-taken branches | not recorded | Control-flow mix |
+| Jumps | not recorded | Control-flow mix |
+| Wrong-path instructions flushed | not recorded | Redirect penalty evidence |
 
 ## Hardware Test Procedure
 

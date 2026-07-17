@@ -36,7 +36,7 @@ The final hardware wrappers use:
 - BTNC as reset.
 - SW0 as run enable.
 - SW3:SW1 as display-mode selection on profiling wrappers.
-- LED0 as MMCM-lock indication in the Phase 17E wrapper.
+- LED0 as MMCM-lock indication in the Phase 17E, Phase 18 and Phase 19 MMCM wrappers.
 - The 7-segment display for MIPS and CPI-related measurements.
 
 ## Custom ISA Summary
@@ -79,8 +79,10 @@ The CPU evolved through several implementation styles:
 | Phase 13 forwarding/timing pipeline | Best fixed-100 MHz board-measured path |
 | Phase 14 six-stage pipeline | Higher timing potential but worse CPI on the measured workload |
 | Phase 17 profiling and MMCM test | Hardware profiling plus 115 MHz physical MIPS measurement |
+| Phase 18 benchmark alignment | Used the same instruction-memory image and retire signal in XSim and FPGA; XSim predicted 93.001 MIPS and the board displayed `0093` |
+| Phase 19 past-100-MIPS tests | Produced the final 117 MHz Phase 13 board result of `0102` and the 160 MHz Phase 14G board result of `0101` |
 
-The most important architectural lesson was that deeper pipelining did not automatically improve real board MIPS. The Phase 14G six-stage CPU closed timing at a much higher estimated clock, but its CPI was worse at the fixed 100 MHz board clock. The Phase 13 five-stage path had better board CPI, and the Phase 17E MMCM test used that advantage to physically reach approximately 100 MIPS.
+The most important architectural lesson was that deeper pipelining did not automatically improve real board MIPS. The Phase 14G six-stage CPU closed timing at a much higher estimated clock, but its CPI was worse at the fixed 100 MHz board clock. The Phase 13 five-stage path had better board CPI, Phase 17E used that advantage to physically reach the first 100 MIPS milestone, and Phase 19A extended it to approximately 102 MIPS.
 
 ## Verification Strategy
 

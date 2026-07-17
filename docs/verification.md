@@ -3041,7 +3041,7 @@ Phase 14F proves full custom-ISA style program execution for the separate six-st
 
 ## Phase 14G Six-Stage Pipeline Vivado Timing
 
-Status: Vivado implementation and timing sweep passed; Phase 14G becomes the preferred measured implementation result.
+Status: Vivado implementation and timing sweep passed; Phase 14G became the preferred timing-estimated implementation result at that stage.
 
 Implementation script:
 
