@@ -92,6 +92,7 @@ Verification was built up incrementally:
 - Focused tests for pipeline movement, forwarding, load-use hazards, control-flow redirects, wrong-path side effects and invalid-opcode safety.
 - Vivado synthesis and implementation reports for timing, utilisation, BRAM inference and bitstream generation.
 - Physical Basys 3 measurements using LEDs and 7-segment display counters.
+- Phase 18 benchmark alignment using the same instruction-memory image and retire signal in XSim and the FPGA wrapper.
 
 The project used separate implementation paths for experimental CPU variants so that verified baselines were not overwritten.
 
@@ -105,6 +106,7 @@ Hardware bring-up progressed from simple observability to direct performance mea
 - The Phase 16A MIPS counter displayed 100 MHz hardware throughput on the Basys 3 7-segment display.
 - Phase 17A/17B extended the Phase 13 hardware profiler with MIPS, CPI and bottleneck display modes.
 - Phase 17E used an MMCM-generated 115 MHz CPU clock and displayed the final `0100` MIPS result.
+- Phase 18 reused the 115 MHz measurement wrapper with `programs/final_benchmark.mem` so simulation and FPGA can be compared on the same workload.
 
 ## Final Performance Results
 
@@ -116,6 +118,8 @@ Hardware bring-up progressed from simple observability to direct performance mea
 | Phase 17B CPI x100 | `0115` |
 | Phase 17B control flush x100 | `1250` |
 | Phase 17E MIPS display | `0100` |
+| Phase 18 aligned simulation prediction | approximately 93.0 MIPS at 115 MHz |
+| Phase 18 aligned board display | `0093` |
 
 Important distinction:
 
@@ -132,6 +136,7 @@ Important distinction:
 - A timing-clean estimate is not the same as a physical board measurement.
 - Hardware profiling is valuable because it prevents guessing which optimisation matters.
 - The MMCM high-frequency test physically confirmed the 100 MIPS milestone without changing the original Phase 13 CPU RTL.
+- Benchmark alignment matters: Phase 18 showed that changing the instruction-memory program changes CPI and therefore expected board MIPS, even with the same CPU and same clock.
 
 ## Comparison Class
 
@@ -155,7 +160,7 @@ The final CPU is a custom educational FPGA soft-core. It should be compared care
 
 - Archive photo/video evidence for the final board displays and MMCM lock LED.
 - Add UART or ILA output for richer hardware performance counters.
-- Align hardware and simulation benchmark programs more strictly.
+- Archive photo/video evidence for the Phase 18 aligned benchmark board display.
 - Reduce branch/control penalty through safer control-flow optimisation.
 - Explore additional MMCM frequencies near the Phase 13 timing boundary.
 - Add a small assembler or compiler flow for easier program development.

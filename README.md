@@ -24,6 +24,8 @@ Phase 17E physically verified the high-frequency Phase 13 forward-timing CPU on 
 
 The Phase 17E result is the best real board-measured result. Phase 14G remains the strongest timing-estimated result at approximately 101.8 MIPS, but that value has not been physically measured at 166.667 MHz.
 
+Phase 18 adds a benchmark-aligned flow using the same `programs/final_benchmark.mem` image in XSim and on the FPGA. The aligned simulation predicts approximately 93.0 MIPS at 115 MHz for that benchmark; the Phase 18 board test displayed `0093`, confirming close simulation-to-hardware agreement for the shared workload.
+
 ## Architecture Summary
 
 The project uses a compact custom 32-bit ISA with:
@@ -74,6 +76,21 @@ reports/phase17e_mmcm_mips_impl/bitstreams/fpga_top_pipeline_forwardtiming_mmcm_
 
 Generated implementation folders and bitstreams are intentionally ignored by Git.
 
+## Run The Phase 18 Aligned Benchmark
+
+The simulation-to-FPGA aligned benchmark uses the same program image in XSim and in the 115 MHz FPGA wrapper:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_phase18_final_benchmark.ps1
+vivado -mode batch -source scripts/run_vivado_impl_phase18_forwardtiming_mmcm_benchmark.tcl
+```
+
+The Phase 18 bitstream is written locally under:
+
+```text
+reports/phase18_benchmark_aligned_impl/bitstreams/fpga_top_phase18_forwardtiming_mmcm_benchmark.bit
+```
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -81,6 +98,7 @@ Generated implementation folders and bitstreams are intentionally ignored by Git
 | [docs/performance_results.md](docs/performance_results.md) | Main performance tables and comparison |
 | [reports/final_project_summary.md](reports/final_project_summary.md) | Final book-ready project summary |
 | [reports/phase17e_mmcm_high_frequency_mips_test.md](reports/phase17e_mmcm_high_frequency_mips_test.md) | Final 100 MIPS hardware result |
+| [reports/phase18_sim_fpga_benchmark_alignment.md](reports/phase18_sim_fpga_benchmark_alignment.md) | Shared simulation/FPGA benchmark alignment |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |

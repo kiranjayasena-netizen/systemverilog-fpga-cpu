@@ -136,3 +136,15 @@ Final distinction:
 - Best fixed 100 MHz board result: Phase 13, approximately 87 MIPS.
 - Best physical FPGA-measured result: Phase 17E, approximately 100 MIPS at 115 MHz.
 - Best timing-estimated result: Phase 14G, approximately 101.8 MIPS.
+
+## Phase 18 Simulation-to-FPGA Benchmark Alignment
+
+Phase 18 created a shared benchmark flow so simulation and FPGA measurements can be compared with the same workload:
+
+- `programs/final_benchmark.mem` is used in both XSim and the FPGA wrapper.
+- `tb/tb_phase18_final_benchmark_forwardtiming.sv` measures enabled cycles, retired instructions and CPI using the same Phase 13 `retire_valid` signal used by the hardware MIPS counter.
+- `fpga_top_phase18_forwardtiming_mmcm_benchmark` reuses the proven Phase 17E 115 MHz MMCM/MIPS-counter wrapper but overrides instruction memory with the final benchmark image.
+
+The Phase 18 XSim run measured 20,000 enabled cycles, 16,174 retired instructions and CPI 1.236552. That predicts approximately 93.0 MIPS at 115 MHz for the aligned benchmark.
+
+The Phase 18 FPGA wrapper closed timing at 115 MHz and generated a bitstream. The Basys 3 board measurement displayed `0093`, matching the simulation prediction of approximately 93.0 MIPS for the final benchmark.

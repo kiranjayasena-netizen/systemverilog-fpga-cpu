@@ -69,6 +69,31 @@ This confirms the Phase 17D timing-supported estimate. Phase 17D showed that the
 
 The Phase 17E value remains just below the Phase 14G timing-estimated peak result of approximately 101.8 MIPS. The important distinction is that Phase 17E's approximately 100 MIPS value is a real board measurement, while Phase 14G's 101.8 MIPS value is based on post-route timing and simulation CPI and has not been physically measured at 166.667 MHz.
 
+## Phase 18 Benchmark Alignment
+
+Phase 18 adds a fairness check between simulation and FPGA measurement by using the exact same program image in both environments:
+
+- shared benchmark: `programs/final_benchmark.mem`;
+- simulation testbench: `tb/tb_phase18_final_benchmark_forwardtiming.sv`;
+- FPGA top: `fpga_top_phase18_forwardtiming_mmcm_benchmark`;
+- report: `reports/phase18_sim_fpga_benchmark_alignment.md`.
+
+The aligned benchmark is heavier than the earlier Phase 17E FPGA demo workload, so it is not expected to show `0100` MIPS. It is intended to answer whether simulation and hardware agree when the workload is identical.
+
+| Metric | Value |
+| --- | ---: |
+| XSim enabled cycles | 20,000 |
+| XSim retired instructions | 16,174 |
+| XSim CPI | 1.236552 |
+| Predicted MIPS at 100 MHz | 80.870 |
+| Predicted MIPS at 115 MHz | 93.001 |
+| Phase 18 Vivado WNS/TNS | +0.014 ns / 0.000 ns |
+| Phase 18 Vivado WHS/THS | +0.036 ns / 0.000 ns |
+| Phase 18 bitstream | generated |
+| Phase 18 board MIPS | `0093`, approximately 93 MIPS |
+
+The Phase 18 board test displayed `0093` in MIPS mode at 115 MHz. This matches the XSim prediction of 93.001 MIPS within the integer precision of the 7-segment display.
+
 ## Phase 13 Versus Phase 14G
 
 | Metric | Phase 13 five-stage pipeline | Phase 14G six-stage pipeline |

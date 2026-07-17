@@ -3845,6 +3845,96 @@ Interpretation:
 - The physical 7-segment reading confirms approximately 100 MIPS for the original Phase 13 CPU at 115 MHz.
 - The 115 MHz wrapper is separate from Phase 14G/15/16 and does not modify those RTL paths.
 
+## Phase 18 Simulation-to-FPGA Benchmark Alignment
+
+Status: shared benchmark program, XSim benchmark measurement, scaled MIPS-counter simulation, Vivado implementation and Basys 3 board measurement passed.
+
+Files:
+
+- `programs/final_benchmark.mem`
+- `programs/final_benchmark.md`
+- `tb/tb_phase18_final_benchmark_forwardtiming.sv`
+- `tb/tb_phase18_mmcm_mips_counter_scaled.sv`
+- `rtl/fpga_top_phase18_forwardtiming_mmcm_benchmark.sv`
+- `scripts/run_xsim_phase18_final_benchmark.ps1`
+- `scripts/run_vivado_impl_phase18_forwardtiming_mmcm_benchmark.tcl`
+- `reports/phase18_sim_fpga_benchmark_alignment.md`
+
+Purpose:
+
+- Use the same instruction-memory image in XSim and on the FPGA.
+- Count retired instructions with the same `retire_valid` signal.
+- Compare simulated CPI prediction against physical board MIPS for the same workload.
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase18_final_benchmark.ps1
+```
+
+Local XSim result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 16,174 |
+| CPI | 1.236552 |
+| Predicted MIPS at 100 MHz | 80.870 |
+| Predicted MIPS at 115 MHz | 93.001 |
+
+The local run showed the known Windows `xelab` object-directory cleanup warning after snapshot build, but the simulation snapshot ran and the test passed.
+
+Scaled counter check:
+
+```text
+PHASE 18 SCALED MIPS COUNTER TEST PASSED
+```
+
+Vivado implementation command:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase18_forwardtiming_mmcm_benchmark.tcl
+```
+
+Vivado result:
+
+| Metric | Value |
+| --- | ---: |
+| CPU clock | 115.000 MHz |
+| WNS | +0.014 ns |
+| TNS | 0.000 ns |
+| WHS | +0.036 ns |
+| THS | 0.000 ns |
+| LUTs | 1,825 |
+| FFs | 2,072 |
+| BRAM | 1 Block RAM Tile / 2 RAMB18 |
+| DSP | 0 |
+| Bitstream | generated |
+
+Bitstream path:
+
+- `reports/phase18_benchmark_aligned_impl/bitstreams/fpga_top_phase18_forwardtiming_mmcm_benchmark.bit`
+
+Hardware test procedure:
+
+1. Program the Phase 18 bitstream.
+2. Press and release BTNC reset.
+3. Confirm LED0 is on for MMCM lock.
+4. Set SW0 = 1.
+5. Set SW3:SW1 = `000`.
+6. Wait at least two one-second measurement windows.
+7. Record the MIPS display. Confirmed value: `0093`.
+8. Set SW3:SW1 = `001` and record CPI x100.
+9. Set SW3:SW1 = `011` and record control-flush x100.
+
+Board result:
+
+| Display mode | Observed value | Meaning |
+| --- | ---: | --- |
+| MIPS | `0093` | approximately 93 MIPS at 115 MHz for `final_benchmark.mem` |
+
+Do not compare the Phase 18 display directly against Phase 17E `0100` unless noting that the benchmark program changed.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
