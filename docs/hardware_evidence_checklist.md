@@ -27,6 +27,7 @@ This checklist tracks the physical Basys 3 evidence to capture for the final rep
 
 ## Notes
 
+- These images are not required for synthesis or simulation, but they are important for the final report, presentation and book.
 - Copy selected photos or screenshots into `docs/images/` only when they are intentionally chosen as final evidence.
 - Do not commit large raw video files unless necessary.
 - Do not commit raw Vivado implementation folders or bitstreams.
