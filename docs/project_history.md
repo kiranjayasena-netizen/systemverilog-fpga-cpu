@@ -153,8 +153,18 @@ The Phase 18 FPGA wrapper closed timing at 115 MHz and generated a bitstream. Th
 
 Phase 19 keeps the confirmed Phase 17E result honest by separating timing-clean candidates from physical board measurements, then records the successful Phase 19A and Phase 19B board readings.
 
-Phase 19A created separate MMCM wrappers for the original Phase 13 forward-timing CPU at 115.5, 116.0, 116.5 and 117.0 MHz. All four targets closed timing and generated bitstreams. The 117.0 MHz board test displayed `0102`, approximately 102 MIPS, making Phase 19A the strongest real board-measured result.
+Phase 19A created separate MMCM wrappers for the original Phase 13 forward-timing CPU at 115.5, 116.0, 116.5 and 117.0 MHz. All four targets closed timing and generated bitstreams. The 117.0 MHz board test displayed `0102`, approximately 102 MIPS, making Phase 19A the strongest real board-measured result at that stage.
 
 Phase 19B created a high-frequency MMCM/MIPS-counter wrapper for the Phase 14G six-stage CPU. The 150, 155 and 160 MHz targets closed timing and generated bitstreams. The 160 MHz board test displayed `0101`, approximately 101 MIPS. The 166.667 MHz target failed setup timing in the new hardware-measurement wrapper, so it is not valid board evidence.
 
 Phase 19C documented the aligned-benchmark requirement. With the Phase 18 CPI of 1.236552, the aligned benchmark needs about 123.655 MHz to reach 100 MIPS, or it needs CPI to improve to 1.15 or better at 115 MHz.
+
+## Phase 20 Real Performance Improvement Work
+
+Phase 20 starts from the confirmed Phase 19A 102 MIPS board result and tries to improve real CPU performance without overwriting proven baselines.
+
+The first Phase 20 CPU copy, `cpu_core_pipeline_forwardtiming_phase20`, adds conservative static backward-BEQ prediction. Focused XSim correctness passed, but the aligned `programs/final_benchmark.mem` CPI remained 1.236552, matching Phase 18. This showed that the safe prediction experiment did not help the final benchmark because its hot loop already relies on the earlier JUMP path and forward BEQs.
+
+Phase 20E then extended the original Phase 13 CPU frequency path. The 118.5 MHz target passed timing and displayed `0103`; the 119.0 MHz target passed timing and displayed `0104`. This made Phase 20E the strongest physical board-measured result at approximately 104 MIPS. The 117.5 and 118.0 MHz runs failed setup timing in their specific implementation attempts, and the 120.0 MHz target was left for future selective testing.
+
+Phase 20 also documented the Phase 19B 166.667 MHz six-stage timing failure.

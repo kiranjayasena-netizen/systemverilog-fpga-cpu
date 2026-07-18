@@ -4012,10 +4012,93 @@ Timing warning:
 - The Phase 19B 166.667 MHz wrapper failed setup timing and is not valid for board measurement.
 - Timing-clean bitstream generation makes a candidate valid for testing, but physical MIPS should still be documented from the FPGA display.
 
+## Phase 20 Performance Improvement Verification
+
+Status: focused XSim verification passed for the copied Phase 20 forward-timing CPU. Selective Phase 20E original-CPU frequency-extension bitstreams were generated and board-tested at 118.5 MHz and 119.0 MHz.
+
+Files:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase20.sv`
+- `tb/tb_phase20_forwardtiming_correctness.sv`
+- `tb/tb_phase20_final_benchmark.sv`
+- `scripts/run_xsim_phase20_performance.ps1`
+- `rtl/fpga_top_phase20_forwardtiming_mmcm_benchmark.sv`
+- `rtl/fpga_top_phase20_forwardtiming_mmcm_targets.sv`
+- `rtl/fpga_top_phase20_phase19a_frequency_targets.sv`
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase20_performance.ps1
+```
+
+Focused correctness result:
+
+| Metric | Value |
+| --- | ---: |
+| Checks | 26 |
+| Failures | 0 |
+| Result | passed |
+
+Aligned benchmark result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 16,174 |
+| CPI | 1.236552 |
+| Predicted MIPS at 115 MHz | 93.001 |
+| Predicted MIPS at 117 MHz | 94.618 |
+| Load-use stalls | 1,470 |
+| Control flush cycles | 1,763 |
+| Fetch wait cycles | 1,470 |
+| Memory wait cycles | 1,470 |
+
+The copied CPU is functionally correct in focused testing, but it does not improve the aligned benchmark CPI.
+
+Phase 20E original-CPU frequency-extension result:
+
+| Target clock | WNS | TNS | WHS | THS | Bitstream | Board display |
+| ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| 117.500 MHz | -0.116 ns | -1.106 ns | +0.035 ns | 0.000 ns | skipped | invalid |
+| 118.000 MHz | -0.463 ns | -25.738 ns | +0.051 ns | 0.000 ns | skipped | invalid |
+| 118.500 MHz | +0.004 ns | 0.000 ns | +0.035 ns | 0.000 ns | generated | `0103` |
+| 119.000 MHz | +0.003 ns | 0.000 ns | +0.086 ns | 0.000 ns | generated | `0104` |
+
+The 119.0 MHz `0104` result is the best physical FPGA-measured result currently recorded.
+
+Prepared Phase 20 original-CPU frequency-extension commands:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase20_phase19a_117p5.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_phase19a_118p0.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_phase19a_118p5.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_phase19a_119p0.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_phase19a_120p0.tcl
+```
+
+Prepared Phase 20 copied-CPU benchmark implementation commands:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase20_forwardtiming_mmcm_115.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_forwardtiming_mmcm_117.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_forwardtiming_mmcm_118.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_forwardtiming_mmcm_119.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase20_forwardtiming_mmcm_120.tcl
+```
+
+Hardware test rule:
+
+- Only program timing-clean generated bitstreams.
+- Confirm LED0 MMCM lock.
+- Use SW3:SW1 = `000` for MIPS mode.
+- Wait at least two one-second windows.
+- Do not record a new MIPS result until the board display is physically observed.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
-- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream, Phase 16C full-speed comparison MIPS bitstreams, Phase 17E 115 MHz MMCM MIPS bitstream, Phase 19A `0102` result and Phase 19B `0101` result.
+- Capture physical Basys 3 evidence for the Phase 15B sticky-event slow-enable bitstream, Phase 16A 7-segment MIPS counter bitstream, Phase 16C full-speed comparison MIPS bitstreams, Phase 17E 115 MHz MMCM MIPS bitstream, Phase 19A `0102` result, Phase 19B `0101` result and Phase 20E `0104` result.
 - Continue adding verification entries for future RTL modules and integration tests.
 - Save useful waveform screenshots in `docs/images/`.
 - Keep testbenches self-checking.
