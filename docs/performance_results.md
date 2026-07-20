@@ -339,6 +339,29 @@ Prepared Phase 21 original-CPU frequency-extension scripts:
 
 No Phase 21 board result is claimed. Phase 20E remains the best confirmed physical FPGA measurement at approximately 104 MIPS.
 
+## Phase 22 Frontend CPI Experiment
+
+Phase 22 targets the aligned benchmark hot path with a one-entry JUMP target cache in a copied CPU. The original Phase 13 and Phase 14G CPU RTL files remain untouched.
+
+Simulation result:
+
+| Design | Benchmark | CPI | Predicted MIPS at 115 MHz | Predicted MIPS at 117 MHz | Predicted MIPS at 119 MHz | Predicted MIPS at 120 MHz |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Phase 18 baseline | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 | 97.044 |
+| Phase 21 copied CPU | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 | 97.044 |
+| Phase 22 copied CPU | `final_benchmark.mem` | 1.181963 | 97.296 | 98.988 | 100.680 | 101.526 |
+
+Phase 22 meets the simulation target of CPI <= 1.190, which predicts more than 100 MIPS at 119 MHz. However, the 119 MHz implementation fails timing:
+
+| Design | Clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| Phase 22 benchmark wrapper | 115 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 22 benchmark wrapper | 117 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 22 benchmark wrapper | 119 MHz | -1.258 ns | -246.378 ns | +0.087 ns | 0.000 ns | not generated | invalid |
+| Phase 22 benchmark wrapper | 120 MHz | not run | not run | not run | not run | not generated | not tested |
+
+Phase 22 is therefore a successful simulation CPI experiment but not a hardware replacement. Phase 20E remains the best confirmed physical result.
+
 ## Simulation Comparison
 
 Representative simulation results from the project are below. These are not all measured on the same hardware wrapper; they are primarily useful for comparing CPI trends during architecture development.

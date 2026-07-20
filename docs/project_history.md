@@ -188,3 +188,13 @@ Phase 21 also prepared:
 - a follow-up analysis of the Phase 19B six-stage 166.667 MHz timing failure.
 
 No new Phase 21 board MIPS result is claimed. Phase 20E remains the best confirmed physical result at approximately 104 MIPS.
+
+## Phase 22 Frontend CPI Experiment
+
+Phase 22 targets the real aligned-benchmark hot path after Phase 21 showed that broad backward-BEQ prediction did not help. A copied CPU, `cpu_core_pipeline_forwardtiming_phase22`, adds a one-entry unconditional JUMP target cache.
+
+The cache learns a JUMP PC and target, pre-requests the target when that JUMP PC is fetched again, and consumes the already-returning target response when the JUMP is decoded. A directed XSim test includes a repeated backward-JUMP loop to exercise this path.
+
+Phase 22 correctness passed with 29 checks and 0 failures. The aligned benchmark CPI improved from `1.236552` to `1.181963`, predicting about 100.680 MIPS at 119 MHz. The 119 MHz Vivado implementation failed setup timing with WNS `-1.258 ns`, so no Phase 22 hardware result is claimed.
+
+Phase 20E remains the best confirmed physical result at approximately 104 MIPS.

@@ -125,6 +125,12 @@ Phase 21 repeats the CPI-focused branch-prediction experiment in a separate copi
 
 That means the Phase 21 copied CPU predicts the same aligned-benchmark throughput as Phase 18: approximately 93.001 MIPS at 115 MHz and 96.235 MIPS at 119 MHz. Phase 20E remains the best confirmed physical FPGA result at approximately 104 MIPS.
 
+## Phase 22 Frontend CPI Experiment
+
+Phase 22 targets the actual aligned-benchmark hot path with a copied CPU that adds a one-entry unconditional JUMP target cache. Focused XSim correctness passed, and the aligned benchmark CPI improved from `1.236552` to `1.181963`, predicting approximately 100.680 MIPS at 119 MHz.
+
+The 119 MHz Vivado implementation failed setup timing with WNS `-1.258 ns`, so Phase 22 is not a valid hardware result yet. Phase 20E remains the best confirmed physical board measurement.
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -144,6 +150,10 @@ That means the Phase 21 copied CPU predicts the same aligned-benchmark throughpu
 | [reports/phase21_forwardtiming_benchmark_results.md](reports/phase21_forwardtiming_benchmark_results.md) | Phase 21 aligned benchmark XSim result |
 | [reports/phase21_frequency_extension_after_104mips.md](reports/phase21_frequency_extension_after_104mips.md) | Phase 21 prepared frequency-extension candidates |
 | [reports/phase21_phase19b_166mhz_timing_followup.md](reports/phase21_phase19b_166mhz_timing_followup.md) | Phase 21 six-stage timing follow-up |
+| [reports/phase22_frontend_control_analysis.md](reports/phase22_frontend_control_analysis.md) | Phase 22 frontend/control-flow bottleneck analysis |
+| [reports/phase22_forwardtiming_optimisation.md](reports/phase22_forwardtiming_optimisation.md) | Phase 22 JUMP target-cache optimisation result |
+| [reports/phase22_aligned_benchmark_results.md](reports/phase22_aligned_benchmark_results.md) | Phase 22 aligned benchmark CPI comparison |
+| [reports/phase22_phase20e_frequency_extension_followup.md](reports/phase22_phase20e_frequency_extension_followup.md) | Phase 22 optional MHz-only follow-up notes |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |

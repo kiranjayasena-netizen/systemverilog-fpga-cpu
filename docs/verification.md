@@ -4179,6 +4179,97 @@ Hardware test rule:
 - Wait at least two one-second measurement windows.
 - Record a new result only after physical board observation.
 
+## Phase 22 Frontend CPI Verification
+
+Status: focused XSim verification passed for the copied Phase 22 forward-timing CPU. The aligned benchmark CPI improved enough to predict more than 100 MIPS at 119 MHz, but the 119 MHz Vivado implementation failed setup timing, so no Phase 22 board result is claimed.
+
+Files:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase22.sv`
+- `tb/tb_phase22_forwardtiming_correctness.sv`
+- `tb/tb_phase22_final_benchmark.sv`
+- `scripts/run_xsim_phase22_performance.ps1`
+- `rtl/fpga_top_phase22_forwardtiming_mmcm_benchmark.sv`
+- `rtl/fpga_top_phase22_forwardtiming_mmcm_targets.sv`
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase22_performance.ps1
+```
+
+Focused correctness result:
+
+| Metric | Value |
+| --- | ---: |
+| Checks | 29 |
+| Failures | 0 |
+| Result | passed |
+
+Console pass message:
+
+```text
+PHASE 22 FORWARDTIMING CORRECTNESS TEST PASSED
+```
+
+Aligned benchmark result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 16,921 |
+| CPI | 1.181963 |
+| Predicted MIPS at 115 MHz | 97.296 |
+| Predicted MIPS at 117 MHz | 98.988 |
+| Predicted MIPS at 119 MHz | 100.680 |
+| Predicted MIPS at 120 MHz | 101.526 |
+| CPI improvement versus Phase 18/21 | 4.415% |
+| CPI <= 1.190 target | yes |
+| Load-use stalls | 1,538 |
+| Control flush cycles | 1,845 |
+| Fetch wait cycles | 1,538 |
+| Memory wait cycles | 1,538 |
+| Taken branches | 307 |
+| Not-taken branches | 1,538 |
+| Jumps | 1,538 |
+| Wrong-path flushed | 1,229 |
+
+The Windows `xelab` object-directory cleanup warning appeared after snapshot creation, matching earlier local XSim behaviour; both simulations ran and passed.
+
+Vivado implementation command run:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase22_forwardtiming_mmcm_119.tcl
+```
+
+119 MHz implementation result:
+
+| Metric | Value |
+| --- | ---: |
+| WNS | -1.258 ns |
+| TNS | -246.378 ns |
+| WHS | +0.087 ns |
+| THS | 0.000 ns |
+| LUTs | 1,959 |
+| FFs | 2,147 |
+| BRAM | 1 Block RAM Tile |
+| DSP | 0 |
+| Bitstream | not generated |
+
+Prepared but not run:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase22_forwardtiming_mmcm_115.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase22_forwardtiming_mmcm_117.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase22_forwardtiming_mmcm_120.tcl
+```
+
+Decision:
+
+- Phase 22 is a useful CPI proof in simulation.
+- The 119 MHz implementation is not timing-clean.
+- Do not program or claim a Phase 22 hardware result from this failed timing point.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.

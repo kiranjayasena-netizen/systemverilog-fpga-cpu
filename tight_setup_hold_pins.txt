@@ -1,5 +1,28 @@
-+====================+===================+===========================================+
-| Launch Setup Clock | Launch Hold Clock | Pin                                       |
-+====================+===================+===========================================+
-| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/jump_response_pending_reg/D |
-+--------------------+-------------------+-------------------------------------------+
++====================+===================+=======================================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                                                   |
++====================+===================+=======================================================+
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[valid]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/fetch_pc_reg[0]/D                       |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/fetch_pending_valid_reg/D               |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/jump_response_pending_reg/D             |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[pc][9]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[pc][8]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/id_ex_reg_reg[jump]/D                   |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[pc][0]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/id_ex_reg_reg[branch]/D                 |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[pc][5]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][13]_rep__1/D |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][14]_rep__0/D |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][14]_rep/D    |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/id_ex_reg_reg[mem_write]/D              |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][9]/D         |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][1]/D         |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][31]/D        |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[pc][4]/D                  |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][0]/D         |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][12]/D        |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][5]/D         |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpi_div_bit_reg[1]/D                             |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][3]/D         |
+| cpu_clk_unbuf      | cpu_clk_unbuf     | impl/cpu_inst/if_id_reg_reg[instruction][23]/D        |
++--------------------+-------------------+-------------------------------------------------------+
