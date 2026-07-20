@@ -306,6 +306,39 @@ Phase 20 also prepares:
 
 The original-CPU Phase 20E frequency extension physically displayed `0103` at 118.5 MHz and `0104` at 119.0 MHz. The `0104` result is now the best physical board result.
 
+## Phase 21 CPI-Focused Experiment
+
+Phase 21 creates another copied Phase 13-derived CPU path to test CPI-focused branch prediction without touching the original Phase 13 CPU RTL or the original Phase 14G CPU RTL.
+
+The copied Phase 21 CPU adds conservative static backward-BEQ prediction and preserves the existing early JUMP behaviour. Focused XSim correctness passed with 26 checks and 0 failures. The aligned `programs/final_benchmark.mem` CPI did not improve:
+
+| Design | Benchmark | CPI | Predicted MIPS at 115 MHz | Predicted MIPS at 117 MHz | Predicted MIPS at 119 MHz |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Phase 18 baseline | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 |
+| Phase 21 copied CPU | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 |
+
+The result shows that this safe predictor is correct but does not help the hot path of the aligned benchmark. With CPI still at `1.236552`, the aligned benchmark needs about 123.655 MHz to reach 100 MIPS.
+
+Prepared Phase 21 benchmark-wrapper scripts:
+
+| Design | Clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| Phase 21 benchmark wrapper | 115 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 21 benchmark wrapper | 117 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 21 benchmark wrapper | 119 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 21 benchmark wrapper | 120 MHz | not run | not run | not run | not run | not generated | not tested |
+
+Prepared Phase 21 original-CPU frequency-extension scripts:
+
+| Original CPU path | Clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| Phase 20E extension | 119.5 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 20E extension | 120.0 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 20E extension | 120.5 MHz | not run | not run | not run | not run | not generated | not tested |
+| Phase 20E extension | 121.0 MHz | not run | not run | not run | not run | not generated | not tested |
+
+No Phase 21 board result is claimed. Phase 20E remains the best confirmed physical FPGA measurement at approximately 104 MIPS.
+
 ## Simulation Comparison
 
 Representative simulation results from the project are below. These are not all measured on the same hardware wrapper; they are primarily useful for comparing CPI trends during architecture development.

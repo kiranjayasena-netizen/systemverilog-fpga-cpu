@@ -119,6 +119,12 @@ Phase 20 starts the next performance-improvement pass after the confirmed Phase 
 
 The first copied Phase 13-derived CPU adds conservative static backward-BEQ prediction and passes focused XSim correctness testing. On the aligned `programs/final_benchmark.mem` workload, however, CPI remains unchanged at `1.236552`, so that copied CPU is not accepted as a performance improvement. The original-CPU Phase 20E frequency extension physically displayed `0103` at 118.5 MHz and `0104` at 119.0 MHz.
 
+## Phase 21 CPI-Focused Work
+
+Phase 21 repeats the CPI-focused branch-prediction experiment in a separate copied Phase 13-derived CPU path and keeps the original Phase 13 and Phase 14G CPU RTL untouched. The copied Phase 21 CPU passes focused XSim correctness testing, but the aligned benchmark CPI remains `1.236552`.
+
+That means the Phase 21 copied CPU predicts the same aligned-benchmark throughput as Phase 18: approximately 93.001 MIPS at 115 MHz and 96.235 MIPS at 119 MHz. Phase 20E remains the best confirmed physical FPGA result at approximately 104 MIPS.
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -134,6 +140,10 @@ The first copied Phase 13-derived CPU adds conservative static backward-BEQ pred
 | [reports/phase20_forwardtiming_optimisation.md](reports/phase20_forwardtiming_optimisation.md) | Phase 20 copied-CPU optimisation result |
 | [reports/phase20_phase19a_frequency_extension.md](reports/phase20_phase19a_frequency_extension.md) | Phase 20E 119 MHz / 104 MIPS original-CPU result |
 | [reports/phase20_phase19b_166mhz_timing_analysis.md](reports/phase20_phase19b_166mhz_timing_analysis.md) | Phase 20 six-stage 166 MHz timing-failure analysis |
+| [reports/phase21_cpi_branch_prediction.md](reports/phase21_cpi_branch_prediction.md) | Phase 21 branch-prediction CPI experiment |
+| [reports/phase21_forwardtiming_benchmark_results.md](reports/phase21_forwardtiming_benchmark_results.md) | Phase 21 aligned benchmark XSim result |
+| [reports/phase21_frequency_extension_after_104mips.md](reports/phase21_frequency_extension_after_104mips.md) | Phase 21 prepared frequency-extension candidates |
+| [reports/phase21_phase19b_166mhz_timing_followup.md](reports/phase21_phase19b_166mhz_timing_followup.md) | Phase 21 six-stage timing follow-up |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |

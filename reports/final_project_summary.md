@@ -82,6 +82,7 @@ The CPU evolved through several implementation styles:
 | Phase 18 benchmark alignment | Used the same instruction-memory image and retire signal in XSim and FPGA; XSim predicted 93.001 MIPS and the board displayed `0093` |
 | Phase 19 past-100-MIPS tests | Produced the 117 MHz Phase 13 board result of `0102` and the 160 MHz Phase 14G board result of `0101` |
 | Phase 20 real performance improvement work | Produced the 119 MHz Phase 13 board result of `0104`; the copied branch-prediction CPU passed XSim but did not improve aligned benchmark CPI |
+| Phase 21 CPI-focused follow-up | Tested another copied static backward-BEQ predictor path; XSim correctness passed but aligned benchmark CPI remained 1.236552 |
 
 The most important architectural lesson was that deeper pipelining did not automatically improve real board MIPS. The Phase 14G six-stage CPU closed timing at a much higher estimated clock, but its CPI was worse at the fixed 100 MHz board clock. The Phase 13 five-stage path had better board CPI, Phase 17E used that advantage to physically reach the first 100 MIPS milestone, Phase 19A extended it to approximately 102 MIPS, and Phase 20E extended it to approximately 104 MIPS.
 
@@ -163,6 +164,7 @@ The final CPU is a custom educational FPGA soft-core. It should be compared care
 - The Phase 17E result uses the FPGA demo workload, not a standard benchmark suite.
 - Phase 14G's approximately 101.8 MIPS value is timing-estimated rather than physically measured.
 - Phase 20E has very small positive timing slack at 119 MHz, so further clock increases need fresh timing and board validation.
+- The Phase 21 copied predictor did not improve the aligned benchmark, so future CPI work needs a more targeted control/front-end change than simple backward-BEQ prediction.
 
 ## Future Work
 
@@ -171,6 +173,7 @@ The final CPU is a custom educational FPGA soft-core. It should be compared care
 - Archive photo/video evidence for the Phase 18 aligned benchmark board display.
 - Capture photo/video evidence for the Phase 20E `0104`, Phase 19A `0102` and Phase 19B `0101` board displays.
 - Continue Phase 20 performance work: the first copied static backward-BEQ predictor passed focused XSim, but did not improve the aligned benchmark CPI.
+- Continue Phase 21-style CPI work only with copied CPU variants; target the actual aligned-benchmark hot path rather than broad predictor changes.
 - Run any further original-CPU MMCM frequency-extension scripts selectively, then board-test only timing-clean bitstreams.
 - Reduce branch/control penalty through a more targeted future control-flow optimisation if profiling shows it can help the chosen benchmark.
 - Add a small assembler or compiler flow for easier program development.

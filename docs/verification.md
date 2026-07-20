@@ -4095,6 +4095,90 @@ Hardware test rule:
 - Wait at least two one-second windows.
 - Do not record a new MIPS result until the board display is physically observed.
 
+## Phase 21 CPI-Focused Verification
+
+Status: focused XSim verification passed for the copied Phase 21 forward-timing CPU. Vivado implementation scripts were prepared, but no Phase 21 bitstream was generated or board-tested in this pass.
+
+Files:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase21.sv`
+- `tb/tb_phase21_forwardtiming_correctness.sv`
+- `tb/tb_phase21_final_benchmark.sv`
+- `scripts/run_xsim_phase21_performance.ps1`
+- `rtl/fpga_top_phase21_forwardtiming_mmcm_benchmark.sv`
+- `rtl/fpga_top_phase21_forwardtiming_mmcm_targets.sv`
+- `rtl/fpga_top_phase21_phase20e_frequency_targets.sv`
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase21_performance.ps1
+```
+
+Focused correctness result:
+
+| Metric | Value |
+| --- | ---: |
+| Checks | 26 |
+| Failures | 0 |
+| Result | passed |
+
+Console pass message:
+
+```text
+PHASE 21 FORWARDTIMING CORRECTNESS TEST PASSED
+```
+
+Aligned benchmark result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 16,174 |
+| CPI | 1.236552 |
+| Predicted MIPS at 115 MHz | 93.001 |
+| Predicted MIPS at 117 MHz | 94.618 |
+| Predicted MIPS at 119 MHz | 96.235 |
+| Load-use stalls | 1,470 |
+| Control flush cycles | 1,763 |
+| Fetch wait cycles | 1,470 |
+| Memory wait cycles | 1,470 |
+| Taken branches | 294 |
+| Not-taken branches | 1,469 |
+| Jumps | 1,469 |
+
+Interpretation:
+
+- The Phase 21 copied CPU is correct in focused simulation.
+- Static backward-BEQ prediction does not improve `programs/final_benchmark.mem`.
+- Phase 20E remains the best confirmed physical result.
+
+Prepared Phase 21 copied-CPU benchmark implementation commands:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase21_forwardtiming_mmcm_115.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_forwardtiming_mmcm_117.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_forwardtiming_mmcm_119.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_forwardtiming_mmcm_120.tcl
+```
+
+Prepared Phase 21 original-CPU frequency-extension commands:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase21_phase20e_119p5.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_phase20e_120p0.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_phase20e_120p5.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase21_phase20e_121p0.tcl
+```
+
+Hardware test rule:
+
+- Only program timing-clean generated bitstreams.
+- Confirm LED0 MMCM lock.
+- Use SW3:SW1 = `000` for MIPS mode.
+- Wait at least two one-second measurement windows.
+- Record a new result only after physical board observation.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.

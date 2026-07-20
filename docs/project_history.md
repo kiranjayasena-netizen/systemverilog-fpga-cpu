@@ -168,3 +168,23 @@ The first Phase 20 CPU copy, `cpu_core_pipeline_forwardtiming_phase20`, adds con
 Phase 20E then extended the original Phase 13 CPU frequency path. The 118.5 MHz target passed timing and displayed `0103`; the 119.0 MHz target passed timing and displayed `0104`. This made Phase 20E the strongest physical board-measured result at approximately 104 MIPS. The 117.5 and 118.0 MHz runs failed setup timing in their specific implementation attempts, and the 120.0 MHz target was left for future selective testing.
 
 Phase 20 also documented the Phase 19B 166.667 MHz six-stage timing failure.
+
+## Phase 21 CPI-Focused Follow-Up
+
+Phase 21 continues the post-104-MIPS work with a copied Phase 13-derived CPU:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase21.sv`
+- `tb/tb_phase21_forwardtiming_correctness.sv`
+- `tb/tb_phase21_final_benchmark.sv`
+
+The Phase 21 copy keeps the original Phase 13 CPU RTL untouched and tests conservative static backward-BEQ prediction plus a load-use hazard audit. Focused XSim correctness passed with 26 checks and 0 failures.
+
+On the aligned `programs/final_benchmark.mem` workload, CPI remained `1.236552`, matching the Phase 18 baseline. The predicted aligned-benchmark throughput therefore stayed at approximately 93.001 MIPS at 115 MHz and 96.235 MIPS at 119 MHz.
+
+Phase 21 also prepared:
+
+- copied-CPU MMCM benchmark scripts for 115, 117, 119 and 120 MHz;
+- original Phase 20E frequency-extension scripts for 119.5, 120.0, 120.5 and 121.0 MHz;
+- a follow-up analysis of the Phase 19B six-stage 166.667 MHz timing failure.
+
+No new Phase 21 board MIPS result is claimed. Phase 20E remains the best confirmed physical result at approximately 104 MIPS.
