@@ -211,3 +211,19 @@ Vivado timing improved compared with Phase 22 at 119 MHz:
 - Phase 23 119 MHz WNS: `-0.981 ns`
 
 However, Phase 23 still failed setup timing at 119, 117 and 115 MHz, so no bitstream was generated and no board result is claimed. Phase 20E remains the best confirmed physical result at approximately 104 MIPS.
+
+## Phase 24 Frontend-Split Timing-Friendly Experiment
+
+Phase 24 follows the Phase 22/23 timing failures with a cleaner copied CPU experiment, `cpu_core_pipeline_forwardtiming_phase24`. Instead of another predictor retiming patch, the copied CPU registers the instruction-memory request PC and request-valid state so the frontend request path is structurally separated from immediate redirect selection.
+
+Focused XSim correctness passed with 29 checks and 0 failures. The experiment preserved architectural correctness for arithmetic, LOAD/STORE, BEQ, JUMP, wrong-path side-effect protection, x0 protection and pause/resume behavior.
+
+The aligned benchmark result was not an improvement:
+
+- Phase 18/21 CPI: `1.236552`
+- Phase 22/23 CPI: `1.181963`
+- Phase 24 CPI: `1.508978`
+
+Vivado closed timing at 100 and 105 MHz, but the 110 MHz implementation failed with WNS `-0.574 ns` and TNS `-162.224 ns`. The 115, 117 and 119 MHz targets were not run.
+
+Phase 24 is therefore a useful timing/CPI trade-off result rather than a performance replacement. It shows that splitting the frontend too conservatively can add more fetch latency than it saves, and Phase 20E remains the best confirmed physical FPGA result.

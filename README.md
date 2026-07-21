@@ -137,6 +137,12 @@ Phase 23 creates another copied CPU to retime the Phase 22 JUMP target-cache loo
 
 Focused XSim correctness passed with 29 checks and 0 failures. The aligned benchmark CPI stayed at `1.181963`, so the simulation still predicts approximately 100.680 MIPS at 119 MHz. Vivado timing improved versus Phase 22 at 119 MHz, from WNS `-1.258 ns` to `-0.981 ns`, but 119, 117 and 115 MHz still failed setup timing. No Phase 23 bitstream was generated and no Phase 23 board result is claimed. Phase 20E remains the best confirmed physical result.
 
+## Phase 24 Frontend-Split Experiment
+
+Phase 24 creates a copied CPU with a more conservative registered frontend request path. Focused XSim correctness passed with 29 checks and 0 failures, but the aligned benchmark CPI regressed to `1.508978`.
+
+Vivado closed timing at 100 and 105 MHz, but 110 MHz failed setup timing. Because the CPI regression dominates, Phase 24 is not a performance replacement and no Phase 24 board result is claimed. Phase 20E remains the best confirmed physical FPGA result at approximately 104 MIPS.
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -164,6 +170,10 @@ Focused XSim correctness passed with 29 checks and 0 failures. The aligned bench
 | [reports/phase23_forwardtiming_optimisation.md](reports/phase23_forwardtiming_optimisation.md) | Phase 23 copied-CPU retiming result |
 | [reports/phase23_aligned_benchmark_results.md](reports/phase23_aligned_benchmark_results.md) | Phase 23 aligned benchmark CPI comparison |
 | [reports/phase23_fpga_timing_results.md](reports/phase23_fpga_timing_results.md) | Phase 23 FPGA timing results |
+| [reports/phase24_frontend_split_analysis.md](reports/phase24_frontend_split_analysis.md) | Phase 24 frontend-split timing/CPI analysis |
+| [reports/phase24_forwardtiming_optimisation.md](reports/phase24_forwardtiming_optimisation.md) | Phase 24 copied-CPU optimisation result |
+| [reports/phase24_aligned_benchmark_results.md](reports/phase24_aligned_benchmark_results.md) | Phase 24 aligned benchmark CPI comparison |
+| [reports/phase24_fpga_timing_results.md](reports/phase24_fpga_timing_results.md) | Phase 24 FPGA timing results |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |

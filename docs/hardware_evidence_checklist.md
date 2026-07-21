@@ -25,6 +25,8 @@ This checklist tracks the physical Basys 3 evidence to capture for the final rep
 | Phase 21 timing-clean candidate, if later generated | TBD | no board evidence yet |
 | Phase 22 119 MHz CPI-improved candidate | not valid | failed timing; no board evidence |
 | Phase 23 retimed JUMP-cache candidate | not valid | failed 115/117/119 MHz timing; no board evidence |
+| Phase 24 frontend-split 100/105 MHz candidates | not performance candidates | timing-clean but not board-tested; CPI regressed |
+| Phase 24 frontend-split 110 MHz candidate | not valid | failed timing; no board evidence |
 | Board programmed in Vivado Hardware Manager | DONE/startup high | capture screenshot or board photo |
 
 ## Optional Evidence
@@ -54,3 +56,4 @@ This checklist tracks the physical Basys 3 evidence to capture for the final rep
 - Phase 21 currently has XSim evidence only; do not add a Phase 21 board row unless a timing-clean bitstream is physically programmed and observed.
 - Phase 22 improves aligned-benchmark CPI in XSim but its 119 MHz implementation fails setup timing; do not capture or claim Phase 22 board evidence unless a later timing-clean implementation is produced.
 - Phase 23 preserves the Phase 22 CPI improvement and improves WNS, but it still fails timing at 115, 117 and 119 MHz; do not capture or claim Phase 23 board evidence.
+- Phase 24 passes XSim correctness and closes timing at 100/105 MHz, but its aligned-benchmark CPI regresses to 1.508978, so it should not be presented as a performance board-result candidate.

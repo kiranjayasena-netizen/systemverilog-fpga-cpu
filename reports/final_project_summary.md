@@ -85,6 +85,7 @@ The CPU evolved through several implementation styles:
 | Phase 21 CPI-focused follow-up | Tested another copied static backward-BEQ predictor path; XSim correctness passed but aligned benchmark CPI remained 1.236552 |
 | Phase 22 frontend CPI experiment | Added a copied one-entry JUMP target-cache path; CPI improved to 1.181963 in XSim but the 119 MHz implementation failed timing |
 | Phase 23 retimed JUMP-cache experiment | Registered predictor metadata in a copied CPU; CPI stayed at 1.181963 and 119 MHz WNS improved, but 115/117/119 MHz timing still failed |
+| Phase 24 frontend-split experiment | Registered the instruction-memory request path in a copied CPU; correctness passed and 100/105 MHz timing closed, but CPI regressed to 1.508978 |
 
 The most important architectural lesson was that deeper pipelining did not automatically improve real board MIPS. The Phase 14G six-stage CPU closed timing at a much higher estimated clock, but its CPI was worse at the fixed 100 MHz board clock. The Phase 13 five-stage path had better board CPI, Phase 17E used that advantage to physically reach the first 100 MIPS milestone, Phase 19A extended it to approximately 102 MIPS, and Phase 20E extended it to approximately 104 MIPS.
 
@@ -169,6 +170,7 @@ The final CPU is a custom educational FPGA soft-core. It should be compared care
 - The Phase 21 copied predictor did not improve the aligned benchmark, so future CPI work needs a more targeted control/front-end change than simple backward-BEQ prediction.
 - Phase 22 showed that targeting the JUMP/frontend path can improve CPI, but the first cache implementation is not timing-clean at the required 119 MHz point.
 - Phase 23 retimed the JUMP-cache path and improved WNS versus Phase 22, but still did not reach timing closure even at 115 MHz.
+- Phase 24 split the frontend request path in a copied CPU and closed timing at 100/105 MHz, but the added fetch latency regressed aligned-benchmark CPI to 1.508978.
 
 ## Future Work
 
@@ -180,6 +182,7 @@ The final CPU is a custom educational FPGA soft-core. It should be compared care
 - Continue Phase 21-style CPI work only with copied CPU variants; target the actual aligned-benchmark hot path rather than broad predictor changes.
 - Retiming or simplifying the Phase 22 frontend cache path is a promising follow-up because it improves CPI but currently fails timing.
 - Use the Phase 23 timing report before attempting more frontend prediction work; the remaining failures suggest a broader frontend/control split is needed rather than another small retiming patch.
+- Use the Phase 24 result as a caution before adding frontend latency; any future frontend split needs a prefetch buffer or redirect bypass that preserves CPI.
 - Run any further original-CPU MMCM frequency-extension scripts selectively, then board-test only timing-clean bitstreams.
 - Reduce branch/control penalty through a more targeted future control-flow optimisation if profiling shows it can help the chosen benchmark.
 - Add a small assembler or compiler flow for easier program development.

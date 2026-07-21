@@ -4358,6 +4358,86 @@ Decision:
 - Do not program or claim a Phase 23 hardware result.
 - Phase 20E remains the best confirmed physical FPGA result.
 
+## Phase 24 Frontend-Split Verification
+
+Status: focused XSim verification passed for the copied Phase 24 forward-timing CPU. The aligned benchmark CPI regressed, and only the 100 and 105 MHz Vivado targets were timing-clean. No Phase 24 physical board result is claimed.
+
+Files:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase24.sv`
+- `tb/tb_phase24_forwardtiming_correctness.sv`
+- `tb/tb_phase24_final_benchmark.sv`
+- `scripts/run_xsim_phase24_performance.ps1`
+- `rtl/fpga_top_phase24_forwardtiming_mmcm_benchmark.sv`
+- `rtl/fpga_top_phase24_forwardtiming_mmcm_targets.sv`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_100.tcl`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_105.tcl`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_110.tcl`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_115.tcl`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_117.tcl`
+- `scripts/run_vivado_impl_phase24_forwardtiming_mmcm_119.tcl`
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase24_performance.ps1
+```
+
+Focused correctness result:
+
+| Metric | Value |
+| --- | ---: |
+| Checks | 29 |
+| Failures | 0 |
+| Result | passed |
+
+Console pass message:
+
+```text
+PHASE 24 FRONTEND SPLIT CORRECTNESS TEST PASSED
+```
+
+Aligned benchmark result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 13,254 |
+| CPI | 1.508978 |
+| Predicted MIPS at 115 MHz | 76.210 |
+| Predicted MIPS at 117 MHz | 77.536 |
+| Predicted MIPS at 119 MHz | 78.861 |
+| Predicted MIPS at 120 MHz | 79.524 |
+| CPI improvement versus Phase 18/21 | -22.031% |
+| CPI difference versus Phase 22/23 | +27.667% |
+| CPI <= 1.190 target | no |
+
+Vivado implementation commands run:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase24_forwardtiming_mmcm_100.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase24_forwardtiming_mmcm_105.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase24_forwardtiming_mmcm_110.tcl
+```
+
+Implementation results:
+
+| Clock | WNS | TNS | WHS | THS | Bitstream | Board status |
+| ---: | ---: | ---: | ---: | ---: | --- | --- |
+| 100 MHz | +0.107 ns | 0.000 ns | +0.034 ns | 0.000 ns | generated | not tested |
+| 105 MHz | +0.059 ns | 0.000 ns | +0.034 ns | 0.000 ns | generated | not tested |
+| 110 MHz | -0.574 ns | -162.224 ns | +0.113 ns | 0.000 ns | not generated | invalid |
+
+The prepared 115, 117 and 119 MHz scripts were not run because 110 MHz failed setup timing and the CPI result was not competitive.
+
+Decision:
+
+- Phase 24 is functionally correct.
+- Phase 24 is not a CPI improvement.
+- The timing-clean 100/105 MHz bitstreams are not useful performance candidates.
+- Do not program or claim a Phase 24 board result as a new record.
+- Phase 20E remains the best confirmed physical FPGA result.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.

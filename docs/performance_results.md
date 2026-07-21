@@ -387,6 +387,30 @@ Vivado implementation result:
 
 The 119 MHz WNS improved from Phase 22's `-1.258 ns` to `-0.981 ns`, but the copied CPU still fails timing. Phase 23 is therefore not a hardware result. Phase 20E remains the best confirmed physical FPGA measurement at approximately 104 MIPS.
 
+## Phase 24 Frontend-Split Timing-Friendly Experiment
+
+Phase 24 creates a copied CPU with a registered instruction-memory request path. The goal was to avoid another direct predictor/redirect path feeding the frontend PC request. The original Phase 13 CPU, Phase 14G CPU, Phase 22 CPU and Phase 23 CPU files remain untouched.
+
+Simulation result:
+
+| Design | Benchmark | CPI | Predicted MIPS at 115 MHz | Predicted MIPS at 117 MHz | Predicted MIPS at 119 MHz | Predicted MIPS at 120 MHz |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Phase 18 baseline | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 | 97.044 |
+| Phase 22/23 JUMP cache | `final_benchmark.mem` | 1.181963 | 97.296 | 98.988 | 100.680 | 101.526 |
+| Phase 24 frontend split | `final_benchmark.mem` | 1.508978 | 76.210 | 77.536 | 78.861 | 79.524 |
+
+Phase 24 passes focused XSim correctness, but it does not meet the CPI target. The registered frontend request path adds too many fetch bubbles and reduces retired instructions from 16,174 in the Phase 18 baseline to 13,254 in the same 20,000-cycle benchmark window.
+
+Vivado implementation result:
+
+| Design | Clock | WNS | TNS | WHS | THS | LUTs | FFs | BRAM | DSP | Bitstream | Board MIPS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| Phase 24 benchmark wrapper | 100 MHz | +0.107 ns | 0.000 ns | +0.034 ns | 0.000 ns | 1,642 | 2,074 | 1 Block RAM Tile | 0 | generated | not tested |
+| Phase 24 benchmark wrapper | 105 MHz | +0.059 ns | 0.000 ns | +0.034 ns | 0.000 ns | 1,647 | 2,076 | 1 Block RAM Tile | 0 | generated | not tested |
+| Phase 24 benchmark wrapper | 110 MHz | -0.574 ns | -162.224 ns | +0.113 ns | 0.000 ns | 1,658 | 2,075 | 1 Block RAM Tile | 0 | not generated | invalid |
+
+The 115, 117 and 119 MHz scripts were prepared but not run because 110 MHz failed setup timing and the CPI result was already below the performance target. Phase 24 is therefore a useful negative timing/CPI experiment, not a replacement for Phase 20E.
+
 ## Simulation Comparison
 
 Representative simulation results from the project are below. These are not all measured on the same hardware wrapper; they are primarily useful for comparing CPI trends during architecture development.
@@ -458,6 +482,7 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.
 - Phase 16A measured at the 100 MHz board clock; Phase 17E added a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU; Phase 19A extended that path to 117 MHz; Phase 20E extended it to 119 MHz.
 - Phase 23 retimed the JUMP-cache lookup and improved timing versus Phase 22, but still failed 119, 117 and 115 MHz implementation timing.
+- Phase 24 made the frontend request path more timing-friendly in a copied CPU, but CPI regressed to 1.508978 and 110 MHz failed timing.
 - Future work could test additional MMCM frequencies or use UART/ILA for richer counter output.
 - Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
 
