@@ -362,6 +362,31 @@ Phase 22 meets the simulation target of CPI <= 1.190, which predicts more than 1
 
 Phase 22 is therefore a successful simulation CPI experiment but not a hardware replacement. Phase 20E remains the best confirmed physical result.
 
+## Phase 23 Retimed Frontend Timing Experiment
+
+Phase 23 retimes the Phase 22 one-entry JUMP target cache in another copied CPU. The original Phase 13 CPU, Phase 14G CPU and Phase 22 CPU files remain untouched.
+
+Simulation result:
+
+| Design | Benchmark | CPI | Predicted MIPS at 115 MHz | Predicted MIPS at 117 MHz | Predicted MIPS at 119 MHz | Predicted MIPS at 120 MHz |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Phase 18 baseline | `final_benchmark.mem` | 1.236552 | 93.001 | 94.618 | 96.235 | 97.044 |
+| Phase 22 JUMP cache | `final_benchmark.mem` | 1.181963 | 97.296 | 98.988 | 100.680 | 101.526 |
+| Phase 23 retimed JUMP cache | `final_benchmark.mem` | 1.181963 | 97.296 | 98.988 | 100.680 | 101.526 |
+
+Phase 23 preserves the Phase 22 CPI result and still meets the simulation target of CPI <= 1.190. It does not improve CPI beyond Phase 22.
+
+Vivado implementation result:
+
+| Design | Clock | WNS | TNS | WHS | THS | Bitstream | Board MIPS |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| Phase 23 benchmark wrapper | 115 MHz | -0.679 ns | -122.466 ns | +0.077 ns | 0.000 ns | not generated | invalid |
+| Phase 23 benchmark wrapper | 117 MHz | -0.895 ns | -162.582 ns | +0.034 ns | 0.000 ns | not generated | invalid |
+| Phase 23 benchmark wrapper | 119 MHz | -0.981 ns | -234.451 ns | +0.132 ns | 0.000 ns | not generated | invalid |
+| Phase 23 benchmark wrapper | 120 MHz | not run | not run | not run | not run | not generated | not tested |
+
+The 119 MHz WNS improved from Phase 22's `-1.258 ns` to `-0.981 ns`, but the copied CPU still fails timing. Phase 23 is therefore not a hardware result. Phase 20E remains the best confirmed physical FPGA measurement at approximately 104 MIPS.
+
 ## Simulation Comparison
 
 Representative simulation results from the project are below. These are not all measured on the same hardware wrapper; they are primarily useful for comparing CPI trends during architecture development.
@@ -432,6 +457,7 @@ The 63 MIPS value is a direct hardware measurement at the 100 MHz Basys 3 board 
 - The measured MIPS depends on the benchmark program loaded into instruction memory.
 - The 7-segment display currently shows integer MIPS, so fractional precision is lost.
 - Phase 16A measured at the 100 MHz board clock; Phase 17E added a 115 MHz MMCM-generated hardware measurement for the Phase 13 CPU; Phase 19A extended that path to 117 MHz; Phase 20E extended it to 119 MHz.
+- Phase 23 retimed the JUMP-cache lookup and improved timing versus Phase 22, but still failed 119, 117 and 115 MHz implementation timing.
 - Future work could test additional MMCM frequencies or use UART/ILA for richer counter output.
 - Future work could use a benchmark program identical to the simulation benchmark for stricter comparison.
 

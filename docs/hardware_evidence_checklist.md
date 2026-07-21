@@ -24,6 +24,7 @@ This checklist tracks the physical Basys 3 evidence to capture for the final rep
 | Phase 20E 119 MHz timing summary | WNS +0.003 ns, TNS 0.000 ns, WHS +0.086 ns, THS 0.000 ns | capture screenshot or selected report excerpt |
 | Phase 21 timing-clean candidate, if later generated | TBD | no board evidence yet |
 | Phase 22 119 MHz CPI-improved candidate | not valid | failed timing; no board evidence |
+| Phase 23 retimed JUMP-cache candidate | not valid | failed 115/117/119 MHz timing; no board evidence |
 | Board programmed in Vivado Hardware Manager | DONE/startup high | capture screenshot or board photo |
 
 ## Optional Evidence
@@ -52,3 +53,4 @@ This checklist tracks the physical Basys 3 evidence to capture for the final rep
 - The Phase 20E `0104` result is now the strongest physical board-measured result and should be described as approximately 104 MIPS.
 - Phase 21 currently has XSim evidence only; do not add a Phase 21 board row unless a timing-clean bitstream is physically programmed and observed.
 - Phase 22 improves aligned-benchmark CPI in XSim but its 119 MHz implementation fails setup timing; do not capture or claim Phase 22 board evidence unless a later timing-clean implementation is produced.
+- Phase 23 preserves the Phase 22 CPI improvement and improves WNS, but it still fails timing at 115, 117 and 119 MHz; do not capture or claim Phase 23 board evidence.

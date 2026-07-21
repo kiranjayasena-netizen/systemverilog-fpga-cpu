@@ -198,3 +198,16 @@ The cache learns a JUMP PC and target, pre-requests the target when that JUMP PC
 Phase 22 correctness passed with 29 checks and 0 failures. The aligned benchmark CPI improved from `1.236552` to `1.181963`, predicting about 100.680 MIPS at 119 MHz. The 119 MHz Vivado implementation failed setup timing with WNS `-1.258 ns`, so no Phase 22 hardware result is claimed.
 
 Phase 20E remains the best confirmed physical result at approximately 104 MIPS.
+
+## Phase 23 Retimed JUMP-Cache Timing Experiment
+
+Phase 23 follows the Phase 22 result with another copied CPU, `cpu_core_pipeline_forwardtiming_phase23`. It keeps the one-entry unconditional JUMP target cache idea but registers predictor hit and target metadata before the frontend uses the prediction.
+
+Focused XSim correctness again passed with 29 checks and 0 failures. The aligned benchmark CPI remained `1.181963`, matching Phase 22 and preserving the 4.415% improvement over the Phase 18/21 baseline.
+
+Vivado timing improved compared with Phase 22 at 119 MHz:
+
+- Phase 22 119 MHz WNS: `-1.258 ns`
+- Phase 23 119 MHz WNS: `-0.981 ns`
+
+However, Phase 23 still failed setup timing at 119, 117 and 115 MHz, so no bitstream was generated and no board result is claimed. Phase 20E remains the best confirmed physical result at approximately 104 MIPS.

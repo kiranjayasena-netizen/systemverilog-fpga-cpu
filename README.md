@@ -131,6 +131,12 @@ Phase 22 targets the actual aligned-benchmark hot path with a copied CPU that ad
 
 The 119 MHz Vivado implementation failed setup timing with WNS `-1.258 ns`, so Phase 22 is not a valid hardware result yet. Phase 20E remains the best confirmed physical board measurement.
 
+## Phase 23 Retimed JUMP-Cache Experiment
+
+Phase 23 creates another copied CPU to retime the Phase 22 JUMP target-cache lookup. It registers predictor hit/target metadata before using it for the frontend request path.
+
+Focused XSim correctness passed with 29 checks and 0 failures. The aligned benchmark CPI stayed at `1.181963`, so the simulation still predicts approximately 100.680 MIPS at 119 MHz. Vivado timing improved versus Phase 22 at 119 MHz, from WNS `-1.258 ns` to `-0.981 ns`, but 119, 117 and 115 MHz still failed setup timing. No Phase 23 bitstream was generated and no Phase 23 board result is claimed. Phase 20E remains the best confirmed physical result.
+
 ## Key Documentation
 
 | Document | Purpose |
@@ -154,6 +160,10 @@ The 119 MHz Vivado implementation failed setup timing with WNS `-1.258 ns`, so P
 | [reports/phase22_forwardtiming_optimisation.md](reports/phase22_forwardtiming_optimisation.md) | Phase 22 JUMP target-cache optimisation result |
 | [reports/phase22_aligned_benchmark_results.md](reports/phase22_aligned_benchmark_results.md) | Phase 22 aligned benchmark CPI comparison |
 | [reports/phase22_phase20e_frequency_extension_followup.md](reports/phase22_phase20e_frequency_extension_followup.md) | Phase 22 optional MHz-only follow-up notes |
+| [reports/phase23_timing_closure_analysis.md](reports/phase23_timing_closure_analysis.md) | Phase 23 retimed JUMP-cache timing-closure analysis |
+| [reports/phase23_forwardtiming_optimisation.md](reports/phase23_forwardtiming_optimisation.md) | Phase 23 copied-CPU retiming result |
+| [reports/phase23_aligned_benchmark_results.md](reports/phase23_aligned_benchmark_results.md) | Phase 23 aligned benchmark CPI comparison |
+| [reports/phase23_fpga_timing_results.md](reports/phase23_fpga_timing_results.md) | Phase 23 FPGA timing results |
 | [docs/hardware_evidence_checklist.md](docs/hardware_evidence_checklist.md) | Evidence checklist for board photos/videos |
 | [docs/project_history.md](docs/project_history.md) | Full phase-by-phase development history |
 | [docs/book_source_index.md](docs/book_source_index.md) | Source map for writing the project book |

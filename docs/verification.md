@@ -4270,6 +4270,94 @@ Decision:
 - The 119 MHz implementation is not timing-clean.
 - Do not program or claim a Phase 22 hardware result from this failed timing point.
 
+## Phase 23 Retimed JUMP-Cache Verification
+
+Status: focused XSim verification passed for the copied Phase 23 forward-timing CPU. The aligned benchmark CPI stayed at the improved Phase 22 value, but Vivado implementation still failed setup timing at 119, 117 and 115 MHz, so no Phase 23 bitstream or board result is claimed.
+
+Files:
+
+- `rtl/cpu_core_pipeline_forwardtiming_phase23.sv`
+- `tb/tb_phase23_forwardtiming_correctness.sv`
+- `tb/tb_phase23_final_benchmark.sv`
+- `scripts/run_xsim_phase23_performance.ps1`
+- `rtl/fpga_top_phase23_forwardtiming_mmcm_benchmark.sv`
+- `rtl/fpga_top_phase23_forwardtiming_mmcm_targets.sv`
+- `scripts/run_vivado_impl_phase23_forwardtiming_mmcm_115.tcl`
+- `scripts/run_vivado_impl_phase23_forwardtiming_mmcm_117.tcl`
+- `scripts/run_vivado_impl_phase23_forwardtiming_mmcm_119.tcl`
+- `scripts/run_vivado_impl_phase23_forwardtiming_mmcm_120.tcl`
+
+Simulation command:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_xsim_phase23_performance.ps1
+```
+
+Focused correctness result:
+
+| Metric | Value |
+| --- | ---: |
+| Checks | 29 |
+| Failures | 0 |
+| Result | passed |
+
+Console pass message:
+
+```text
+PHASE 23 FORWARDTIMING CORRECTNESS TEST PASSED
+```
+
+Aligned benchmark result:
+
+| Metric | Value |
+| --- | ---: |
+| Enabled cycles | 20,000 |
+| Retired instructions | 16,921 |
+| CPI | 1.181963 |
+| Predicted MIPS at 115 MHz | 97.296 |
+| Predicted MIPS at 117 MHz | 98.988 |
+| Predicted MIPS at 119 MHz | 100.680 |
+| Predicted MIPS at 120 MHz | 101.526 |
+| CPI improvement versus Phase 18/21 | 4.415% |
+| CPI difference versus Phase 22 | 0.000% |
+| CPI <= 1.190 target | yes |
+| Load-use stalls | 1,538 |
+| Control flush cycles | 1,845 |
+| Fetch wait cycles | 1,538 |
+| Memory wait cycles | 1,538 |
+| Taken branches | 307 |
+| Not-taken branches | 1,538 |
+| Jumps | 1,538 |
+| Wrong-path flushed | 1,229 |
+
+The Windows `xelab` object-directory cleanup warning appeared after snapshot creation, matching earlier local XSim behaviour; both simulations ran and passed.
+
+Vivado implementation commands run:
+
+```powershell
+vivado -mode batch -source scripts\run_vivado_impl_phase23_forwardtiming_mmcm_119.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase23_forwardtiming_mmcm_117.tcl
+vivado -mode batch -source scripts\run_vivado_impl_phase23_forwardtiming_mmcm_115.tcl
+```
+
+Implementation results:
+
+| Clock | WNS | TNS | WHS | THS | Bitstream | Board status |
+| ---: | ---: | ---: | ---: | ---: | --- | --- |
+| 119 MHz | -0.981 ns | -234.451 ns | +0.132 ns | 0.000 ns | not generated | invalid |
+| 117 MHz | -0.895 ns | -162.582 ns | +0.034 ns | 0.000 ns | not generated | invalid |
+| 115 MHz | -0.679 ns | -122.466 ns | +0.077 ns | 0.000 ns | not generated | invalid |
+
+The prepared 120 MHz script was not run because the lower-frequency candidates also failed timing.
+
+Decision:
+
+- Phase 23 preserves the useful Phase 22 CPI improvement in simulation.
+- Retiming improves 119 MHz WNS versus Phase 22, from `-1.258 ns` to `-0.981 ns`.
+- The copied CPU is still not timing-clean at the tested frequencies.
+- Do not program or claim a Phase 23 hardware result.
+- Phase 20E remains the best confirmed physical FPGA result.
+
 ## Future Verification Work
 
 - Preserve the Phase 14G six-stage pipeline timing evidence and prepare a supervisor-facing final implementation summary.
