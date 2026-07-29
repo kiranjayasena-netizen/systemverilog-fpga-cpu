@@ -2,6 +2,21 @@
 
 SystemVerilog FPGA soft-core CPU project targeting the Digilent Basys 3 board.
 
+## Book Edition
+
+This repository is the source companion to the eProjectCPU teaching book.
+
+| Item | Publication value |
+| --- | --- |
+| Book-compatible release | `book-v1.0` |
+| Authoritative source commit | `d7a18dff029060ebdc1cd2616d327796523e75e3` |
+| Vivado version | 2026.1 |
+| Target board | Digilent Basys 3 |
+| FPGA part | `xc7a35tcpg236-1` |
+
+The `book-v1.0` release preserves the source snapshot used by the printed
+edition. Later work on `main` may contain additional experiments.
+
 ## Project Aim
 
 This repository builds a simple custom FPGA CPU from small verified RTL blocks, then follows the design through simulation, FPGA implementation, timing closure, board bring-up and hardware performance measurement.
@@ -63,6 +78,34 @@ powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
 ```
 
 The regression script runs the self-checking Vivado XSim testbenches used throughout the project.
+
+## Reproduce the Published Result
+
+For the shortest book-aligned route through the repository:
+
+1. Install AMD Vivado 2026.1 with support for the Artix-7 device family.
+2. Download the `book-v1.0` release or check out its tagged commit.
+3. Open a Vivado-enabled PowerShell in the repository root.
+4. Run the XSim regression:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+   ```
+
+5. Build the confirmed Phase 20E 119 MHz design:
+
+   ```powershell
+   vivado -mode batch -source scripts/run_vivado_impl_phase20_phase19a_119p0.tcl
+   ```
+
+6. Confirm that the timing summary has non-negative setup slack and no
+   relevant unconstrained paths before using the bitstream.
+7. Program the Basys 3 and select MIPS display mode. The retained physical
+   result displayed `0104`, corresponding to approximately 104 MIPS on the
+   project benchmark.
+
+See [Reproducing the Book Results](docs/reproducing-the-book-results.md) for
+the full procedure, expected evidence and limitations.
 
 ## Build the Phase 17E 100 MIPS Baseline
 
@@ -198,6 +241,18 @@ Vivado closed timing at 100 and 105 MHz, but 110 MHz failed setup timing. Becaus
 
 - Main hardware milestone reached: approximately 104 MIPS physically measured on Basys 3 in Phase 20E.
 - Generated Vivado outputs, bitstreams, checkpoints and implementation folders are not tracked.
-- A license should be added before making the repository public.
+- The repository is public.
+- Source files are released under the MIT License; book text and illustrations
+  retain their separately stated copyright.
+- Phase 21-24 directories are retained as experimental evidence and do not
+  replace the confirmed Phase 20E result.
 
 See [docs/project_history.md](docs/project_history.md) for the full phase-by-phase development history.
+
+## Licence and Citation
+
+The SystemVerilog, testbenches, scripts, constraints and supporting project
+files are available under the [MIT License](LICENSE). The published book text
+and its illustrations are not licensed by this repository licence.
+
+Citation metadata is provided in [`CITATION.cff`](CITATION.cff).

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite the repository and accompanying book."
+title: "eProjectCPU: SystemVerilog FPGA CPU"
+type: software
+authors:
+  - family-names: "Jayasena"
+    given-names: "Kiran"
+repository-code: "https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu"
+url: "https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu"
+version: "1.0"
+date-released: "2026-07-29"
+license: MIT
+commit: "d7a18dff029060ebdc1cd2616d327796523e75e3"
+keywords:
+  - SystemVerilog
+  - FPGA
+  - soft-core CPU
+  - Basys 3
+  - Vivado
