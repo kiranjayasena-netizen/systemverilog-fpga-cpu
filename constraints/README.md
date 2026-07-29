@@ -1,47 +1,21 @@
-# Constraints
+# Basys 3 Constraints
 
-The FPGA constraint file is board-specific. Do not copy pin locations from another board unless the package, board schematic and clock source match your hardware.
+[`basys3.xdc`](basys3.xdc) contains the project constraints for the Digilent
+Basys 3 and the Artix-7 `xc7a35tcpg236-1` device.
 
-Create a real `.xdc` file only after choosing the target FPGA board. The placeholder names below show the signals that need constraints, but they are not real pin locations.
+The file constrains the 100 MHz board clock and the switches, buttons, LEDs
+and seven-segment display used by the FPGA wrappers. Individual implementation
+scripts may add generated-clock constraints for their MMCM configuration.
 
-```tcl
-## Clock input
-set_property PACKAGE_PIN <CLOCK_PIN> [get_ports clk]
-set_property IOSTANDARD <IO_STANDARD> [get_ports clk]
-create_clock -period <CLOCK_PERIOD_NS> -name sys_clk [get_ports clk]
+Before implementation:
 
-## Reset button
-set_property PACKAGE_PIN <RESET_BUTTON_PIN> [get_ports rst_btn]
-set_property IOSTANDARD <IO_STANDARD> [get_ports rst_btn]
+1. Confirm that the selected top-level module uses the port names expected by
+   `basys3.xdc`.
+2. Confirm that the Vivado project targets `xc7a35tcpg236-1`.
+3. Run `report_clocks` and `report_timing_summary` after implementation.
+4. Check setup and hold timing and confirm that no important paths are
+   unconstrained.
+5. Generate and use a bitstream only after these checks pass.
 
-## CPU enable switch
-set_property PACKAGE_PIN <ENABLE_SWITCH_PIN> [get_ports enable_sw]
-set_property IOSTANDARD <IO_STANDARD> [get_ports enable_sw]
-
-## LEDs
-set_property PACKAGE_PIN <LED0_PIN>  [get_ports {led[0]}]
-set_property PACKAGE_PIN <LED1_PIN>  [get_ports {led[1]}]
-set_property PACKAGE_PIN <LED2_PIN>  [get_ports {led[2]}]
-set_property PACKAGE_PIN <LED3_PIN>  [get_ports {led[3]}]
-set_property PACKAGE_PIN <LED4_PIN>  [get_ports {led[4]}]
-set_property PACKAGE_PIN <LED5_PIN>  [get_ports {led[5]}]
-set_property PACKAGE_PIN <LED6_PIN>  [get_ports {led[6]}]
-set_property PACKAGE_PIN <LED7_PIN>  [get_ports {led[7]}]
-set_property PACKAGE_PIN <LED8_PIN>  [get_ports {led[8]}]
-set_property PACKAGE_PIN <LED9_PIN>  [get_ports {led[9]}]
-set_property PACKAGE_PIN <LED10_PIN> [get_ports {led[10]}]
-set_property PACKAGE_PIN <LED11_PIN> [get_ports {led[11]}]
-set_property PACKAGE_PIN <LED12_PIN> [get_ports {led[12]}]
-set_property PACKAGE_PIN <LED13_PIN> [get_ports {led[13]}]
-set_property PACKAGE_PIN <LED14_PIN> [get_ports {led[14]}]
-set_property PACKAGE_PIN <LED15_PIN> [get_ports {led[15]}]
-set_property IOSTANDARD <IO_STANDARD> [get_ports {led[*]}]
-```
-
-Recommended process:
-
-1. Pick the FPGA board.
-2. Read the board schematic and vendor master XDC.
-3. Fill in the clock, reset, switch and LED pins.
-4. Run synthesis and implementation.
-5. Only generate or use a bitstream after the constraints match the actual board.
+Do not use this file with another board or FPGA package. Obtain that board's
+official master XDC and verify every pin, I/O standard and clock source first.
