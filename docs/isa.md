@@ -33,8 +33,52 @@ The register fields address the 32-register file, so register indexes run from `
 | `4'h8` | STORE | `data_memory[rs1 + imm_ext] = rs2` |
 | `4'h9` | BEQ | Branch if `rs1 == rs2` |
 | `4'ha` | JUMP | Unconditional PC-relative jump |
+| `4'hb` | MAC8 | Phase 12 core only: `rd = rd + signed8(rs1[7:0]) * signed8(rs2[7:0])` |
 
-Invalid opcodes are marked invalid by the control unit. They do not write the register file or data memory.
+Opcodes `4'hc` through `4'hf` remain invalid. Historical cores that do not
+implement the Phase 12 AI extension also continue to treat `4'hb` as invalid;
+this prevents them from silently executing MAC8 incorrectly.
+
+## MAC8 Encoding And Arithmetic
+
+Canonical assembly syntax:
+
+```text
+MAC8 rd, rs1, rs2
+```
+
+Encoding:
+
+| Bits | MAC8 meaning |
+| --- | --- |
+| `[31:28]` | `4'hb` |
+| `[27:23]` | `rd`, both the accumulator source and destination |
+| `[22:18]` | `rs1`, low byte is signed INT8 multiplicand A |
+| `[17:13]` | `rs2`, low byte is signed INT8 multiplicand B |
+| `[12:0]` | Reserved; canonical encoding is zero and hardware ignores it |
+
+Arithmetic is precisely:
+
+```text
+a       = signed(rs1[7:0])                 // range -128 to +127
+b       = signed(rs2[7:0])                 // range -128 to +127
+product = signed16(a * b)                  // full, untruncated 16-bit product
+result  = (rd_old + sign_extend(product)) mod 2^32
+rd      = result
+```
+
+The upper 24 bits of each source register are ignored. The accumulator is the
+full 32-bit old value of `rd`. There is no saturation, exception or overflow
+flag; two's-complement overflow wraps modulo `2^32`, matching ADD/SUB behavior.
+If `rd` is `x0`, its accumulator value is zero and the final write is ignored.
+
+Example (`x3` initially contains 10):
+
+```text
+ADDI x1, x0, -3
+ADDI x2, x0,  4
+MAC8 x3, x1, x2       // x3 = 10 + (-3 * 4) = -2
+```
 
 ## Immediate Sign Extension
 

@@ -277,6 +277,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_full_sim"
 
 Invoke-XsimTest `
+    -Name "Phase 12 pipelined CPU MAC8 and AI dot-product verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_full.sv", "tb/tb_cpu_core_pipeline_mac.sv") `
+    -Top "tb_cpu_core_pipeline_mac" `
+    -Snapshot "tb_cpu_core_pipeline_mac_sim"
+
+Invoke-XsimTest `
     -Name "Phase 13A jumpfast pipelined CPU verification" `
     -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_jumpfast.sv", "tb/tb_cpu_core_pipeline_jumpfast.sv") `
     -Top "tb_cpu_core_pipeline_jumpfast" `

@@ -11,6 +11,9 @@ package cpu_defs_pkg;
     localparam logic [3:0] OP_STORE = 4'h8;
     localparam logic [3:0] OP_BEQ   = 4'h9;
     localparam logic [3:0] OP_JUMP  = 4'ha;
+    // Phase 12 AI extension. Cores that do not explicitly implement MAC8
+    // continue to reject this opcode through opcode_is_valid().
+    localparam logic [3:0] OP_MAC8  = 4'hb;
 
     localparam logic [2:0] ALU_ADD = 3'b000;
     localparam logic [2:0] ALU_SUB = 3'b001;

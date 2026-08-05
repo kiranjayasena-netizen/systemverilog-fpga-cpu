@@ -50,11 +50,18 @@ Phase 18 adds a benchmark-aligned flow using the same `programs/final_benchmark.
 The project uses a compact custom 32-bit ISA with:
 
 - Arithmetic/logical instructions: NOP, ADD, SUB, AND, OR, XOR, ADDI
+- Phase 12 AI extension: signed INT8 `MAC8` with a 32-bit accumulator
 - Memory instructions: LOAD, STORE
 - Control-flow instructions: BEQ, JUMP
 - Signed 13-bit immediates
 - `x0` hardwired to zero
 - Safe invalid-opcode handling
+
+`MAC8` is currently implemented only in the Phase 12 five-stage core. The
+historical single-cycle, multicycle and later experimental pipeline variants
+remain unchanged and reject its opcode. See
+[docs/ai_optimization_plan.md](docs/ai_optimization_plan.md) for the encoding,
+measured dot-product comparison and staged AI roadmap.
 
 The final physically measured 104 MIPS result uses the Phase 13 five-stage forward-timing pipeline at 119 MHz. The project also includes multi-cycle, BRAM-aware, prefetch, five-stage pipeline and six-stage pipeline variants for comparison.
 
@@ -223,6 +230,7 @@ Vivado closed timing at 100 and 105 MHz, but 110 MHz failed setup timing. Becaus
 | [docs/architecture.md](docs/architecture.md) | CPU architecture overview |
 | [docs/isa.md](docs/isa.md) | Custom ISA reference |
 | [docs/verification.md](docs/verification.md) | Simulation and hardware verification notes |
+| [docs/ai_optimization_plan.md](docs/ai_optimization_plan.md) | INT8 inference architecture plan and Phase 1/2 results |
 
 ## Repository Structure
 

@@ -57,6 +57,25 @@ module cpu_core_pipeline_full #(
 
     localparam logic [31:0] NOP_INSTRUCTION = {OP_NOP, 28'h0};
 
+    // This Phase 12 core is the first implementation of OP_MAC8. Keeping the
+    // extension-local predicates here prevents historical CPU variants from
+    // accepting an instruction that their execute stages do not implement.
+    function automatic logic phase12_opcode_is_valid(input logic [3:0] opcode);
+        phase12_opcode_is_valid = opcode_is_valid(opcode) || (opcode == OP_MAC8);
+    endfunction
+
+    function automatic logic phase12_opcode_writes_rd(input logic [3:0] opcode);
+        phase12_opcode_writes_rd = opcode_writes_rd(opcode) || (opcode == OP_MAC8);
+    endfunction
+
+    function automatic logic phase12_opcode_uses_rs1(input logic [3:0] opcode);
+        phase12_opcode_uses_rs1 = opcode_uses_rs1(opcode) || (opcode == OP_MAC8);
+    endfunction
+
+    function automatic logic phase12_opcode_uses_rs2(input logic [3:0] opcode);
+        phase12_opcode_uses_rs2 = opcode_uses_rs2(opcode) || (opcode == OP_MAC8);
+    endfunction
+
     typedef struct packed {
         logic        valid;
         logic [31:0] pc;
@@ -74,6 +93,7 @@ module cpu_core_pipeline_full #(
         logic [31:0] imm_ext;
         logic [31:0] operand_a;
         logic [31:0] operand_b;
+        logic [31:0] accumulator;
         logic        reg_write;
         logic        mem_read;
         logic        mem_write;
@@ -138,6 +158,7 @@ module cpu_core_pipeline_full #(
     logic        if_id_opcode_valid;
     logic        if_id_uses_rs1;
     logic        if_id_uses_rs2;
+    logic        if_id_uses_accumulator;
     logic        load_use_stall;
     logic        decode_stall;
 
@@ -145,12 +166,21 @@ module cpu_core_pipeline_full #(
     logic        wb_writes_rd;
     logic [31:0] decode_operand_a;
     logic [31:0] decode_operand_b;
+    logic [31:0] decode_accumulator;
 
     logic [31:0] ex_operand_a;
     logic [31:0] ex_operand_b_reg;
     logic [31:0] ex_operand_b;
     logic [31:0] ex_store_data;
+    logic [31:0] ex_accumulator;
     logic [31:0] ex_alu_result;
+    logic signed [7:0]  ex_mac_operand_a;
+    logic signed [7:0]  ex_mac_operand_b;
+    logic signed [15:0] ex_mac_product;
+    logic signed [31:0] ex_mac_product_ext;
+    // Guide Vivado to keep the multiply-add in a DSP resource. This remains
+    // inferred RTL and does not instantiate a device-specific primitive.
+    (* use_dsp = "yes" *) logic signed [31:0] ex_mac_result;
     logic        ex_branch_taken;
     logic        ex_jump_taken;
     logic        ex_redirect_taken;
@@ -195,9 +225,10 @@ module cpu_core_pipeline_full #(
     assign if_id_imm13  = if_id_reg.instruction[12:0];
     assign if_id_imm_ext = {{19{if_id_imm13[12]}}, if_id_imm13};
 
-    assign if_id_opcode_valid = opcode_is_valid(if_id_opcode);
-    assign if_id_uses_rs1     = opcode_uses_rs1(if_id_opcode);
-    assign if_id_uses_rs2     = opcode_uses_rs2(if_id_opcode);
+    assign if_id_opcode_valid     = phase12_opcode_is_valid(if_id_opcode);
+    assign if_id_uses_rs1         = phase12_opcode_uses_rs1(if_id_opcode);
+    assign if_id_uses_rs2         = phase12_opcode_uses_rs2(if_id_opcode);
+    assign if_id_uses_accumulator = (if_id_opcode == OP_MAC8);
 
     assign wb_write_data = mem_wb_reg.mem_to_reg ? data_mem_read_data : mem_wb_reg.alu_result;
     assign wb_writes_rd  = mem_wb_reg.valid &&
@@ -214,6 +245,12 @@ module cpu_core_pipeline_full #(
         (wb_writes_rd && (mem_wb_reg.rd == if_id_rs2)) ? wb_write_data :
         regs[if_id_rs2];
 
+    // MAC8 uses rd as both its 32-bit accumulator source and destination.
+    assign decode_accumulator =
+        (if_id_rd == 5'd0) ? 32'h0000_0000 :
+        (wb_writes_rd && (mem_wb_reg.rd == if_id_rd)) ? wb_write_data :
+        regs[if_id_rd];
+
     assign load_use_stall =
         if_id_reg.valid &&
         if_id_opcode_valid &&
@@ -221,7 +258,8 @@ module cpu_core_pipeline_full #(
         id_ex_reg.mem_read &&
         (id_ex_reg.rd != 5'd0) &&
         ((if_id_uses_rs1 && (if_id_rs1 == id_ex_reg.rd)) ||
-         (if_id_uses_rs2 && (if_id_rs2 == id_ex_reg.rd)));
+         (if_id_uses_rs2 && (if_id_rs2 == id_ex_reg.rd)) ||
+         (if_id_uses_accumulator && (if_id_rd == id_ex_reg.rd)));
 
     // A load-use dependency needs one bubble because data BRAM read data is
     // returned after the consuming instruction would otherwise enter EX.
@@ -230,6 +268,7 @@ module cpu_core_pipeline_full #(
     always_comb begin
         ex_operand_a     = id_ex_reg.operand_a;
         ex_operand_b_reg = id_ex_reg.operand_b;
+        ex_accumulator   = id_ex_reg.accumulator;
 
         if (ex_mem_reg.valid &&
             ex_mem_reg.reg_write &&
@@ -251,8 +290,32 @@ module cpu_core_pipeline_full #(
             ex_operand_b_reg = wb_write_data;
         end
 
+        if (id_ex_reg.opcode == OP_MAC8) begin
+            if (ex_mem_reg.valid &&
+                ex_mem_reg.reg_write &&
+                !ex_mem_reg.mem_to_reg &&
+                (ex_mem_reg.rd != 5'd0) &&
+                (ex_mem_reg.rd == id_ex_reg.rd)) begin
+                ex_accumulator = ex_mem_reg.alu_result;
+            end else if (wb_writes_rd && (mem_wb_reg.rd == id_ex_reg.rd)) begin
+                ex_accumulator = wb_write_data;
+            end
+        end
+
         ex_operand_b  = id_ex_reg.use_imm ? id_ex_reg.imm_ext : ex_operand_b_reg;
         ex_store_data = ex_operand_b_reg;
+    end
+
+
+    // MAC8 consumes the low byte of each source as a signed two's-complement
+    // INT8 value. The full 16-bit product is sign-extended before it is added
+    // to the 32-bit accumulator; only the final 32-bit sum can wrap.
+    always_comb begin
+        ex_mac_operand_a  = $signed(ex_operand_a[7:0]);
+        ex_mac_operand_b  = $signed(ex_operand_b_reg[7:0]);
+        ex_mac_product    = ex_mac_operand_a * ex_mac_operand_b;
+        ex_mac_product_ext = {{16{ex_mac_product[15]}}, ex_mac_product};
+        ex_mac_result     = $signed(ex_accumulator) + ex_mac_product_ext;
     end
 
     always_comb begin
@@ -265,6 +328,7 @@ module cpu_core_pipeline_full #(
             OP_AND:   ex_alu_result = ex_operand_a & ex_operand_b;
             OP_OR:    ex_alu_result = ex_operand_a | ex_operand_b;
             OP_XOR:   ex_alu_result = ex_operand_a ^ ex_operand_b;
+            OP_MAC8:  ex_alu_result = ex_mac_result;
             default:  ex_alu_result = 32'h0000_0000;
         endcase
     end
@@ -353,6 +417,7 @@ module cpu_core_pipeline_full #(
             id_ex_reg.imm_ext     <= 32'h0000_0000;
             id_ex_reg.operand_a   <= 32'h0000_0000;
             id_ex_reg.operand_b   <= 32'h0000_0000;
+            id_ex_reg.accumulator <= 32'h0000_0000;
             id_ex_reg.reg_write   <= 1'b0;
             id_ex_reg.mem_read    <= 1'b0;
             id_ex_reg.mem_write   <= 1'b0;
@@ -530,7 +595,8 @@ module cpu_core_pipeline_full #(
                 id_ex_reg.imm_ext     <= if_id_imm_ext;
                 id_ex_reg.operand_a   <= decode_operand_a;
                 id_ex_reg.operand_b   <= decode_operand_b;
-                id_ex_reg.reg_write   <= opcode_writes_rd(if_id_opcode);
+                id_ex_reg.accumulator <= decode_accumulator;
+                id_ex_reg.reg_write   <= phase12_opcode_writes_rd(if_id_opcode);
                 id_ex_reg.mem_read    <= (if_id_opcode == OP_LOAD);
                 id_ex_reg.mem_write   <= (if_id_opcode == OP_STORE);
                 id_ex_reg.mem_to_reg  <= (if_id_opcode == OP_LOAD);
@@ -578,7 +644,7 @@ module cpu_core_pipeline_full #(
                 instruction_fetch_wait_cycles <= instruction_fetch_wait_cycles + 32'd1;
             end else begin
                 if (accept_fetch_response) begin
-                    if_id_reg.valid       <= opcode_is_valid(accepted_fetch_instruction[31:28]);
+                    if_id_reg.valid       <= phase12_opcode_is_valid(accepted_fetch_instruction[31:28]);
                     if_id_reg.pc          <= accepted_fetch_pc;
                     if_id_reg.instruction <= accepted_fetch_instruction;
                 end else begin

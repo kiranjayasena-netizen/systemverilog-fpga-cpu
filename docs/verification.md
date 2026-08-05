@@ -4447,3 +4447,61 @@ Decision:
 - Keep testbenches self-checking.
 - Use `$fatal` or an equivalent failure mechanism when checks fail.
 - Record simulator, files tested, coverage points and conclusions for each simulation.
+
+## Phase 1/2 AI Dot Product And MAC8 Verification
+
+The Phase 12 five-stage core now has a focused self-checking MAC8 testbench:
+
+- Testbench: `tb/tb_cpu_core_pipeline_mac.sv`
+- Baseline image: `programs/ai_dot_product_baseline.mem`
+- MAC image: `programs/ai_dot_product_mac.mem`
+- RTL: `rtl/cpu_core_pipeline_full.sv`
+
+Focused Vivado XSim result on 5 August 2026:
+
+```text
+Tests run:    83
+Tests failed: 0
+PIPELINE MAC8 TEST PASSED
+```
+
+The test covers signed positive/negative/mixed/zero arithmetic, INT8 extrema,
+back-to-back accumulation, source and accumulator forwarding, STORE
+forwarding, all three relevant load-use hazards, reset, `x0`, and defined
+modulo-`2^32` overflow. It also runs both dot-product images and checks the
+same result, `0xffff_fff2` (-14).
+
+Measured integration result:
+
+| Program | Retired instructions through STORE | Enabled cycles through STORE |
+| --- | ---: | ---: |
+| Existing-ISA dot product | 24 | 29 |
+| MAC8 dot product | 14 | 19 |
+
+The same run generated `tb_cpu_core_pipeline_mac.vcd` for local waveform
+inspection. The focused compile/elaboration/simulation commands were:
+
+```powershell
+xvlog -sv rtl/cpu_defs_pkg.sv rtl/bram_instr_mem.sv rtl/bram_data_mem.sv rtl/cpu_core_pipeline_full.sv tb/tb_cpu_core_pipeline_mac.sv
+xelab tb_cpu_core_pipeline_mac -s phase_ai_mac_test_dsp
+xsim phase_ai_mac_test_dsp -runall
+```
+
+The unchanged Phase 12 test was rerun after the extension and passed 2,793
+checks with 0 failures. Its aggregate result remained 457 cycles and 319
+retired instructions.
+
+The full repository regression was then run with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_xsim_regression.ps1
+```
+
+It completed with exit code 0 on 5 August 2026 after running the legacy suite
+and the new MAC8 test. A separate `xvlog -sv` compile of every file under
+`rtl/` also completed with exit code 0.
+
+Vivado synthesis inferred one DSP48E1 for the MAC and post-route implementation
+met 100 MHz with WNS `+0.031 ns`, TNS `0.000 ns`, WHS `+0.040 ns`, THS
+`0.000 ns`, and zero routing errors. Bitstream generation passed. See
+`reports/ai_mac_phase2/README.md` for resource details.
