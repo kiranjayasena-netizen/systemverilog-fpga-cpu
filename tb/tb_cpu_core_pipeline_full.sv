@@ -460,7 +460,7 @@ module tb_cpu_core_pipeline_full;
         prepare_program();
 
         put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(10)));
-        put_instr(1, instr(4'hb,   5'd3, 5'd1, 5'd1, 13'h123));
+        put_instr(1, instr(4'hc,   5'd3, 5'd1, 5'd1, 13'h123));
         put_instr(2, instr(OP_ADDI,5'd2, 5'd0, 5'd0, imm13_signed(20)));
         put_instr(3, instr(4'hf,   5'd4, 5'd2, 5'd2, 13'h456));
         put_instr(4, instr(OP_STORE,5'd0,5'd0, 5'd2, imm13_signed(0)));
