@@ -210,10 +210,16 @@ staged acceptance gates are recorded in
 Stage A2 status: complete. The isolated `dot4acc_pipeline` implements and
 verifies the three registered arithmetic stages with exact valid displacement,
 II=1, bubbles, global-enable freeze, reset flush, and Stage A1 equivalence. It
-is not connected to any CPU core; issue and dependency-control integration is
-reserved for Stage C.
+is reused unchanged by the Stage C experiment.
 
-## Phase 3: Packed INT8 DOT4ACC Proposal — Not Implemented
+Stage C status: complete in the copied experimental
+`cpu_core_pipeline_dot4acc_issue`. Canonical decode, registered operand issue,
+fixed-depth dependency tracking, LOAD handling, II=1 ordered same-`rd` chains,
+younger non-DOT holds, redirects, and reset flushing are verified. DOT results
+remain observation-only: architectural writeback and retirement are absent and
+reserved for Stage D, while every historical core remains unchanged.
+
+## Phase 3: Packed INT8 DOT4ACC Proposal — Issue Control Only
 
 A future instruction could treat each source register as four signed INT8
 lanes:

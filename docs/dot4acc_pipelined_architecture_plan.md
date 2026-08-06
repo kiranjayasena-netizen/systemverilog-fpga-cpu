@@ -1,9 +1,11 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stage A1 encoding/reference infrastructure and Stage A2 isolated
-arithmetic-pipeline implementation are complete. `OP_DOT4ACC = 4'hc` is
-reserved, but no CPU core accepts or executes it. The Stage A2 pipeline is not
-connected to decode, register-file, dependency, writeback, or retirement logic.
+Status: Stages A1, A2, and C are complete. `OP_DOT4ACC = 4'hc` remains
+non-executable in every historical core. The copied experimental core
+`cpu_core_pipeline_dot4acc_issue` decodes canonical encodings, captures ready
+operands at a registered issue boundary, tracks dependencies, and exposes
+ordered arithmetic completions for verification. It intentionally has no
+DOT4ACC architectural writeback or retirement; those remain Stage D work.
 
 ## Executive summary
 
@@ -13,11 +15,11 @@ the existing decode/forwarding paths before the four multipliers. The three
 arithmetic stages register: (1) four signed 16-bit products, (2) one signed
 18-bit balanced-tree result, and (3) the 32-bit accumulated result.
 
-The issue register plus arithmetic stages occupy four cycles. The result is
-written and retired three clocks after issue acceptance. Independent or
-contiguous same-accumulator DOT4ACC instructions can be accepted with an
-initiation interval (II) of one, producing four INT8 multiply-accumulates per
-cycle after fill: 400 MMAC/s at 100 MHz.
+The issue register plus arithmetic stages occupy four cycles. In the Stage C
+experiment, the result and aligned destination are observable three advancing
+clocks after issue acceptance but are neither written nor retired. Independent
+or contiguous same-accumulator DOT4ACC instructions can be accepted with an
+initiation interval (II) of one.
 
 Younger scalar, memory, and control instructions remain held until all older
 DOT4ACC operations complete. Consecutive DOT4ACC operations may issue. This
@@ -476,16 +478,55 @@ and historical-core invalid-opcode coverage are integrated into XSim.
 - Isolation: no CPU core, decoder, register file, hazard path, forwarding path,
   writeback selector, or retirement path includes the Stage A2 module.
 
-### Stage C: issue, dependency, and flush integration
+### Stage C: issue, dependency, and flush integration — complete
 
-- Files: new copied `rtl/cpu_core_pipeline_dot4acc_pipelined.sv` and matching
-  focused integration testbench; never edit either MAC8 core.
-- Work: pending comparisons, chain bypass, non-DOT hold, LOAD integration, and
-  age-correct redirect behaviour.
-- Tests: every dependency/control row plus no-issue-on-hazard assertions.
-- Gate: exact stalls, II=1 chains, in-order completion, correct flush/reset.
-- Reject if: younger instructions overtake, older DOTs are flushed, or DOT busy
-  enters established branch arithmetic.
+- Files: copied experimental `rtl/cpu_core_pipeline_dot4acc_issue.sv` and
+  focused `tb/tb_cpu_core_pipeline_dot4acc_issue.sv`. The verified MAC8 cores
+  and `rtl/dot4acc_pipeline.sv` are unchanged.
+- Canonical decode: only opcode `4'hc` with zero `[12:0]` is accepted in the
+  experimental core. DOT controls have `reg_write`, memory, branch, and jump
+  effects cleared and DOT valid is explicitly suppressed from EX/MEM.
+- Issue acceptance: `enable && !rst && id_ex_is_dot && dot_operands_ready &&
+  !ex_redirect_taken && !redirect_pending_valid`. The issue path accepts one
+  operation on every advancing clock and registers both packed inputs, the
+  selected accumulator basis, `rd`, eligibility, and chain metadata.
+- Forwarding/readiness: existing EX/MEM non-LOAD and MEM/WB forwarding select
+  each of `rs1`, `rs2`, and old `rd`. LOAD dependencies retain the existing
+  one-bubble rule for all three roles. A completion-stage DOT result can feed a
+  waiting DOT-only source; matches in the issue/product/sum metadata stages
+  stall. Every comparison ignores `x0` as a writable destination.
+- Fixed-depth tracking: valid, nonzero destination, eligibility, and chain
+  state advance through issue plus three metadata slots in lockstep with the
+  arithmetic pipeline and freeze under global `enable`.
+- Ordering: contiguous DOT instructions may proceed. A younger non-DOT is held
+  as soon as an older DOT occupies ID/EX or any DOT metadata slot and is
+  released only after the last completion observation drains. This also holds
+  younger fast jumps, branches, LOADs, STOREs, and scalar side effects.
+- Redirect/reset: an older EX redirect wins before issue, while the conservative
+  hold policy prevents a younger control transfer from overtaking an accepted
+  DOT. Reset clears issue, all metadata, arithmetic valid state, chain state,
+  and hold state. Cancelled pre-issue DOTs never produce eligible metadata.
+- Result boundary: issue at advancing edge `I` becomes an aligned result and
+  destination observation at `I+3`; no Stage C signal drives architectural
+  writeback, memory, retirement, redirect, or retired-instruction counters.
+- Stage C limitation: release after observation proves ordering/control but
+  cannot make a younger scalar consumer see the DOT value because writeback is
+  intentionally absent. Focused younger non-DOT tests are dependency-free;
+  dependent architectural consumers become executable only in Stage D.
+- Verification: 1,468 checks passed with zero failures. The run accepted 128
+  transactions, completed 123, intentionally reset-flushed 5, and observed 26
+  younger DOT cancellations before issue. Independent and eight-member chains
+  demonstrated II=1; the deterministic mixed-control stress phase ran 520
+  wall-clock cycles with enable freezes and resets.
+
+The original D3 proposal required an immediately preceding final result at the
+Stage A2 pipeline input. That value cannot exist two clocks before the fixed
+Stage A2 output and the Stage A2 interface has no late accumulator port. Stage
+C therefore uses an ordered completion-side recurrence without changing the
+arithmetic RTL. A chain head carries `A0`; each continuation carries accumulator
+zero and produces raw `doti`. Ordered observation computes `A1=A0+dot0`, then
+`A2=A1+dot1`, then `A3=A2+dot2`. Consecutive completions make this recurrence
+II=1 while preserving modulo-`2^32` mathematical order.
 
 ### Stage D: writeback and retirement
 
@@ -530,18 +571,24 @@ and historical-core invalid-opcode coverage are integrated into XSim.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Stage A1/A2 completion and exact Stage C recommendation
+## Stage C completion and exact Stage D recommendation
 
 Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
 the width-explicit reference model, the independent sequential model, and
 historical-core invalid-opcode checks are verified in XSim.
 
 Stage A2 is complete as an isolated, three-stage, II=1 arithmetic pipeline.
-The exact Stage C recommendation is to create a new copied experimental CPU
-core and integrate only DOT4ACC issue admission and dependency/control state:
-capture forwarded `rd`/`rs1`/`rs2` operands into an issue boundary, compare
-source/destination metadata against every valid DOT stage, permit contiguous
-same-`rd` chains only with a proven accumulator bypass, hold younger non-DOT
-instructions, and make redirect/reset flushing age-correct. Stage C must not
-yet add shared writeback arbitration or retirement integration; those remain
-the separate Stage D gate.
+Stage C is complete in the copied experimental core: forwarded operands end at
+the issue register, fixed-depth comparisons cover every in-flight destination,
+the completion-side chain recurrence sustains same-`rd` II=1, and conservative
+holds plus redirect/reset rules preserve age order. Completion is observation
+only, so this is not yet a fully executable instruction implementation.
+
+The exact Stage D recommendation is to add only a mutually exclusive selector
+between normal MEM/WB and eligible DOT completion for the existing single
+register-file write port, then add one in-order DOT retirement event carrying
+the aligned PC/opcode/`rd`/result metadata. Prove that normal and DOT writes can
+never collide under the Stage C hold policy, suppress `rd == x0` writes, update
+retirement/performance counters exactly once, and forward the newly committed
+value only where required after hold release. Do not broaden Stage D into new
+issue policy, arithmetic, memory, or out-of-order machinery.

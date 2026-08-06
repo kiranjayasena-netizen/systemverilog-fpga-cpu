@@ -4742,3 +4742,74 @@ Stage A2 and then the existing MAC8/CPU suite, completed with exit code 0 in
 298.9 seconds. The historical Phase 12 cores therefore remain at 2,796 checks
 with zero failures, 457 cycles, and 319 retired instructions; focused MAC8
 verification remains 83 checks with zero failures.
+
+### DOT4ACC Stage C Experimental Issue-Control Verification
+
+On 6 August 2026, Stage C added the copied experimental core
+`rtl/cpu_core_pipeline_dot4acc_issue.sv` and focused self-checking testbench
+`tb/tb_cpu_core_pipeline_dot4acc_issue.sv`. The experiment reuses the unchanged
+Stage A2 arithmetic pipeline and does not modify any historical core.
+
+Only canonical zero-reserved-field opcode `4'hc` encodings enter the private
+DOT path. Forwarded `rs1`, `rs2`, and old-`rd` values terminate at a registered
+issue boundary. Valid nonzero destinations are compared against the issue,
+product, pair-sum, and completion-aligned metadata positions; a match in an
+unfinished stage stalls the consumer, while an aligned completion can feed a
+waiting DOT-only operand. The existing one-cycle LOAD-use bubble covers all
+three logical source roles. `x0` is never marked eligible or chained.
+
+An issue accepted at advancing edge `I` is observed with its aligned result and
+destination at `I+3`. Independent streams and contiguous eight-operation
+same-`rd` streams both issued every advancing clock. Because the unchanged
+Stage A2 interface cannot receive a predecessor result at its late accumulator
+stage, the verified chain implementation is an ordered completion recurrence:
+the head carries the architectural accumulator, continuations carry zero and
+produce raw dot sums, and observation folds each raw sum into the immediately
+preceding logical chain result. Every folded result matched the Stage A1 oracle.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 1,468 |
+| Failures | 0 |
+| Accepted DOT transactions | 128 |
+| Completed DOT transactions | 123 |
+| Intentionally reset-flushed transactions | 5 |
+| Younger DOT cancellations before issue | 26 |
+| Mixed-control stress length | 520 wall-clock cycles |
+
+Directed coverage included canonical/noncanonical decode, `rd=x0`, EX/MEM and
+MEM/WB scalar forwarding into all operand roles, LOAD-to-`rs1`, LOAD-to-`rs2`,
+LOAD-to-accumulator with exactly one bubble each, two packed-source RAW cases,
+a noncontiguous accumulator RAW case, independent and same-`rd` II=1 streams,
+chain breaks, younger ADD/LOAD/STORE/branch/jump holds, global-enable metadata
+freeze, taken/not-taken branches, jump cancellation, reset at multiple occupied
+states, and post-reset recovery. The deterministic stress phase mixed DOT and
+non-DOT instructions, chains, loads, bubbles, redirects, enable freezes, and
+two reset windows. Its scoreboard accounted for every accepted transaction as
+exactly one completion or an intentional reset flush, with ordered destination
+metadata and exact three-advance latency.
+
+Architectural-state protection was checked continuously: DOT valid is removed
+before EX/MEM, no retire event carries `OP_DOT4ACC`, no DOT completion drives
+register or memory write enables, `rd` remains unchanged by observation, and
+DOT does not increment retired-instruction state. Younger non-DOT instructions
+remain outside EX until all older DOT observation metadata drains.
+
+`scripts/run_xsim_regression.ps1` now orders Stage A1, Stage A2, and Stage C
+before the existing MAC8 and CPU tests. The complete post-change XSim suite
+passed with exit code 0 in 301.2 seconds. Historical invariant results remain
+Stage A1 306/0, Stage A2 2,859/0, focused MAC8 83/0 with 29/19 cycles and
+`0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate cycles and 319 retired
+instructions. No post-route timing or complete DOT4ACC execution claim is made.
+
+An optional top-level synthesis-only check of the experimental core for
+`xc7a35tcpg236-1` completed with zero errors, zero critical warnings, and zero
+latches. It reported 1,919 slice LUTs, 2,332 flip-flops, two RAMB18E1 blocks,
+and five DSP48E1 blocks: four in the unchanged DOT pipeline plus the existing
+MAC8 DSP. The DOT DSP report retained registered A/B pipeline inputs, confirming
+that the CPU forwarding network ends at the issue register rather than driving
+the multipliers combinationally. The four ordinary warnings cover unused low
+address bits on the two word-addressed memories. This unconstrained exposed-core
+synthesis is resource/structure evidence only, not placement or timing evidence.
