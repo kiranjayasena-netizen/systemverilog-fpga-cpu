@@ -4505,3 +4505,119 @@ Vivado synthesis inferred one DSP48E1 for the MAC and post-route implementation
 met 100 MHz with WNS `+0.031 ns`, TNS `0.000 ns`, WHS `+0.040 ns`, THS
 `0.000 ns`, and zero routing errors. Bitstream generation passed. See
 `reports/ai_mac_phase2/README.md` for resource details.
+
+### MAC8 Fmax Sweep
+
+The follow-up Vivado 2026.1 sweep implemented 95, 100, 102, 104, 106, 108 and
+110 MHz targets. It repeated the 100/102 MHz pass-fail boundary five times in
+independent Vivado processes. These are repetition labels, not controlled
+placer seeds; every CSV row records `seed_applied=false`.
+
+| Target | Timing passes | Setup WNS | Hold WNS | Failing setup endpoints |
+| ---: | ---: | ---: | ---: | ---: |
+| 100 MHz | 5/5 | +0.031 ns | +0.040 ns | 0 |
+| 102 MHz | 0/5 | -0.074 ns | +0.057 ns | 36 |
+
+All 15 sweep implementations routed fully, passed hold timing and generated a
+bitstream. The tested setup-frequency bracket for the exact sweep flow is
+`100 MHz <= Fmax < 102 MHz`. See `reports/ai_mac_fmax_sweep.md` and
+`reports/ai_mac_fmax_sweep/results.csv` for the complete method and result set.
+
+### MAC8 Post-Route Timing Optimisation
+
+The original 100 MHz post-route critical path was inspected from the preserved
+checkpoint before RTL changes. It starts at the data RAMB18E1
+`CLKBWRCLK`, passes through LOAD write-back selection, MEM/WB-to-EX forwarding,
+the 32-bit BEQ comparison, and redirect/flush logic, and ends at
+`fetch_buffer_instruction_reg[15]/R`. WNS is `+0.031 ns`; the 9.339 ns data
+delay is 4.113 ns logic (44.040%) and 5.226 ns routing (55.960%) over nine
+logic levels. The DSP path is near-critical but is not the original absolute
+limiter.
+
+The accepted experimental core is
+`rtl/cpu_core_pipeline_mac8_timingopt.sv`, with the matching top
+`rtl/fpga_top_pipeline_mac8_timingopt.sv`. Reset still initializes frontend
+payloads, while redirect/bubble invalidation clears only valid bits and leaves
+invalid payload data as don't-care state. The baseline
+`rtl/cpu_core_pipeline_full.sv` is unchanged.
+
+Candidate XSim commands used `-d MAC8_TIMINGOPT_DUT` so the existing
+self-checking testbenches selected the experimental core. Results:
+
+| Test | Checks | Failures | Other invariants |
+| --- | ---: | ---: | --- |
+| Focused MAC8 | 83 | 0 | dot products `0xfffffff2`; 29/19 cycles |
+| Original Phase 12 | 2,793 | 0 | 457 cycles; 319 retired instructions |
+
+The focused run rechecked signed positive/negative/mixed operands, INT8 extrema,
+repeated accumulation, modulo-`2^32` wrap, back-to-back dependencies, EX/MEM
+and MEM/WB forwarding, all three MAC8 load-use hazards, reset, invalid opcode
+safety, `x0`, STORE forwarding, and dot-product equivalence.
+
+Post-route Vivado 2026.1 results for the accepted candidate:
+
+| Target | Timing passes | Setup WNS | Setup TNS | Hold WNS | Hold TNS | Failing setup endpoints | Route/bitstream |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 100 MHz | 3/3 | +0.198 ns | 0.000 ns | +0.035 ns | 0.000 ns | 0 | passed/passed |
+| 102 MHz | 1/1 | +0.071 ns | 0.000 ns | +0.037 ns | 0.000 ns | 0 | passed/passed |
+| 104 MHz | 3/3 | +0.062 ns | 0.000 ns | +0.055 ns | 0.000 ns | 0 | passed/passed |
+| 106 MHz | 0/3 | -0.081 ns | -0.815 ns | +0.033 ns | 0.000 ns | 13 | passed/passed |
+
+On 6 August 2026, fresh baseline and candidate routes at the three required
+comparison points reproduced the stored results exactly. Candidate setup WNS
+improved by `+0.167 ns` at 100 MHz (`+0.031` to `+0.198 ns`), `+0.145 ns` at
+102 MHz (`-0.074` to `+0.071 ns`), and `+0.335 ns` at 104 MHz (`-0.273` to
+`+0.062 ns`). All six routes passed hold timing and generated bitstreams.
+
+The 100 MHz implementation uses 1,457 LUTs, 1,507 FFs, one DSP48E1 and one
+BRAM tile, versus 1,454 LUTs, 1,507 FFs, one DSP48E1 and one BRAM tile for the
+original MAC8. The new tested boundary is
+`104 MHz <= Fmax < 106 MHz`.
+
+The three repetitions at 100, 104 and 106 MHz used fresh Vivado processes with
+identical deterministic settings. They were not controlled placement-seed
+experiments; every row records `seed_applied=false`. Full results and analysis
+are in `reports/ai_mac8_validonly_fmax/results.csv` and
+`reports/ai_mac8_timing_optimisation.md`.
+
+### Timing-Optimised MAC8 Boundary Sweep
+
+On 6 August 2026, a focused Vivado 2026.1 boundary sweep tested 104, 105, 106,
+107 and 108 MHz with the timing-optimized top. The default flow used fresh
+Vivado processes, separate run directories and identical default synthesis,
+optimization, placement and routing commands. Repetition labels are not
+placement seeds.
+
+| Target | Default runs | Pass/fail | Min/mean/max setup WNS | Hold WNS | Setup endpoints |
+| ---: | ---: | ---: | --- | ---: | ---: |
+| 104 MHz | 5 | 5 / 0 | +0.062 / +0.062 / +0.062 ns | +0.055 ns | 0 |
+| 105 MHz | 5 | 0 / 5 | -0.148 / -0.148 / -0.148 ns | +0.139 ns | 12 |
+| 106 MHz | 1 | 0 / 1 | -0.081 ns | +0.033 ns | 13 |
+| 107 MHz | 1 | 0 / 1 | -0.379 ns | +0.034 ns | 155 |
+| 108 MHz | 1 | 0 / 1 | -0.416 ns | +0.035 ns | 104 |
+
+All implementations routed fully, passed hold timing and generated
+bitstreams. Both five-run sets had zero WNS range and zero standard deviation.
+The repeatable boundary is 104 MHz pass / 105 MHz fail. The conservative
+operating recommendation remains 100 MHz with the preserved `+0.198 ns`
+repeatable margin; 104 MHz has only `+0.062 ns`.
+
+Two clearly separate single-run directive variations passed 105 MHz:
+`place_design -directive ExtraNetDelay_high` at `+0.034 ns`, and
+`route_design -directive AggressiveExplore` at `+0.106 ns`. These are
+observed strategy passes, not deterministic default-flow repeatability.
+
+All five 104 MHz runs were limited by data BRAM through LOAD writeback,
+forwarding, BEQ/redirect control and redirect-target addition to
+`redirect_pending_target_reg[30]/D`. All five default 105 MHz runs were
+limited by data BRAM through writeback, rs1 forwarding, one DSP48E1 and result
+selection to `ex_mem_reg_reg[alu_result][25]/D`. The original dynamic
+fetch-buffer payload-reset endpoint remains absent, but both frontend control
+and the unregistered DSP path are near-critical.
+
+The pre- and post-sweep candidate regressions each passed 83 focused MAC8
+checks and 2,793 Phase 12 checks. The result remained `0xfffffff2`; totals
+remained 457 cycles and 319 retired instructions. The post-sweep complete
+repository XSim regression also completed with exit code 0. Detailed analysis is in
+`reports/ai_mac8_boundary_sweep.md`, with compact per-run data in
+`reports/ai_mac8_boundary_sweep/results.csv`.

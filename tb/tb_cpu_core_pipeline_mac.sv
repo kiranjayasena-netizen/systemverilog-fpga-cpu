@@ -1,5 +1,11 @@
 import cpu_defs_pkg::*;
 
+`ifdef MAC8_TIMINGOPT_DUT
+    `define PIPELINE_MAC8_DUT cpu_core_pipeline_mac8_timingopt
+`else
+    `define PIPELINE_MAC8_DUT cpu_core_pipeline_full
+`endif
+
 module tb_cpu_core_pipeline_mac;
 
     localparam int unsigned IMEM_DEPTH = 256;
@@ -33,7 +39,7 @@ module tb_cpu_core_pipeline_mac;
     int tests_failed;
     int focused_retired_seen;
 
-    cpu_core_pipeline_full #(
+    `PIPELINE_MAC8_DUT #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE("")
@@ -48,7 +54,7 @@ module tb_cpu_core_pipeline_mac;
         .load_use_stall_cycles(focused_load_use_stalls)
     );
 
-    cpu_core_pipeline_full #(
+    `PIPELINE_MAC8_DUT #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE("programs/ai_dot_product_baseline.mem")
@@ -62,7 +68,7 @@ module tb_cpu_core_pipeline_mac;
         .total_cycles(baseline_total_cycles)
     );
 
-    cpu_core_pipeline_full #(
+    `PIPELINE_MAC8_DUT #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE("programs/ai_dot_product_mac.mem")
@@ -379,3 +385,5 @@ module tb_cpu_core_pipeline_mac;
     end
 
 endmodule
+
+`undef PIPELINE_MAC8_DUT

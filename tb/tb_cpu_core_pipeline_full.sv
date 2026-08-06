@@ -1,5 +1,11 @@
 import cpu_defs_pkg::*;
 
+`ifdef MAC8_TIMINGOPT_DUT
+    `define PIPELINE_FULL_DUT cpu_core_pipeline_mac8_timingopt
+`else
+    `define PIPELINE_FULL_DUT cpu_core_pipeline_full
+`endif
+
 module tb_cpu_core_pipeline_full;
 
     localparam int unsigned IMEM_DEPTH = 256;
@@ -58,7 +64,7 @@ module tb_cpu_core_pipeline_full;
     int retire_seen [0:IMEM_DEPTH-1];
     bit allow_repeated_retire;
 
-    cpu_core_pipeline_full #(
+    `PIPELINE_FULL_DUT #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE("")
@@ -553,3 +559,5 @@ module tb_cpu_core_pipeline_full;
     end
 
 endmodule
+
+`undef PIPELINE_FULL_DUT

@@ -40,6 +40,10 @@ obj_dir/
 *.dcp
 *.ltx
 reports/*_impl/
+reports/ai_mac_fmax_sweep/runs/
+reports/ai_mac8_timingopt/
+reports/ai_mac8_validonly_fmax/runs/
+reports/ai_mac8_boundary_sweep/runs/
 
 # Temporary/editor files
 *.tmp

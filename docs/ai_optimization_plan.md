@@ -130,8 +130,11 @@ DSP48 primitive.
 Vivado maps the expression as one unregistered DSP48E1 `C + A*B`. The routed
 design still meets 100 MHz, but WNS falls from `+0.185 ns` to `+0.031 ns`.
 The worst path remains a data-BRAM/writeback/frontend-control path rather than
-the DSP path. The small margin means future packed arithmetic must not simply
-extend this combinational EX path without retiming.
+the DSP path. A completed 95-110 MHz sweep passed all five independent 100 MHz
+runs and failed all five 102 MHz runs at setup, bounding the tested Fmax for
+this exact flow to `100 MHz <= Fmax < 102 MHz`. The small margin means future
+packed arithmetic must not simply extend this combinational EX path without
+retiming. See `../reports/ai_mac_fmax_sweep.md` for the method and full table.
 
 ### Measured Comparison
 
@@ -150,14 +153,54 @@ Vivado resource/timing values are post-route measurements at 100 MHz.
 | DSPs | 0 | 1 | +1 |
 | WNS at 100 MHz | +0.185 ns | +0.031 ns | -0.154 ns margin |
 | Estimated Fmax from routed slack | ~101.9 MHz | ~100.3 MHz | ~1.5% lower |
+| Tested Fmax bracket | Not swept | 100 MHz passes; 102 MHz fails | `100 MHz <= Fmax < 102 MHz` |
 | Vectorless power estimate | 0.089 W | 0.091 W | +0.002 W |
 
 The instruction and cycle comparisons are measured XSim results. The resource,
-power and slack rows are measured Vivado report values. The Fmax row is only a
-calculation from a single 100 MHz implementation, not a measured frequency
-sweep. Combining those Fmax estimates with the measured cycle counts predicts
-about a 1.50x throughput improvement; that is a prediction, whereas 1.526x is
-the measured same-clock cycle speed-up.
+power and slack rows are measured Vivado report values. The estimated-Fmax row
+is a calculation from the routed 100 MHz slack; the tested bracket comes from
+the completed frequency sweep. Combining the slack-derived Fmax estimates with
+the measured cycle counts predicts about a 1.50x throughput improvement; that
+is a prediction, whereas 1.526x is the measured same-clock cycle speed-up.
+
+### Phase 2 Timing Optimisation
+
+Post-route path inspection showed that the original 100 MHz limiter was not
+the DSP. It ran from data BRAM through LOAD write-back, MEM/WB-to-EX
+forwarding, the BEQ comparison, and redirect/flush logic to a fetch-buffer
+payload reset input. Its 9.339 ns data delay was 4.113 ns logic (44.040%) and
+5.226 ns routing (55.960%) across nine levels.
+
+The accepted experimental core, `cpu_core_pipeline_mac8_timingopt`, keeps the
+verified baseline intact and clears only frontend valid bits during dynamic
+bubbles and redirects. Invalid PC/instruction payload registers retain
+don't-care data; reset behaviour and valid instruction loading are unchanged.
+This removes the long redirect cone from payload data/reset inputs without a
+new stage or architectural change.
+
+| Metric | Original MAC8 | Timing-optimised MAC8 |
+| --- | ---: | ---: |
+| 100 MHz setup WNS | +0.031 ns | +0.198 ns (3/3) |
+| 102 MHz setup WNS | -0.074 ns | +0.071 ns (1/1) |
+| Highest repeatable pass | 100 MHz | 104 MHz (5/5, +0.062 ns minimum) |
+| First consistent fail | 102 MHz | 105 MHz (0/5, -0.148 ns maximum) |
+| Repeatable boundary | `100 MHz pass; 102 MHz fail` | `104 MHz pass; 105 MHz fail` |
+| Highest observed pass | 100 MHz | 105 MHz with controlled directives (single runs) |
+| LUT / FF / DSP / BRAM | 1,454 / 1,507 / 1 / 1 | 1,457 / 1,507 / 1 / 1 |
+
+Focused verification remains 83 checks with zero failures and the original
+Phase 12 regression remains 2,793 checks with zero failures, 457 cycles, and
+319 retired instructions. See
+`../reports/ai_mac8_timing_optimisation.md` and
+`../reports/ai_mac8_boundary_sweep.md` for complete path, repeatability,
+directive-variation, per-run timing, and utilisation evidence.
+
+The 104 MHz repeatable margin is only `+0.062 ns`, below the approximate
+`0.1 ns` threshold for safely extending the single-cycle EX datapath. The
+newly resolved 105 MHz limiter passes through the existing DSP48E1, while a
+separate frontend/branch-control family also fails. DOT4ACC planning may
+therefore proceed only as a pipelined/isolation exercise; a single-cycle
+combinational implementation is not recommended.
 
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Not Implemented
 
@@ -231,17 +274,27 @@ retimed implementation.
    reproducible software baseline.
 2. Phase 2 — complete: retain MAC8 only if full regression and 100 MHz timing
    remain clean; use the comparison table as the new scalar-AI baseline.
-3. Next single step: run a small Fmax sweep for the MAC8 top to quantify its
-   real frequency ceiling and margin across implementation seeds/directives.
-4. Phase 3 — proposal only: specify and model DOT4ACC, then choose two-cycle or
-   deeper-pipeline execution before writing RTL.
+3. Phase 2 timing optimisation — complete: accept the valid-only frontend
+   experimental variant. Five deterministic default-flow executions pass
+   104 MHz at `+0.062 ns`, while five fail 105 MHz at `-0.148 ns`.
+   Repetition labels are not placer seeds.
+4. Next single step / Phase 3 proposal: plan a pipelined DOT4ACC architecture
+   that isolates the packed arithmetic from the current MAC8 DSP path; do not
+   write DOT4ACC RTL during the characterization phase.
 5. Phase 4 — proposal only: define scratchpad/DMA interfaces and verify memory
    bandwidth with a 2x2 MAC-array model before hardware implementation.
 
 ## Remaining Risks
 
-- The routed 100 MHz setup margin is only `+0.031 ns`; a different seed or
-  nearby logic change may fail timing.
+- The timing-optimised routed 100 MHz margin is `+0.198 ns`, but the highest
+  repeatable point, 104 MHz, has only `+0.062 ns`; 105 MHz fails both the DSP
+  path and frontend/branch-control paths under the default flow.
+- Placement-seed sensitivity remains unquantified because Vivado exposes no
+  supported seed here. Single-run placement and routing directive variations
+  pass 105 MHz but are not repeatability evidence.
+- Invalid frontend payload values are now retained across bubbles and
+  redirects. Every consumer must continue to be gated by the matching valid
+  bit.
 - `use_dsp` is a Vivado synthesis directive. Other tools may implement MAC8 in
   LUTs and produce different timing/resource results.
 - The extra asynchronous accumulator read and forwarding selection increase
