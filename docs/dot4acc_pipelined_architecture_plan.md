@@ -1,8 +1,9 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stage A1 encoding reservation and simulation-only arithmetic reference
-infrastructure are complete. `OP_DOT4ACC = 4'hc` is reserved, but no CPU core
-accepts or executes it. No DOT pipeline or execution integration exists.
+Status: Stage A1 encoding/reference infrastructure and Stage A2 isolated
+arithmetic-pipeline implementation are complete. `OP_DOT4ACC = 4'hc` is
+reserved, but no CPU core accepts or executes it. The Stage A2 pipeline is not
+connected to decode, register-file, dependency, writeback, or retirement logic.
 
 ## Executive summary
 
@@ -452,14 +453,28 @@ and historical-core invalid-opcode coverage are integrated into XSim.
 - Gate: exact widths pass and no historical behaviour changes.
 - Reject if: `4'hc` gains another use or implicit expression sizing remains.
 
-### Stage B: isolated arithmetic pipeline
+### Stage B: isolated arithmetic pipeline — complete (Stage A2)
 
-- Files: new `rtl/dot4acc_pipeline.sv` and `tb/tb_dot4acc_pipeline.sv`.
-- Work: issue, four products, balanced sum, accumulator, valid/reset/enable.
-- Tests: full arithmetic matrix, latency/II, reset at each stage, randomized
-  equivalence to four MAC8 reference operations.
-- Gate: exact results and `I+3` completion, with no unknown valids/results.
-- Reject if: truncation occurs, II exceeds one, or signed casts are ambiguous.
+- Files: `rtl/dot4acc_pipeline.sv` and `tb/tb_dot4acc_pipeline.sv`.
+- Interface: `clk`, synchronous active-high `rst`, global clock-enable
+  `enable`, `input_valid`, 32-bit `accumulator`, `packed_a`, and `packed_b`,
+  with registered `output_valid` and 32-bit `result`.
+- Work: stage 1 registers four signed 16-bit products and the accumulator;
+  stage 2 registers two signed 17-bit pair sums and the aligned accumulator;
+  stage 3 forms a signed 18-bit dot sum, explicitly sign-extends it, and
+  registers the modulo-`2^32` signed 32-bit accumulator result.
+- Measured contract: an accepted input uses the acceptance edge as stage
+  advance 1 and asserts `output_valid` on stage advance 3. Disabled clocks do
+  not advance any valid or payload state. The initiation interval is one.
+- Verification: 2,859 checks passed with zero failures; 420 operations were
+  accepted, 415 completed in order, and 5 were intentionally discarded by
+  reset. Directed arithmetic, continuous traffic, bubbles, freezes, reset,
+  and 700 deterministic stress cycles all passed against the Stage A1 oracle.
+- Isolated synthesis: Vivado 2026.1 synthesized the module for
+  `xc7a35tcpg236-1` with no latches, 50 slice LUTs, 99 flip-flops, and four
+  DSP48E1 blocks. This is synthesis-only resource evidence, not routed timing.
+- Isolation: no CPU core, decoder, register file, hazard path, forwarding path,
+  writeback selector, or retirement path includes the Stage A2 module.
 
 ### Stage C: issue, dependency, and flush integration
 
@@ -515,15 +530,18 @@ and historical-core invalid-opcode coverage are integrated into XSim.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Stage A1 completion and exact Stage A2 recommendation
+## Stage A1/A2 completion and exact Stage C recommendation
 
 Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
 the width-explicit reference model, the independent sequential model, and
 historical-core invalid-opcode checks are verified in XSim.
 
-Stage A2 should create only an isolated `rtl/dot4acc_pipeline.sv` arithmetic
-module and matching `tb/tb_dot4acc_pipeline.sv` unit test, using the Stage A1
-reference package as the oracle. It should verify four registered products,
-the widened adder tree, exact valid latency, enable freeze, and reset at every
-stage. It must not modify or connect to a CPU core, decoder, hazard unit,
-forwarding network, writeback, or retirement path.
+Stage A2 is complete as an isolated, three-stage, II=1 arithmetic pipeline.
+The exact Stage C recommendation is to create a new copied experimental CPU
+core and integrate only DOT4ACC issue admission and dependency/control state:
+capture forwarded `rd`/`rs1`/`rs2` operands into an issue boundary, compare
+source/destination metadata against every valid DOT stage, permit contiguous
+same-`rd` chains only with a proven accumulator bypass, hold younger non-DOT
+instructions, and make redirect/reset flushing age-correct. Stage C must not
+yet add shared writeback arbitration or retirement integration; those remain
+the separate Stage D gate.

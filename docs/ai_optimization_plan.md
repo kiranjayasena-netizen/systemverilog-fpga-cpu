@@ -207,6 +207,12 @@ pipeline, dependency policy, performance model, verification matrix, and
 staged acceptance gates are recorded in
 [`dot4acc_pipelined_architecture_plan.md`](dot4acc_pipelined_architecture_plan.md).
 
+Stage A2 status: complete. The isolated `dot4acc_pipeline` implements and
+verifies the three registered arithmetic stages with exact valid displacement,
+II=1, bubbles, global-enable freeze, reset flush, and Stage A1 equivalence. It
+is not connected to any CPU core; issue and dependency-control integration is
+reserved for Stage C.
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Not Implemented
 
 A future instruction could treat each source register as four signed INT8

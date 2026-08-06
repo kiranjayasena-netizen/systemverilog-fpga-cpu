@@ -4674,3 +4674,71 @@ Post-change focused MAC8 verification remained 83 checks with zero failures,
 29/19 baseline/MAC8 cycles, and dot-product result `0xfffffff2`. The complete
 repository XSim regression, including the new reference test, completed with
 exit code 0 in the final 295.4-second run.
+
+### DOT4ACC Stage A2 Isolated Pipeline Verification
+
+On 6 August 2026, Stage A2 added only the synthesizable isolated arithmetic
+module `rtl/dot4acc_pipeline.sv` and its focused self-checking testbench
+`tb/tb_dot4acc_pipeline.sv`. No CPU core, decoder, register file, hazard,
+forwarding, writeback, retirement, wrapper, or implementation RTL was changed.
+
+The interface is a synchronous active-high reset and global pipeline enable,
+an input-valid bit, three 32-bit operands (`accumulator`, `packed_a`, and
+`packed_b`), and registered 32-bit result/output-valid outputs. The registered
+stages are four signed 16-bit products, two signed 17-bit pair sums, and the
+signed 18-bit total plus explicitly sign-extended signed 32-bit accumulator
+addition. Final overflow wraps modulo `2^32`.
+
+The exact latency convention counts the accepting edge as stage advance 1:
+stage 1 captures products on that edge, stage 2 advances on the next enabled
+edge, and stage 3 asserts `output_valid` on the following enabled edge. Thus a
+transaction is valid on the third advancing edge counting acceptance. The
+module accepts one independent transaction per enabled edge (II=1). Disabled
+edges do not count and freeze every valid, arithmetic, accumulator, result,
+and output-valid register.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 2,859 |
+| Failures | 0 |
+| Accepted transactions | 420 |
+| Completed transactions | 415 |
+| Intentionally reset-flushed transactions | 5 |
+| Deterministic stress length | 700 cycles |
+
+Directed arithmetic covered zero, positive/negative/mixed lanes, cancellation,
+distinct lane ordering, all four INT8 boundary products, maximum `+65,536`
+and minimum `-65,024` sums, positive and negative accumulators, mixed-sign
+accumulation, and both wrap directions. Every completed result matched the
+Stage A1 canonical function, and directed vectors also matched an independent
+sequential four-scalar-MAC model.
+
+Pipeline coverage included an isolated operation, at least 16 back-to-back
+inputs, a 64-operation continuous-valid stream, explicit bubbles, adjacent
+transactions with distinct operands/accumulators, exact valid displacement,
+ordered drain, and one result per advancing clock after fill. Enable tests
+froze empty, partial, and full pipelines for single and multiple clocks,
+repeatedly toggled enable, held every payload stable, rejected input-valid
+while disabled, and resumed without loss or duplication. Reset tests covered
+empty, one/multiple in-flight operations, the edge immediately before output,
+stale-output suppression, and post-reset recovery. A fixed-seed stress run
+combined varied operands, accumulators, bubbles, freezes, and three resets.
+
+The Stage A2 focused test is ordered immediately after Stage A1 in
+`scripts/run_xsim_regression.ps1`, before MAC8 and Phase 12 CPU regressions.
+
+An optional module-only Vivado 2026.1 synthesis for `xc7a35tcpg236-1`
+completed successfully with zero inferred latches. The synthesized isolated
+top used 50 slice LUTs, 99 flip-flops, four DSP48E1 blocks, and no BRAM. The
+four DSPs implement the four signed lane multipliers; the 18-bit reduction and
+32-bit accumulator addition remain in fabric. Unconstrained-I/O and DSP
+pipelining advisory DRCs are expected for this artificial module-only top.
+No placement, routing, clock constraint, or timing claim was made.
+
+The final complete repository XSim regression, with Stage A1 followed by
+Stage A2 and then the existing MAC8/CPU suite, completed with exit code 0 in
+298.9 seconds. The historical Phase 12 cores therefore remain at 2,796 checks
+with zero failures, 457 cycles, and 319 retired instructions; focused MAC8
+verification remains 83 checks with zero failures.

@@ -277,6 +277,12 @@ Invoke-XsimTest `
     -Snapshot "tb_dot4acc_reference_sim"
 
 Invoke-XsimTest `
+    -Name "DOT4ACC isolated three-stage arithmetic pipeline verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "tb/dot4acc_reference_pkg.sv", "rtl/dot4acc_pipeline.sv", "tb/tb_dot4acc_pipeline.sv") `
+    -Top "tb_dot4acc_pipeline" `
+    -Snapshot "tb_dot4acc_pipeline_sim"
+
+Invoke-XsimTest `
     -Name "Phase 12 full pipelined CPU custom-ISA verification" `
     -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_full.sv", "tb/tb_cpu_core_pipeline_full.sv") `
     -Top "tb_cpu_core_pipeline_full" `
