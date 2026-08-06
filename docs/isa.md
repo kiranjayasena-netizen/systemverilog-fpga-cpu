@@ -34,10 +34,13 @@ The register fields address the 32-register file, so register indexes run from `
 | `4'h9` | BEQ | Branch if `rs1 == rs2` |
 | `4'ha` | JUMP | Unconditional PC-relative jump |
 | `4'hb` | MAC8 | Phase 12 core only: `rd = rd + signed8(rs1[7:0]) * signed8(rs2[7:0])` |
+| `4'hc` | DOT4ACC (reserved) | Reserved for a future experimental pipelined core; not executable in existing cores |
 
-Opcodes `4'hc` through `4'hf` remain invalid. Historical cores that do not
-implement the Phase 12 AI extension also continue to treat `4'hb` as invalid;
-this prevents them from silently executing MAC8 incorrectly.
+Opcodes `4'hd` through `4'hf` remain unassigned and invalid. Opcode `4'hc` has
+a reserved symbolic definition, but every existing CPU core still treats it
+as invalid and side-effect free. Historical cores that do not implement the
+Phase 12 AI extension also continue to treat `4'hb` as invalid; this prevents
+them from silently executing unsupported AI instructions.
 
 ## MAC8 Encoding And Arithmetic
 
@@ -79,6 +82,23 @@ ADDI x1, x0, -3
 ADDI x2, x0,  4
 MAC8 x3, x1, x2       // x3 = 10 + (-3 * 4) = -2
 ```
+
+## Reserved DOT4ACC Encoding
+
+`DOT4ACC rd, rs1, rs2` is reserved for a future copied experimental core. No
+current core decodes or executes it, and no DOT4ACC hardware exists yet.
+
+| Bits | Reserved DOT4ACC meaning |
+| --- | --- |
+| `[31:28]` | `4'hc` (`OP_DOT4ACC`) |
+| `[27:23]` | `rd`, future accumulator source and destination |
+| `[22:18]` | `rs1`, future packed signed INT8 source |
+| `[17:13]` | `rs2`, future packed signed INT8 source |
+| `[12:0]` | reserved; canonical encoding must be zero |
+
+The Stage A1 encoder always writes zero to `[12:0]`, and its reference checker
+flags nonzero reserved bits as non-canonical. This is an encoding and arithmetic
+reference contract only, not executable ISA support.
 
 ## Immediate Sign Extension
 

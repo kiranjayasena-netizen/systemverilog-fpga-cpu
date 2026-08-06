@@ -14,6 +14,10 @@ package cpu_defs_pkg;
     // Phase 12 AI extension. Cores that do not explicitly implement MAC8
     // continue to reject this opcode through opcode_is_valid().
     localparam logic [3:0] OP_MAC8  = 4'hb;
+    // Reserved for the future experimental DOT4ACC core. Defining the encoding
+    // does not make it executable: shared validity and operand-use predicates
+    // intentionally continue to reject it.
+    localparam logic [3:0] OP_DOT4ACC = 4'hc;
 
     localparam logic [2:0] ALU_ADD = 3'b000;
     localparam logic [2:0] ALU_SUB = 3'b001;

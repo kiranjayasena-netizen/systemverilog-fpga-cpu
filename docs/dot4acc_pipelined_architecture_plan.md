@@ -1,7 +1,8 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: architecture planning only. This document does not assign an opcode or
-change RTL, pipeline state, hazards, testbenches, or implementation flows.
+Status: Stage A1 encoding reservation and simulation-only arithmetic reference
+infrastructure are complete. `OP_DOT4ACC = 4'hc` is reserved, but no CPU core
+accepts or executes it. No DOT pipeline or execution integration exists.
 
 ## Executive summary
 
@@ -438,6 +439,11 @@ and `0xfffffff2` dot-product result.
 
 ### Stage A: encoding and reference contract
 
+Stage A1 status: complete. Opcode `4'hc` is reserved in the shared package
+without adding it to shared validity predicates. The canonical encoder,
+explicit-width arithmetic reference, independent sequential comparison model,
+and historical-core invalid-opcode coverage are integrated into XSim.
+
 - Files: `docs/isa.md`, `rtl/cpu_defs_pkg.sv`, a new focused DOT testbench, and
   the Phase 12 invalid-opcode case.
 - Work: reserve `4'hc`, add canonical encoder/reference helpers and all
@@ -509,11 +515,15 @@ and `0xfffffff2` dot-product result.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Exact first implementation task
+## Stage A1 completion and exact Stage A2 recommendation
 
-Stage A1 is the only first task: reserve the still-unused `4'hc` in the future
-implementation branch, add a canonical instruction encoder and explicit-width
-signed reference function to a new focused testbench, move the existing Phase
-12 invalid-`0xc` case to `0xd`, and prove all historical cores still reject
-`0xc`. Do not add execute RTL, DSPs, pipeline state, hazards, or CPU opcode
-acceptance in that task.
+Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
+the width-explicit reference model, the independent sequential model, and
+historical-core invalid-opcode checks are verified in XSim.
+
+Stage A2 should create only an isolated `rtl/dot4acc_pipeline.sv` arithmetic
+module and matching `tb/tb_dot4acc_pipeline.sv` unit test, using the Stage A1
+reference package as the oracle. It should verify four registered products,
+the widened adder tree, exact valid latency, enable freeze, and reset at every
+stage. It must not modify or connect to a CPU core, decoder, hazard unit,
+forwarding network, writeback, or retirement path.

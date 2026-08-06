@@ -60,6 +60,9 @@ module tb_cpu_core_pipeline_full;
     int aggregate_retired;
 
     int current_retired;
+    int observed_reg_write_pulses;
+    int observed_mem_write_pulses;
+    int observed_redirect_pulses;
     bit forbidden_word [0:IMEM_DEPTH-1];
     int retire_seen [0:IMEM_DEPTH-1];
     bit allow_repeated_retire;
@@ -208,6 +211,9 @@ module tb_cpu_core_pipeline_full;
 
     task automatic start_program();
         current_retired = 0;
+        observed_reg_write_pulses = 0;
+        observed_mem_write_pulses = 0;
+        observed_redirect_pulses = 0;
         enable = 1'b1;
     endtask
 
@@ -254,6 +260,15 @@ module tb_cpu_core_pipeline_full;
         while ((current_retired < expected_retired) && (cycles < max_cycles)) begin
             step_clock();
             observe_retire(program_name);
+            if (reg_write) begin
+                observed_reg_write_pulses++;
+            end
+            if (mem_write) begin
+                observed_mem_write_pulses++;
+            end
+            if (pc_redirect) begin
+                observed_redirect_pulses++;
+            end
             cycles++;
         end
         enable = 1'b0;
@@ -466,9 +481,11 @@ module tb_cpu_core_pipeline_full;
         prepare_program();
 
         put_instr(0, instr(OP_ADDI, 5'd1, 5'd0, 5'd0, imm13_signed(10)));
-        put_instr(1, instr(4'hc,   5'd3, 5'd1, 5'd1, 13'h123));
+        // 0xd remains the generic invalid-opcode stimulus. OP_DOT4ACC is
+        // reserved at 0xc but must also remain invalid in this historical core.
+        put_instr(1, instr(4'hd,       5'd3, 5'd1, 5'd1, 13'h123));
         put_instr(2, instr(OP_ADDI,5'd2, 5'd0, 5'd0, imm13_signed(20)));
-        put_instr(3, instr(4'hf,   5'd4, 5'd2, 5'd2, 13'h456));
+        put_instr(3, instr(OP_DOT4ACC, 5'd4, 5'd2, 5'd2, 13'h456));
         put_instr(4, instr(OP_STORE,5'd0,5'd0, 5'd2, imm13_signed(0)));
         put_instr(5, instr(OP_NOP, 5'd0, 5'd0, 5'd0, 13'd0));
         forbid_retire(1);
@@ -480,6 +497,9 @@ module tb_cpu_core_pipeline_full;
         check_equal32("invalid x3 unchanged", dut.regs[3], 32'd0);
         check_equal32("invalid x4 unchanged", dut.regs[4], 32'd0);
         check_equal32("invalid data word 0", dut.data_mem_inst.mem[0], 32'd20);
+        check_equal32("invalid opcodes add no register-write pulse", observed_reg_write_pulses, 32'd2);
+        check_equal32("invalid opcodes add no memory-write pulse", observed_mem_write_pulses, 32'd1);
+        check_equal32("invalid opcodes add no redirect pulse", observed_redirect_pulses, 32'd0);
     endtask
 
     task automatic run_mixed_benchmark();

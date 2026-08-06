@@ -4621,3 +4621,56 @@ remained 457 cycles and 319 retired instructions. The post-sweep complete
 repository XSim regression also completed with exit code 0. Detailed analysis is in
 `reports/ai_mac8_boundary_sweep.md`, with compact per-run data in
 `reports/ai_mac8_boundary_sweep/results.csv`.
+
+### DOT4ACC Stage A1 Encoding And Reference Verification
+
+On 6 August 2026, Stage A1 reserved `OP_DOT4ACC = 4'hc` without adding the
+opcode to any shared or Phase 12 validity predicate. No CPU execution RTL,
+pipeline state, hazard logic, forwarding, writeback, retirement, synthesis, or
+implementation flow was added.
+
+The simulation-only package `tb/dot4acc_reference_pkg.sv` defines the canonical
+encoder and explicit-width arithmetic reference. The focused
+`tb/tb_dot4acc_reference.sv` run passed:
+
+| Test group | Checks | Failures |
+| --- | ---: | ---: |
+| Encoding, reserved-field and shared-helper checks | 14 | 0 |
+| Directed arithmetic and range checks | 36 | 0 |
+| Deterministic independent-model comparisons | 256 | 0 |
+| Total | 306 | 0 |
+
+The encoder produced `32'hc190_a000` for `rd=x3`, `rs1=x4`, `rs2=x5`, proving
+the field layout and zero reserved `[12:0]` value. A nonzero reserved field was
+flagged as non-canonical. The shared `opcode_is_valid`, `opcode_writes_rd`,
+`opcode_uses_rs1`, and `opcode_uses_rs2` helpers all continued to reject
+`OP_DOT4ACC`; opcode `4'hd` also remained invalid.
+
+Every lane is explicitly signed 8-bit, every product is signed 16-bit, pair
+sums are signed 17-bit, and the four-product sum is signed 18-bit before signed
+32-bit accumulation. Exhaustive extrema analysis and directed simulation
+confirmed the asymmetric mathematical range:
+
+```text
+maximum = 4 * (-128 * -128) = +65,536
+minimum = 4 * (-128 * +127) = -65,024
+```
+
+The directed cases covered zeros, all-positive and all-negative inputs,
+mixed signs, cancellation, every requested INT8 extreme pairing, both range
+extrema, nonzero/positive/negative accumulators, modulo-`2^32` wrapping, and
+distinct lane order. The canonical balanced-tree model also matched a
+separately structured sequential 64-bit model for 256 deterministic vectors.
+
+The Phase 12 invalid-opcode program now uses `4'hd` as its generic invalid
+instruction and separately injects reserved `OP_DOT4ACC`. Both the baseline
+and timing-optimised MAC8 cores passed 2,796 checks with zero failures. Neither
+invalid instruction retired, changed its target register, changed memory, or
+caused a redirect, jump, or branch event. The three new side-effect assertions
+account for the increase from the previous 2,793 checks; aggregate behaviour
+remained exactly 457 cycles and 319 retired instructions.
+
+Post-change focused MAC8 verification remained 83 checks with zero failures,
+29/19 baseline/MAC8 cycles, and dot-product result `0xfffffff2`. The complete
+repository XSim regression, including the new reference test, completed with
+exit code 0 in the final 295.4-second run.
