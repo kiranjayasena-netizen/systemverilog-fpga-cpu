@@ -202,6 +202,11 @@ separate frontend/branch-control family also fails. DOT4ACC planning may
 therefore proceed only as a pipelined/isolation exercise; a single-cycle
 combinational implementation is not recommended.
 
+Architecture-planning status: complete. The selected three-stage arithmetic
+pipeline, dependency policy, performance model, verification matrix, and
+staged acceptance gates are recorded in
+[`dot4acc_pipelined_architecture_plan.md`](dot4acc_pipelined_architecture_plan.md).
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Not Implemented
 
 A future instruction could treat each source register as four signed INT8
