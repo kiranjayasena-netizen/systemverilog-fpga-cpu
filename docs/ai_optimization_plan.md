@@ -227,6 +227,17 @@ increment the retired-instruction counter once. Same-`rd` chains retain II=1;
 historical cores remain unchanged. Full benchmarking and post-route timing are
 the next stage.
 
+Stage E status: complete as an architectural/simulation benchmark with no RTL
+changes. The self-checking suite passed 233 checks and recorded 48 result rows.
+At the equal nominal 100 MHz clock, the 64-element neuron measured 118 scalar,
+70 MAC8, and 27 DOT4ACC cycles; DOT4ACC achieved 237.04 MMAC/s, 4.37x speedup
+over scalar, 2.59x over MAC8, and 59.26% of its theoretical arithmetic peak.
+The 32-member same-`rd` stream retained issue/completion/retirement II=1, while
+memory-fed and interleaved-scalar measurements quantify the present
+correctness-first hold cost. Full data and controls are in
+`reports/dot4acc_stage_e_benchmark.md`. Repeatable post-route 100 MHz proof and
+bounded Fmax characterization remain Stage F.
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Issue Control Only
 
 A future instruction could treat each source register as four signed INT8

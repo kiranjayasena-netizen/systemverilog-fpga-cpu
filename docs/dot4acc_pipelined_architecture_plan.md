@@ -1,10 +1,11 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stages A1, A2, C, and D are complete. `OP_DOT4ACC = 4'hc` remains
+Status: Stages A1, A2, C, D, and E are complete. `OP_DOT4ACC = 4'hc` remains
 non-executable in every historical core. The Stage D successor
 `cpu_core_pipeline_dot4acc_wb` preserves the verified Stage C issue controls
 and adds single-port architectural writeback plus exactly-once in-order
-retirement. Post-route timing and full architectural benchmarking remain
+retirement. Stage E measures its architectural performance at an equal nominal
+100 MHz against the scalar and MAC8 implementations. Post-route timing remains
 future work.
 
 ## Executive summary
@@ -573,15 +574,28 @@ II=1 while preserving modulo-`2^32` mathematical order.
   direct forwarding-to-DSP input path. This is not placed or routed timing
   evidence.
 
-### Stage E: synthesis and DSP mapping
+### Stage E: architectural performance benchmarking — complete
 
-- Files: new experimental top, copied flow, compact reports.
-- Work: synthesize for `xc7a35tcpg236-1`; inspect primitives and registers.
-- Tests: DRC, netlist hierarchy, DSP properties, utilization, stage timing.
-- Gate: four DOT DSPs plus existing MAC8 DSP, one BRAM, no latches, explained
-  resource totals.
-- Reject if: cross-lane packing appears, multipliers map unexpectedly, or MAC8
-  mapping changes.
+- Files: `tb/tb_dot4acc_stage_e_benchmark.sv`,
+  `scripts/run_xsim_dot4acc_stage_e.ps1`, machine-readable results under
+  `reports/dot4acc_stage_e/`, and `reports/dot4acc_stage_e_benchmark.md`.
+- Controls: all scalar, MAC8, and DOT4ACC comparisons use the same signed INT8
+  data, accumulator, useful-MAC count, architectural end condition, and nominal
+  100 MHz clock. No RTL was changed.
+- Coverage: the historical four-element workload, 4–128-element scaling,
+  1–32-member same-`rd` chains, independent DOT streams, memory-fed operands,
+  conservative non-DOT holds, dependent consumers, a 64-element neuron, and an
+  optional 4x16 matrix-vector kernel.
+- Result: 233 focused checks and 48 result rows passed with zero failures.
+  The 64-element neuron measured 118 scalar, 70 MAC8, and 27 DOT4ACC cycles,
+  giving DOT4ACC 237.04 MMAC/s at the equal nominal clock, 4.37x scalar
+  speedup, 2.59x MAC8 speedup, and 59.26% arithmetic-peak utilization.
+- Long-stream evidence: the 128-element register-resident DOT chain measured
+  43 cycles, 297.67 MMAC/s, and 74.42% of the 400 MMAC/s theoretical arithmetic
+  peak. The 32-member chain retained issue, completion, and retirement II=1.
+- Limitation evidence: memory-fed 128-element execution measured 294 cycles
+  versus 43 register-resident cycles; the conservative hold, rather than the
+  arithmetic tree, dominates that sequence.
 
 ### Stage F: post-route timing
 
@@ -607,7 +621,7 @@ II=1 while preserving modulo-`2^32` mathematical order.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Stage D completion and exact next-stage recommendation
+## Stage E completion and exact next-stage recommendation
 
 Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
 the width-explicit reference model, the independent sequential model, and
@@ -622,10 +636,17 @@ PC/opcode/`rd`/result metadata is preserved. Same-`rd` chains retain issue II=1
 and retire one logical accumulated result per instruction. DOT-to-scalar
 consumers observe the committed value after the conservative hold releases.
 
-The exact next stage is full architectural benchmarking plus post-route
-timing/Fmax characterization of `cpu_core_pipeline_dot4acc_wb`: run meaningful
-packed-dot and chain workloads against scalar and MAC8 baselines, then perform
-repeatable 100 MHz implementation and a bounded Fmax sweep while reporting
-setup/hold, resource use, critical paths, and DSP register placement. Do not
-change instruction semantics or broaden into caches, DMA, scratchpads, or
-additional SIMD operations during that characterization stage.
+Stage E is complete without RTL changes. Its self-checking architectural
+benchmark harness records cycle, retirement, instruction-count, throughput,
+dependency, memory-feed, and hold-policy measurements in CSV form. The Markdown
+report tables match that data and the plots are derived from it. Historical 29-cycle
+scalar and 19-cycle MAC8 results are reproduced for the exact original
+four-element workload; the equivalent DOT4ACC program measures 16 cycles and
+the same `0xfffffff2` result.
+
+The exact Stage F recommendation is limited to repeatable post-route timing
+closure of `cpu_core_pipeline_dot4acc_wb`: prove implementation at 100 MHz,
+perform a bounded Fmax characterization, report setup and hold analysis,
+identify critical paths, confirm placed resources, and verify DSP input-register
+placement. Stage F must not change instruction semantics or broaden into CPU
+optimization, caches, DMA, scratchpads, or additional SIMD operations.

@@ -4886,3 +4886,58 @@ registered issue boundary remains ahead of the multipliers. The four ordinary
 synthesis warnings are the expected unused low address bits on the two
 word-addressed BRAM interfaces. This unconstrained exposed-core synthesis is
 resource and structure evidence only, not post-route timing or Fmax evidence.
+
+### DOT4ACC Stage E Architectural Performance Benchmarking
+
+On 7 August 2026, Stage E added a self-checking three-core benchmark harness,
+`tb/tb_dot4acc_stage_e_benchmark.sv`, without changing any RTL. It instantiates
+the committed timing-optimised core for scalar and MAC8 programs and the
+committed Stage D core for DOT4ACC. Every direct comparison uses the same
+signed INT8 operands, initial accumulator, useful INT8 MAC count, 10 ns clock,
+and final STORE retirement boundary. The reference package supplies the DOT
+arithmetic oracle. The measured cycle count begins at the first enabled edge
+after reset/preload and ends on the enabled edge that retires the final STORE.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 233 |
+| Failures | 0 |
+| Machine-readable result rows | 48 |
+| Historical workload result | `0xfffffff2` |
+| Historical scalar cycles/instructions | 29 / 24 |
+| Historical MAC8 cycles/instructions | 19 / 14 |
+| Equivalent DOT4ACC cycles/instructions | 16 / 6 |
+| Longest same-`rd` chain | 32 DOTs, II=1 |
+| Deterministic vector range | 4–128 useful MACs |
+
+The primary 64-element neuron produced `0x000027a5` in all three variants.
+Scalar measured 118 cycles and 113 retired instructions, MAC8 measured 70 and
+65, and DOT4ACC measured 27 and 17. At the equal nominal 100 MHz clock these
+correspond to 54.24, 91.43, and 237.04 MMAC/s. DOT4ACC therefore measured
+4.37x speedup over scalar, 2.59x over MAC8, and 59.26% of its 400 MMAC/s
+theoretical arithmetic peak. The 128-element register-resident chain reached
+297.67 MMAC/s and 74.42% peak utilization in 43 cycles.
+
+The focused suite also verified independent DOT streams, per-member chain
+results, memory-fed vectors, interleaved independent scalar work, and
+DOT-to-ADD/STORE/taken-BEQ consumers. A 128-element memory-fed workload took
+294 cycles versus 43 register-resident cycles. Interleaving one independent
+ADDI after every DOT made the issue interval seven rather than one and added
+six cycles per gap under the intentional conservative hold policy. The
+optional 4x16 matrix-vector kernel produced all four expected outputs and
+measured 114 scalar, 70 MAC8, and 27 DOT4ACC cycles.
+
+The source data are `reports/dot4acc_stage_e/results.csv`; the reproducible
+plots and detailed interpretation are in
+`reports/dot4acc_stage_e_benchmark.md`. All throughput values are same-clock
+architectural/simulation results at a nominal 100 MHz. They are not board,
+post-route timing, Fmax, power, or complete neural-network inference claims.
+
+`scripts/run_xsim_regression.ps1` runs Stage E after Stages A1, A2, C, and D
+and before the historical MAC8/Phase 12 suite. The complete post-change XSim
+regression passed with exit code 0 in 310.2 seconds. Historical invariant
+results remain Stage A1 306/0, Stage A2 2,859/0, Stage C 1,468/0, Stage D
+3,945/0, focused MAC8 83/0 with 29/19 cycles and `0xfffffff2`, and Phase 12
+2,796/0 with 457 aggregate cycles and 319 retired instructions.

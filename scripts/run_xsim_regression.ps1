@@ -295,6 +295,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_dot4acc_wb_sim"
 
 Invoke-XsimTest `
+    -Name "Stage E DOT4ACC same-clock architectural performance benchmarks" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "tb/dot4acc_reference_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/dot4acc_pipeline.sv", "rtl/cpu_core_pipeline_mac8_timingopt.sv", "rtl/cpu_core_pipeline_dot4acc_wb.sv", "tb/tb_dot4acc_stage_e_benchmark.sv") `
+    -Top "tb_dot4acc_stage_e_benchmark" `
+    -Snapshot "tb_dot4acc_stage_e_benchmark_sim"
+
+Invoke-XsimTest `
     -Name "Phase 12 full pipelined CPU custom-ISA verification" `
     -Sources @("rtl/cpu_defs_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/cpu_core_pipeline_full.sv", "tb/tb_cpu_core_pipeline_full.sv") `
     -Top "tb_cpu_core_pipeline_full" `
