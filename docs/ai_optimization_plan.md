@@ -219,6 +219,14 @@ younger non-DOT holds, redirects, and reset flushing are verified. DOT results
 remain observation-only: architectural writeback and retirement are absent and
 reserved for Stage D, while every historical core remains unchanged.
 
+Stage D status: complete in the separate experimental
+`cpu_core_pipeline_dot4acc_wb`. Eligible DOT completions share the existing
+single register-file write port through collision-asserted arbitration, carry
+aligned PC/opcode/`rd`/result metadata, write and retire exactly once, and
+increment the retired-instruction counter once. Same-`rd` chains retain II=1;
+historical cores remain unchanged. Full benchmarking and post-route timing are
+the next stage.
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Issue Control Only
 
 A future instruction could treat each source register as four signed INT8

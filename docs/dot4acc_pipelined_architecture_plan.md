@@ -1,11 +1,11 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stages A1, A2, and C are complete. `OP_DOT4ACC = 4'hc` remains
-non-executable in every historical core. The copied experimental core
-`cpu_core_pipeline_dot4acc_issue` decodes canonical encodings, captures ready
-operands at a registered issue boundary, tracks dependencies, and exposes
-ordered arithmetic completions for verification. It intentionally has no
-DOT4ACC architectural writeback or retirement; those remain Stage D work.
+Status: Stages A1, A2, C, and D are complete. `OP_DOT4ACC = 4'hc` remains
+non-executable in every historical core. The Stage D successor
+`cpu_core_pipeline_dot4acc_wb` preserves the verified Stage C issue controls
+and adds single-port architectural writeback plus exactly-once in-order
+retirement. Post-route timing and full architectural benchmarking remain
+future work.
 
 ## Executive summary
 
@@ -15,11 +15,12 @@ the existing decode/forwarding paths before the four multipliers. The three
 arithmetic stages register: (1) four signed 16-bit products, (2) one signed
 18-bit balanced-tree result, and (3) the 32-bit accumulated result.
 
-The issue register plus arithmetic stages occupy four cycles. In the Stage C
-experiment, the result and aligned destination are observable three advancing
-clocks after issue acceptance but are neither written nor retired. Independent
-or contiguous same-accumulator DOT4ACC instructions can be accepted with an
-initiation interval (II) of one.
+The issue register plus arithmetic stages occupy four cycles. A result and its
+aligned PC/opcode/destination metadata are observable three advancing clocks
+after issue acceptance and are consumed for architectural writeback and
+retirement on the fourth advancing edge. Independent or contiguous
+same-accumulator DOT4ACC instructions retain an initiation interval (II) of
+one.
 
 Younger scalar, memory, and control instructions remain held until all older
 DOT4ACC operations complete. Consecutive DOT4ACC operations may issue. This
@@ -528,14 +529,49 @@ zero and produces raw `doti`. Ordered observation computes `A1=A0+dot0`, then
 `A2=A1+dot1`, then `A3=A2+dot2`. Consecutive completions make this recurrence
 II=1 while preserving modulo-`2^32` mathematical order.
 
-### Stage D: writeback and retirement
+### Stage D: writeback and retirement — complete
 
-- Files: experimental core/testbench, new program image, verification notes.
-- Work: mutually exclusive write/retire selector, counters, `x0`, observations.
-- Tests: focused DOT program, MAC8/scalar equivalence, MAC8 focused regression,
-  Phase 12 regression, and complete repository XSim regression.
-- Gate: no port collision; ordered retirement; all legacy results unchanged.
-- Reject if: any legacy count changes or a valid instruction is lost/duplicated.
+- Files: `rtl/cpu_core_pipeline_dot4acc_wb.sv`,
+  `tb/tb_cpu_core_pipeline_dot4acc_wb.sv`, and
+  `programs/dot4acc_stage_d.mem`. The Stage C core and all historical cores
+  remain unchanged.
+- Write-port arbitration: `normal_wb_valid` represents a writable MEM/WB
+  result and `dot_wb_valid` represents an eligible, non-`x0` DOT completion.
+  One explicit selector drives the existing register-file write enable,
+  address, and data. The requests are structurally mutually exclusive: an
+  immediately older normal instruction writes at least three enabled edges
+  before DOT architectural completion, and the conservative hold prevents a
+  younger non-DOT from reaching MEM/WB. A simulation assertion rejects any
+  violation; no priority-based loss mechanism is used.
+- Architectural completion: issue acceptance at edge `I` produces arithmetic
+  observation at `I+3` and exactly one writeback/retirement event at `I+4`.
+  Global disable freezes the completion and defers consumption; reset flushes
+  it. The retirement event carries the original PC, opcode, `rd`, logical
+  result, valid state, and write eligibility.
+- `x0`: a valid `DOT4ACC x0,...` is computed, retires, and increments the
+  retired-instruction counter once, but never requests the write port and
+  never opens or continues an accumulator chain.
+- Chains: Stage C already exposes one ordered logical result for every chain
+  member. Stage D writes and retires `A1`, `A2`, ... on consecutive enabled
+  edges, so every instruction has defined architectural completion and the
+  final register value is the full recurrence. Issue II remains one.
+- Consumer visibility: the younger non-DOT hold includes the completion slot
+  through its consumption edge. A released scalar, STORE, or branch therefore
+  reads the newly committed register value naturally; no additional global
+  DOT-to-scalar forwarding mux is required. Waiting DOT-only operands retain
+  the Stage C completion forwarding path.
+- Verification: the focused Stage D test passed 3,945 checks with zero
+  failures. It accepted 140 DOTs, retired 133, and accounted for seven reset
+  flushes. Signed arithmetic, `x0`, normal/DOT arbitration, independent and
+  same-`rd` II=1 streams, dependent scalar and DOT consumers, redirects,
+  reset, completion freeze, and 520-cycle mixed stress all passed. The compact
+  executable program retired a two-DOT chain and stored `0x000000ac` in 18
+  preliminary functional cycles.
+- Optional synthesis-only structure: 2,162 LUTs, 2,471 FFs, two RAMB18E1s,
+  five DSP48E1s, and zero latches, with zero errors and zero critical warnings.
+  All four DOT DSPs retain `AREG=1` and `BREG=1`, so Stage D has not created a
+  direct forwarding-to-DSP input path. This is not placed or routed timing
+  evidence.
 
 ### Stage E: synthesis and DSP mapping
 
@@ -571,24 +607,25 @@ II=1 while preserving modulo-`2^32` mathematical order.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Stage C completion and exact Stage D recommendation
+## Stage D completion and exact next-stage recommendation
 
 Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
 the width-explicit reference model, the independent sequential model, and
 historical-core invalid-opcode checks are verified in XSim.
 
 Stage A2 is complete as an isolated, three-stage, II=1 arithmetic pipeline.
-Stage C is complete in the copied experimental core: forwarded operands end at
-the issue register, fixed-depth comparisons cover every in-flight destination,
-the completion-side chain recurrence sustains same-`rd` II=1, and conservative
-holds plus redirect/reset rules preserve age order. Completion is observation
-only, so this is not yet a fully executable instruction implementation.
+Stage C remains complete in its copied issue-only core. Stage D is complete in
+the separate writeback successor: one collision-asserted selector drives the
+single register-file write port, every eligible completion writes once, every
+valid completion retires and increments the counter once, and aligned
+PC/opcode/`rd`/result metadata is preserved. Same-`rd` chains retain issue II=1
+and retire one logical accumulated result per instruction. DOT-to-scalar
+consumers observe the committed value after the conservative hold releases.
 
-The exact Stage D recommendation is to add only a mutually exclusive selector
-between normal MEM/WB and eligible DOT completion for the existing single
-register-file write port, then add one in-order DOT retirement event carrying
-the aligned PC/opcode/`rd`/result metadata. Prove that normal and DOT writes can
-never collide under the Stage C hold policy, suppress `rd == x0` writes, update
-retirement/performance counters exactly once, and forward the newly committed
-value only where required after hold release. Do not broaden Stage D into new
-issue policy, arithmetic, memory, or out-of-order machinery.
+The exact next stage is full architectural benchmarking plus post-route
+timing/Fmax characterization of `cpu_core_pipeline_dot4acc_wb`: run meaningful
+packed-dot and chain workloads against scalar and MAC8 baselines, then perform
+repeatable 100 MHz implementation and a bounded Fmax sweep while reporting
+setup/hold, resource use, critical paths, and DSP register placement. Do not
+change instruction semantics or broaden into caches, DMA, scratchpads, or
+additional SIMD operations during that characterization stage.

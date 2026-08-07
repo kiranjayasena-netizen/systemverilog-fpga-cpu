@@ -4813,3 +4813,76 @@ that the CPU forwarding network ends at the issue register rather than driving
 the multipliers combinationally. The four ordinary warnings cover unused low
 address bits on the two word-addressed memories. This unconstrained exposed-core
 synthesis is resource/structure evidence only, not placement or timing evidence.
+
+### DOT4ACC Stage D Architectural Writeback And Retirement Verification
+
+On 7 August 2026, Stage D added the separate experimental successor
+`rtl/cpu_core_pipeline_dot4acc_wb.sv`, its self-checking architectural testbench
+`tb/tb_cpu_core_pipeline_dot4acc_wb.sv`, and compact executable image
+`programs/dot4acc_stage_d.mem`. The committed Stage C issue-only core, the
+Stage A2 arithmetic module, and every historical CPU core remain unchanged.
+
+The existing single register-file write port now has explicit normal MEM/WB and
+DOT completion request predicates. The Stage C hold policy makes these requests
+structurally mutually exclusive: older normal work drains before a DOT reaches
+architectural completion, and younger normal work remains held. An assertion
+rejects either a write-port or retirement collision, so no result depends on a
+lossy priority choice. Eligible nonzero DOT destinations write on the same
+enabled edge that consumes the completion. A valid `rd=x0` DOT still retires
+and increments the instruction counter once but never enables register write.
+
+PC, opcode, destination, eligibility, chain state, and arithmetic data advance
+in lockstep. Integrated issue at advancing edge `I` remains observable at
+`I+3` and is written/retired exactly once at `I+4`. A disabled completion is
+held stable and consumed once after resume; reset discards it. Every same-`rd`
+chain member exposes, writes, and retires its own logical `A1`, `A2`, ... value
+on consecutive enabled edges, preserving issue II=1 and program order.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 3,945 |
+| Failures | 0 |
+| Accepted DOT transactions | 140 |
+| Arithmetic completions observed | 135 |
+| DOT instructions retired | 133 |
+| DOT register writes | 132 |
+| Intentionally reset-flushed before retirement | 7 |
+| Younger DOT cancellations before issue | 26 |
+| Mixed-control stress length | 520 wall-clock cycles |
+
+The two arithmetic completions beyond the retirement total were deliberately
+reset while awaiting architectural consumption; neither wrote nor retired.
+The scoreboard accounted for all 140 accepted transactions as 133 exactly-once
+retirements or seven reset flushes. Directed checks covered signed boundaries
+and wraparound, canonical decode, result/PC/opcode/`rd` alignment, `x0`, older
+ADD and LOAD writeback, independent and eight-member same-`rd` streams,
+DOT-to-DOT dependencies, LOAD/ALU-to-DOT forwarding, DOT-to-ADD/SUB/STORE/BEQ
+visibility, taken/not-taken redirects, reset, and completion-cycle enable
+freezes. The retired-instruction counter was checked on every clock against
+the exact normal-or-DOT retirement event equation.
+
+The executable program loads two packed inputs and an accumulator, executes a
+two-instruction same-`rd` chain, and stores the result. It produced and stored
+`0x000000ac`; the focused functional run reached the STORE retirement in 18
+enabled cycles. This is preliminary correctness evidence, not a performance or
+post-route timing claim.
+
+`scripts/run_xsim_regression.ps1` runs Stage D after Stage C and before the
+historical MAC8/CPU suite. The complete post-change XSim regression passed with
+exit code 0 in 316.4 seconds. Historical invariant results remain Stage A1
+306/0, Stage A2 2,859/0, Stage C 1,468/0, focused MAC8 83/0 with 29/19 cycles
+and `0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate cycles and 319 retired
+instructions. Optional Stage D synthesis is structural evidence only and is
+recorded separately if run; no post-route timing claim is made here.
+
+The optional isolated Vivado 2026.1 synthesis of
+`cpu_core_pipeline_dot4acc_wb` for `xc7a35tcpg236-1` completed with zero errors,
+zero critical warnings, and zero latches. It reported 2,162 LUTs, 2,471 FFs,
+two RAMB18E1s, and five DSP48E1s. The five DSPs are the existing MAC8 DSP plus
+four DOT DSPs; every DOT DSP reports `AREG=1` and `BREG=1`, confirming that the
+registered issue boundary remains ahead of the multipliers. The four ordinary
+synthesis warnings are the expected unused low address bits on the two
+word-addressed BRAM interfaces. This unconstrained exposed-core synthesis is
+resource and structure evidence only, not post-route timing or Fmax evidence.
