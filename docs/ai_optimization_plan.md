@@ -238,6 +238,13 @@ correctness-first hold cost. Full data and controls are in
 `reports/dot4acc_stage_e_benchmark.md`. Repeatable post-route 100 MHz proof and
 bounded Fmax characterization remain Stage F.
 
+Stage F status: complete without CPU or DOT RTL changes. Under the established
+default Vivado 2026.1 flow, the fixed Stage D/E core passes 98 MHz in 5/5 clean
+routes and fails setup at 99 MHz and 100 MHz in 5/5 routes each; hold and pulse
+width pass throughout. All four DOT DSPs retain `AREG=1` and `BREG=1`, and the
+absolute limiting paths are DOT chain/dependency plus branch/redirect/frontend
+control rather than DOT arithmetic. See `reports/dot4acc_stage_f_timing.md`.
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Issue Control Only
 
 A future instruction could treat each source register as four signed INT8

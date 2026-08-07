@@ -4941,3 +4941,63 @@ regression passed with exit code 0 in 310.2 seconds. Historical invariant
 results remain Stage A1 306/0, Stage A2 2,859/0, Stage C 1,468/0, Stage D
 3,945/0, focused MAC8 83/0 with 29/19 cycles and `0xfffffff2`, and Phase 12
 2,796/0 with 457 aggregate cycles and 319 retired instructions.
+
+### DOT4ACC Stage F Post-Route Timing Characterisation
+
+On 7 August 2026, Stage F added the board-only
+`fpga_top_pipeline_dot4acc_wb` implementation target and reusable default-flow
+Vivado scripts. The wrapper instantiates the unchanged Stage D/E core; no CPU,
+DOT arithmetic, issue, chain, forwarding, writeback, retirement, or benchmark
+RTL changed.
+
+The flow uses Vivado 2026.1, `xc7a35tcpg236-1`, the real Basys 3 XDC and a
+per-run `sys_clk_pin` period override. Each repetition is a fresh deterministic
+Vivado process with its own implementation directory. Commands and directives
+match the historical MAC8 default method: default `synth_design`, `opt_design`,
+`place_design`, and `route_design`, with no `phys_opt_design`.
+
+Fifteen complete routes established the setup boundary:
+
+| Frequency | Runs passing | Setup WNS | Setup TNS | Failing setup endpoints | Hold WNS | Pulse-width WNS |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 98 MHz | 5/5 | +0.341 ns | 0.000 ns | 0 | +0.129 ns | +4.602 ns |
+| 99 MHz | 0/5 | -0.274 ns | -11.476 ns | 109 | +0.037 ns | +4.550 ns |
+| 100 MHz | 0/5 | -0.348 ns | -2.091 ns | 6 | +0.058 ns | +4.500 ns |
+
+All 15 implementations fully routed, generated bitstreams, and had zero hold
+or pulse-width failing endpoints. The fixed DUT therefore does not meet the
+intended 100 MHz constraint under this flow. Its highest repeatable passing
+frequency is 98 MHz and the immediately higher repeatable failing frequency is
+99 MHz. There was no isolated passing result above 98 MHz.
+
+The 98 and 100 MHz worst setup paths begin at the data BRAM, cross LOAD
+writeback/forwarding and BEQ/redirect cancellation logic, and end at DOT chain
+state reset pins. The 99 MHz worst path begins in ID/EX dependency metadata and
+ends at the frontend PC clock enable after dependency/branch/redirect control.
+The four-DSP DOT arithmetic is not on an absolute worst path: its worst
+through-DSP slack is +0.726 ns at 98 MHz, +0.647 ns at 99 MHz, and +0.693 ns at
+100 MHz. DOT result writeback data is likewise absent from the absolute worst
+paths. At 99 MHz the inherited MAC8 DSP path is also failing at -0.256 ns.
+
+Routed 98 MHz utilization is 1,810 slice LUTs, 1,705 slice FFs, two RAMB18E1s,
+zero RAMB36E1s, five DSP48E1s, one BUFG, and zero latches. All four DOT DSPs
+retain `AREG=1` and `BREG=1`; pair cells have `MREG=1/PREG=1`, while product
+cells have `MREG=0/PREG=1`. The five total DSPs remain one MAC8 plus four DOT.
+
+Constraint review reports one internal clock, zero no-clock pins, zero
+unconstrained internal endpoints, zero clock interaction problems, zero
+combinational loops, and zero latch loops. The two missing input delays and 16
+missing output delays belong to asynchronous board controls and LEDs; external
+I/O timing is excluded from the internal CPU Fmax claim. Methodology warnings
+are the documented BRAM output-register, board-I/O-delay, and intentional clock
+override messages. Every recorded run has zero errors and zero critical
+warnings, and post-route DRC reports no related violations.
+
+The pre-change Stage D test passed 3,945 checks and Stage E passed 233 checks
+with 48 result rows. The complete post-change XSim regression passed with exit
+code 0 in 340.7 seconds. Historical invariants remain Stage A1 306/0, Stage A2
+2,859/0, Stage C 1,468/0, Stage D 3,945/0, Stage E 233/0, focused MAC8 83/0
+with 29/19 cycles and `0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate
+cycles and 319 retired instructions. Detailed timing data and reproducibility
+instructions are in `reports/dot4acc_stage_f_timing.md` and
+`reports/dot4acc_stage_f/results.csv`.

@@ -1,12 +1,13 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stages A1, A2, C, D, and E are complete. `OP_DOT4ACC = 4'hc` remains
+Status: Stages A1, A2, C, D, E, and F are complete. `OP_DOT4ACC = 4'hc` remains
 non-executable in every historical core. The Stage D successor
 `cpu_core_pipeline_dot4acc_wb` preserves the verified Stage C issue controls
 and adds single-port architectural writeback plus exactly-once in-order
 retirement. Stage E measures its architectural performance at an equal nominal
-100 MHz against the scalar and MAC8 implementations. Post-route timing remains
-future work.
+100 MHz against the scalar and MAC8 implementations. Stage F now provides
+routed evidence: the fixed core passes 98 MHz in 5/5 default-flow runs and
+fails 99 and 100 MHz in 5/5 runs because of setup timing; hold passes throughout.
 
 ## Executive summary
 
@@ -597,20 +598,37 @@ II=1 while preserving modulo-`2^32` mathematical order.
   versus 43 register-resident cycles; the conservative hold, rather than the
   arithmetic tree, dominates that sequence.
 
-### Stage F: post-route timing
+### Stage F: post-route timing — complete
 
-- Files: new resumable sweep flow, compact CSV/report, documentation links.
-- Work: repeat 100 MHz routes first, then characterize the boundary without
-  overwriting MAC8 evidence.
-- Tests: setup/hold, routes, bitstreams, resources, path reports, XSim, and
-  publication checks.
-- Gate: every required 100 MHz run passes setup/hold with zero endpoints and no
-  material branch/MAC8 path regression.
-- Reject if: 100 MHz is not repeatable or DOT logic enters a protected path.
+- Implementation target: the board-only `fpga_top_pipeline_dot4acc_wb`
+  wrapper instantiates the unchanged Stage D/E core for `xc7a35tcpg236-1` and
+  uses the real Basys 3 XDC.
+- Flow: fresh Vivado 2026.1 processes use the historical default methodology:
+  `synth_design`, `opt_design`, `place_design`, and `route_design`, all with
+  default directives and no `phys_opt_design`.
+- Boundary: 98 MHz passes setup, hold, and pulse-width timing in 5/5 routes
+  (`+0.341 ns` WNS, `+0.129 ns` hold). The immediately higher 99 MHz point
+  fails setup in 5/5 routes (`-0.274 ns` WNS), while hold remains positive.
+- Intended clock: 100 MHz fails setup in 5/5 routes (`-0.348 ns` WNS,
+  `-2.091 ns` TNS, six endpoints) but passes hold (`+0.058 ns`) and pulse width.
+- Limiter: the absolute worst paths are DOT chain/dependency control combined
+  with LOAD forwarding and branch/redirect/frontend control. They do not pass
+  through the four DOT DSPs or DOT result writeback data. The inherited MAC8
+  DSP path is also slightly failing at 99 MHz.
+- DSP structure: all routes retain five DSP48E1s. The four DOT DSPs preserve
+  `AREG=1` and `BREG=1`; the registered issue boundary remains physically
+  represented.
+- Routed 98 MHz resources: 1,810 LUTs, 1,705 FFs, two RAMB18E1s, five
+  DSP48E1s, one BUFG, and zero latches.
+- Evidence: `reports/dot4acc_stage_f/results.csv` and
+  `reports/dot4acc_stage_f_timing.md`. Generated implementation databases are
+  excluded from version control.
 
 ## Risks and mitigations
 
-- **Tree timing:** keep logic local; add another register if 100 MHz fails.
+- **Tree timing:** Stage F proves 100 MHz fails on control paths. Any future
+  register or logic-locality change belongs to a separately verified timing
+  architecture stage.
 - **Accumulator recurrence:** allow II=1 only for contiguous chains; stall
   interleaved matching destinations.
 - **Scoreboard omissions:** compare every valid stage and assert issue safety.
@@ -621,7 +639,7 @@ II=1 while preserving modulo-`2^32` mathematical order.
 - **Valid loss/duplication:** count issue, completion, write, and retirement at
   every reset, pause, and redirect position.
 
-## Stage E completion and exact next-stage recommendation
+## Stage F completion and exact next-stage recommendation
 
 Stage A1 is complete: opcode `4'hc`, the canonical zero-reserved-field encoder,
 the width-explicit reference model, the independent sequential model, and
@@ -644,9 +662,15 @@ scalar and 19-cycle MAC8 results are reproduced for the exact original
 four-element workload; the equivalent DOT4ACC program measures 16 cycles and
 the same `0xfffffff2` result.
 
-The exact Stage F recommendation is limited to repeatable post-route timing
-closure of `cpu_core_pipeline_dot4acc_wb`: prove implementation at 100 MHz,
-perform a bounded Fmax characterization, report setup and hold analysis,
-identify critical paths, confirm placed resources, and verify DSP input-register
-placement. Stage F must not change instruction semantics or broaden into CPU
-optimization, caches, DMA, scratchpads, or additional SIMD operations.
+Stage F is complete without changing CPU or DOT arithmetic RTL. The fixed core
+does not close at the intended 100 MHz under the established default flow. It
+passes 98 MHz repeatably (5/5) and fails at both 99 and 100 MHz (5/5 each), with
+positive hold and pulse-width slack throughout. The four DOT DSPs remain
+registered and are not on the absolute worst setup path.
+
+The exact next-stage recommendation is a timing-focused architectural study of
+the measured DOT chain/dependency plus branch/redirect cancellation paths and
+the inherited MAC8 DSP path, followed by complete functional re-verification
+and repeatable 100 MHz post-route proof. Stage E's memory-feed, LOAD scheduling,
+and conservative-hold bottlenecks should be considered only after the intended
+clock is recovered.
