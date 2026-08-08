@@ -1,6 +1,7 @@
 # Pipelined DOT4ACC Architecture Plan
 
-Status: Stages A1, A2, C, D, E, and F are complete. `OP_DOT4ACC = 4'hc` remains
+Status: Stages A1, A2, C, D, E, and F are complete. Stage G has a functionally
+verified but not timing-complete G1 candidate. `OP_DOT4ACC = 4'hc` remains
 non-executable in every historical core. The Stage D successor
 `cpu_core_pipeline_dot4acc_wb` preserves the verified Stage C issue controls
 and adds single-port architectural writeback plus exactly-once in-order
@@ -624,6 +625,27 @@ II=1 while preserving modulo-`2^32` mathematical order.
   `reports/dot4acc_stage_f_timing.md`. Generated implementation databases are
   excluded from version control.
 
+### Stage G: timing-architecture recovery — partial
+
+- Experimental successor: `cpu_core_pipeline_dot4acc_timingopt`, with a
+  matching Basys wrapper and focused testbench. The Stage D core remains the
+  functional reference and is unchanged.
+- G1 hypothesis: the late `redirect_taken` input to DOT chain-state reset was
+  redundant because the existing decoded non-DOT contiguity boundary closes a
+  chain before a branch/jump EX redirect resolves. G1 removed only that
+  chain-state dependency and added the DOT/non-redirect assertion.
+- G1 focused verification passed 4,258 checks with zero failures. Stage E cycle
+  invariants remain N=64 = 27 cycles, N=128 = 43 cycles, and same-rd II=1.
+- G1 routed 100 MHz WNS improved from `-0.348 ns` to `-0.004 ns` and removed
+  the original BRAM→BEQ→redirect→DOT-chain endpoint. The new limiter is the
+  inherited MAC8 BRAM→DSP→EX/MEM path. G1 is not a 100 MHz pass and has not
+  received a five-run pass claim.
+- G2 qualified DOT completion forwarding with `id_ex_is_dot`; it remained
+  functionally correct but worsened routed WNS to `-0.181 ns` and was rejected.
+  The retained candidate is G1.
+- Stage G is therefore not timing-complete. No Stage H memory-feed or Stage I
+  conservative-hold work is started.
+
 ## Risks and mitigations
 
 - **Tree timing:** Stage F proves 100 MHz fails on control paths. Any future
@@ -668,9 +690,8 @@ passes 98 MHz repeatably (5/5) and fails at both 99 and 100 MHz (5/5 each), with
 positive hold and pulse-width slack throughout. The four DOT DSPs remain
 registered and are not on the absolute worst setup path.
 
-The exact next-stage recommendation is a timing-focused architectural study of
-the measured DOT chain/dependency plus branch/redirect cancellation paths and
-the inherited MAC8 DSP path, followed by complete functional re-verification
-and repeatable 100 MHz post-route proof. Stage E's memory-feed, LOAD scheduling,
-and conservative-hold bottlenecks should be considered only after the intended
-clock is recovered.
+The exact next-stage recommendation is one narrow timing study of the inherited
+MAC8 BRAM→DSP→EX/MEM path, reusing proven MAC8 timing techniques only if the
+29/19-cycle benchmark and all DOT invariants remain unchanged. Stage E's
+memory-feed, LOAD scheduling, and conservative-hold bottlenecks should be
+considered only after repeatable 100 MHz closure is recovered.

@@ -1,0 +1,22 @@
+g1_100mhz worst routed setup path
+SLACK: -0.004
+STARTPOINT_PIN: cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+ENDPOINT_PIN: cpu_inst/ex_mem_reg_reg[alu_result][9]/D
+ENDPOINT_CLOCK: sys_clk_pin
+DATAPATH_DELAY: 9.915
+DATAPATH_LOGIC_DELAY: 6.667
+DATAPATH_NET_DELAY: 3.248
+LOGIC_LEVELS: 4
+UNCERTAINTY: 0.035
+
+Path pins, cells, placement and nets
+cpu_inst/data_mem_inst/mem_reg/DOADO[7] | cell=cpu_inst/data_mem_inst/mem_reg | ref=RAMB18E1 | loc=RAMB18_X0Y2 | bel=RAMB18E1.RAMB18E1 | net=cpu_inst/data_mem_inst/read_data[7]
+cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2 | cell=cpu_inst/data_mem_inst/product0_reg_reg_i_27 | ref=LUT5 | loc=SLICE_X11Y7 | bel=SLICEL.D6LUT | net=cpu_inst/data_mem_inst/read_data[7]
+cpu_inst/data_mem_inst/product0_reg_reg_i_27/O | cell=cpu_inst/data_mem_inst/product0_reg_reg_i_27 | ref=LUT5 | loc=SLICE_X11Y7 | bel=SLICEL.D6LUT | net=cpu_inst/data_mem_inst/id_ex_reg_reg[operand_a][7]
+cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I2 | cell=cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9 | ref=LUT5 | loc=SLICE_X11Y7 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_3
+cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O | cell=cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9 | ref=LUT5 | loc=SLICE_X11Y7 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/packed_a[4]
+cpu_inst/ex_alu_result0/A[28] | cell=cpu_inst/ex_alu_result0 | ref=DSP48E1 | loc=DSP48_X0Y4 | bel=DSP48E1.DSP48E1 | net=cpu_inst/ex_operand_a[7]
+cpu_inst/ex_alu_result0/P[9] | cell=cpu_inst/ex_alu_result0 | ref=DSP48E1 | loc=DSP48_X0Y4 | bel=DSP48E1.DSP48E1 | net=cpu_inst/ex_alu_result0_n_96
+cpu_inst/data_mem_inst/ex_mem_reg[alu_result][9]_i_1/I4 | cell=cpu_inst/data_mem_inst/ex_mem_reg[alu_result][9]_i_1 | ref=LUT6 | loc=SLICE_X15Y12 | bel=SLICEL.C6LUT | net=cpu_inst/data_mem_inst/P[1]
+cpu_inst/data_mem_inst/ex_mem_reg[alu_result][9]_i_1/O | cell=cpu_inst/data_mem_inst/ex_mem_reg[alu_result][9]_i_1 | ref=LUT6 | loc=SLICE_X15Y12 | bel=SLICEL.C6LUT | net=cpu_inst/data_mem_inst/D[1]
+cpu_inst/ex_mem_reg_reg[alu_result][9]/D | cell=cpu_inst/ex_mem_reg_reg[alu_result][9] | ref=FDRE | loc=SLICE_X15Y12 | bel=SLICEL.CFF | net=cpu_inst/ex_alu_result[9]

@@ -245,6 +245,14 @@ width pass throughout. All four DOT DSPs retain `AREG=1` and `BREG=1`, and the
 absolute limiting paths are DOT chain/dependency plus branch/redirect/frontend
 control rather than DOT arithmetic. See `reports/dot4acc_stage_f_timing.md`.
 
+Stage G status: partial timing recovery. The isolated G1 successor preserves
+all Stage D/E behavior and passes 4,258 focused checks. Its clean 100 MHz route
+improves WNS from `-0.348 ns` to `-0.004 ns` and removes the original DOT
+chain-control endpoint, exposing the inherited MAC8 BRAM-to-DSP path. A second
+completion-forwarding qualification candidate worsened WNS to `-0.181 ns` and
+was rejected. Repeatable 100 MHz closure remains open; memory-feed and hold
+policy optimization remain deferred.
+
 ## Phase 3: Packed INT8 DOT4ACC Proposal — Issue Control Only
 
 A future instruction could treat each source register as four signed INT8

@@ -295,6 +295,12 @@ Invoke-XsimTest `
     -Snapshot "tb_cpu_core_pipeline_dot4acc_wb_sim"
 
 Invoke-XsimTest `
+    -Name "Stage G1 DOT4ACC timing-recovery candidate verification" `
+    -Sources @("rtl/cpu_defs_pkg.sv", "tb/dot4acc_reference_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/dot4acc_pipeline.sv", "rtl/cpu_core_pipeline_dot4acc_timingopt.sv", "tb/tb_cpu_core_pipeline_dot4acc_timingopt.sv") `
+    -Top "tb_cpu_core_pipeline_dot4acc_timingopt" `
+    -Snapshot "tb_cpu_core_pipeline_dot4acc_timingopt_sim"
+
+Invoke-XsimTest `
     -Name "Stage E DOT4ACC same-clock architectural performance benchmarks" `
     -Sources @("rtl/cpu_defs_pkg.sv", "tb/dot4acc_reference_pkg.sv", "rtl/bram_instr_mem.sv", "rtl/bram_data_mem.sv", "rtl/dot4acc_pipeline.sv", "rtl/cpu_core_pipeline_mac8_timingopt.sv", "rtl/cpu_core_pipeline_dot4acc_wb.sv", "tb/tb_dot4acc_stage_e_benchmark.sv") `
     -Top "tb_dot4acc_stage_e_benchmark" `

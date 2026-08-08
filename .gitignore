@@ -45,6 +45,7 @@ reports/ai_mac8_timingopt/
 reports/ai_mac8_validonly_fmax/runs/
 reports/ai_mac8_boundary_sweep/runs/
 reports/dot4acc_stage_f/runs/
+reports/dot4acc_stage_g/runs/
 
 # Temporary/editor files
 *.tmp

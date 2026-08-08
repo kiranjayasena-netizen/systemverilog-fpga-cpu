@@ -5001,3 +5001,39 @@ with 29/19 cycles and `0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate
 cycles and 319 retired instructions. Detailed timing data and reproducibility
 instructions are in `reports/dot4acc_stage_f_timing.md` and
 `reports/dot4acc_stage_f/results.csv`.
+
+### DOT4ACC Stage G Timing-Architecture Recovery Verification
+
+On 8 August 2026, Stage G added the isolated successor
+`cpu_core_pipeline_dot4acc_timingopt` and matching focused testbench. The Stage
+D core and all arithmetic RTL remain unchanged. G1 changes only the copied
+DOT-chain next-state dependency: decoded non-DOT contiguity closes the chain,
+without feeding the late `redirect_taken` signal into the chain-state reset.
+The candidate adds a simulation-only assertion that a valid DOT cannot also be
+an EX redirecting instruction.
+
+The G1 focused test passed 4,258 checks with zero failures. It includes the full
+Stage D architectural suite plus taken/not-taken branch chain-boundary tests,
+wrong-path cancellation, same-rd chain metadata, reset, freeze, dependencies,
+consumers, writeback, retirement, and deterministic stress. The executable
+program remains 18 cycles with result `0x000000ac`.
+
+G1's first clean default-flow post-route implementation at 100 MHz reported
+`-0.004 ns` WNS, `-0.004 ns` TNS, one setup endpoint, `+0.034 ns` hold slack,
+and `+4.500 ns` pulse-width slack. The original Stage F
+BRAM→LOAD-forwarding→BEQ→redirect→DOT-chain endpoint disappeared; the new
+worst path is the inherited MAC8 data-BRAM→DSP48E1→EX/MEM path. G1 therefore
+improves timing materially but does not satisfy repeatable 100 MHz closure.
+
+A G2 candidate qualified DOT-completion forwarding with `id_ex_is_dot`. It
+passed the same focused functional checks but worsened routed 100 MHz WNS to
+`-0.181 ns` with 26 setup endpoints and restored the DOT chain-control path as
+the limiter. G2 was rejected and reverted; the retained experimental source is
+G1.
+
+Final post-G1 full regression passed with exit code 0 in 332 seconds. Results
+remain Stage A1 306/0, Stage A2 2,859/0, Stage C 1,468/0, Stage D 3,945/0,
+Stage G1 4,258/0, Stage E 233/0, focused MAC8 83/0 with 29/19 cycles and
+`0xfffffff2`, and Phase 12 2,796/0 with 457 cycles and 319 retired
+instructions. Stage E N=64 and N=128 cycle counts remain 27 and 43, and
+same-rd DOT II remains 1.
