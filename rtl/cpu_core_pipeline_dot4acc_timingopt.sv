@@ -274,6 +274,7 @@ module cpu_core_pipeline_dot4acc_timingopt #(
     logic [31:0] ex_alu_result;
     logic signed [7:0]  ex_mac_operand_a;
     logic signed [7:0]  ex_mac_operand_b;
+    logic        [7:0]  mac8_operand_a_selected;
     logic signed [15:0] ex_mac_product;
     logic signed [31:0] ex_mac_product_ext;
     // Guide Vivado to keep the multiply-add in a DSP resource. This remains
@@ -541,11 +542,27 @@ module cpu_core_pipeline_dot4acc_timingopt #(
                                       dot_selected_accumulator;
 
 
+    // MAC8 gets a dedicated low-byte operand-A path.  The forwarding priority
+    // is identical to ex_operand_a, but avoids carrying the full shared
+    // DOT/scalar operand net into the MAC8 DSP A port.
+    always_comb begin
+        mac8_operand_a_selected = id_ex_reg.operand_a[7:0];
+        if (ex_mem_reg.valid &&
+            ex_mem_reg.reg_write &&
+            !ex_mem_reg.mem_to_reg &&
+            (ex_mem_reg.rd != 5'd0) &&
+            (ex_mem_reg.rd == id_ex_reg.rs1)) begin
+            mac8_operand_a_selected = ex_mem_reg.alu_result[7:0];
+        end else if (wb_writes_rd && (mem_wb_reg.rd == id_ex_reg.rs1)) begin
+            mac8_operand_a_selected = wb_write_data[7:0];
+        end
+    end
+
     // MAC8 consumes the low byte of each source as a signed two's-complement
     // INT8 value. The full 16-bit product is sign-extended before it is added
     // to the 32-bit accumulator; only the final 32-bit sum can wrap.
     always_comb begin
-        ex_mac_operand_a  = $signed(ex_operand_a[7:0]);
+        ex_mac_operand_a  = $signed(mac8_operand_a_selected);
         ex_mac_operand_b  = $signed(ex_operand_b_reg[7:0]);
         ex_mac_product    = ex_mac_operand_a * ex_mac_operand_b;
         ex_mac_product_ext = {{16{ex_mac_product[15]}}, ex_mac_product};
@@ -1041,6 +1058,26 @@ module cpu_core_pipeline_dot4acc_timingopt #(
     endproperty
     assert property (g1_dot_never_redirects)
         else $fatal(1, "G1 invariant violated: DOT also redirects");
+
+    // Conservative in-order DOT holding prevents a MAC8 in ID/EX from
+    // coinciding with a writable DOT completion.  Therefore the dedicated
+    // MAC8 path needs no DOT-completion mux input.
+    property g3_mac8_never_needs_dot_completion_rs1;
+        @(posedge clk) disable iff (rst)
+            (id_ex_reg.valid && (id_ex_reg.opcode == OP_MAC8)) |->
+            !(dot_complete_writable &&
+              (dot_complete_rd == id_ex_reg.rs1));
+    endproperty
+    assert property (g3_mac8_never_needs_dot_completion_rs1)
+        else $fatal(1, "G3 invariant violated: MAC8 overlaps DOT rs1 completion");
+
+    property g3_mac8_operand_a_equivalent;
+        @(posedge clk) disable iff (rst)
+            (id_ex_reg.valid && (id_ex_reg.opcode == OP_MAC8)) |->
+            (mac8_operand_a_selected == ex_operand_a[7:0]);
+    endproperty
+    assert property (g3_mac8_operand_a_equivalent)
+        else $fatal(1, "G3 invariant violated: MAC8 operand-A mismatch");
 
     // These checks are deliberately outside synthesizable behaviour. The
     // focused testbench supplies the transaction scoreboard and arithmetic

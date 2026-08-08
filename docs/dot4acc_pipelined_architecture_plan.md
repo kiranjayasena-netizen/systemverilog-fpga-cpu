@@ -695,3 +695,10 @@ MAC8 BRAM→DSP→EX/MEM path, reusing proven MAC8 timing techniques only if the
 29/19-cycle benchmark and all DOT invariants remain unchanged. Stage E's
 memory-feed, LOAD scheduling, and conservative-hold bottlenecks should be
 considered only after repeatable 100 MHz closure is recovered.
+### Stage G3.1 timing recovery
+
+The experimental timing-optimized DOT core now passes 100 MHz in five clean
+default-flow post-route implementations after isolating an 8-bit MAC8 operand-A
+selection path. DOT arithmetic, I+3 completion, I+4 retirement, and II=1 chain
+behaviour are unchanged. The next stage is memory-feed study; no such work is
+implemented here.

@@ -356,3 +356,9 @@ retimed implementation.
   saturating requantization need a separate, explicitly specified operation.
 - MAC8 is implemented only in the Phase 12 core; software must not run it on a
   historical core variant.
+### Stage G3.1 status
+
+Inherited MAC8 operand-A timing was isolated in the experimental DOT core. The
+candidate passes 100 MHz in 5/5 clean default-flow implementations while
+preserving DOT and historical MAC8 benchmark invariants. Stage H memory-feed
+optimisation remains future work.

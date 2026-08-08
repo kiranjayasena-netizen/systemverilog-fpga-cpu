@@ -162,3 +162,31 @@ they preserve the 29/19-cycle benchmark and all DOT timing invariants. Do not
 start Stage H memory-feed or Stage I hold-policy work until repeatable 100 MHz
 closure is recovered.
 
+## Stage G3.1 update
+
+G3.1 added an 8-bit MAC8-specific operand-A selection path while leaving the
+general `ex_operand_a` path unchanged. The exact G1 path was BRAM `DOADO[7]`
+at `RAMB18_X0Y2` through `ex_operand_a[7]` into MAC8 DSP
+`cpu_inst/ex_alu_result0/A[28]` at `DSP48_X0Y4`, then to the EX/MEM result
+register. It measured `9.915 ns` data delay (`6.667 ns` logic and `3.248 ns`
+routing) at `-0.004 ns` WNS.
+
+Assertions prove that valid MAC8 cannot overlap a writable DOT completion on
+`rs1`, and that the dedicated low-byte selection equals the original
+`ex_operand_a[7:0]` for valid MAC8 EX states. G3.1 passed the full functional
+regression and preserved the Stage E cycle invariants.
+
+Five clean 100 MHz implementations passed identically: WNS `+0.111 ns`, TNS
+`0.000 ns`, hold WNS `+0.084 ns`, zero setup endpoints, zero hold endpoints,
+1,818 LUTs, 1,704 FFs, two RAMB18E1s, and five DSP48E1s. The critical family
+remains BRAM -> MAC8 DSP A port -> EX/MEM, but it now passes at 100 MHz.
+
+The bounded sweep produced one-run failures at 101 MHz (`-0.230 ns`), 102 MHz
+(`-0.152 ns`), 103 MHz (`-0.107 ns`), 104 MHz (`-0.148 ns`), and 105 MHz
+(`-0.036 ns`). The 101 MHz
+follow-up repeatability run was interrupted before completion, so 100 MHz is
+the highest repeatable passing point and 101 MHz is reported as the first
+observed failing point, not a separately repeatability-certified failure.
+
+G3.1 satisfies the required 100 MHz recovery. The next stage is Stage H
+memory-feed optimisation; it is not implemented here.

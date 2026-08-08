@@ -5037,3 +5037,11 @@ Stage G1 4,258/0, Stage E 233/0, focused MAC8 83/0 with 29/19 cycles and
 `0xfffffff2`, and Phase 12 2,796/0 with 457 cycles and 319 retired
 instructions. Stage E N=64 and N=128 cycle counts remain 27 and 43, and
 same-rd DOT II remains 1.
+### Stage G3.1 inherited MAC8 timing recovery
+
+G3.1 added a dedicated 8-bit MAC8 operand-A forwarding path in the experimental
+DOT core. Full regression and Stage G focused verification passed with the
+existing invariants. Five clean default-flow implementations passed at 100 MHz
+with WNS `+0.111 ns`, TNS `0.000 ns`, and hold WNS `+0.084 ns` in every run.
+The first observed failing sweep point was 101 MHz at `-0.230 ns`; its
+follow-up repeatability run was interrupted and is not claimed as 5/5 evidence.
