@@ -28,6 +28,14 @@ Focused architectural verification passed 4,258 checks with zero failures. Regis
 
 The candidate does establish the required ordering mechanisms: an overlapped LOAD cannot commit before its older DOT, deferred completion is consumed once, and the dynamic acceptance guard is not based on PC equality alone. A future H1.2 design should target the remaining frontend/retirement serialization rather than weaken these protections.
 
+## H1.2 deferred LOAD-to-DOT forwarding
+
+H1.2 was implemented in a separate successor and added only rs1/rs2 forwarding from a valid deferred LOAD. The deferred entry remained architecturally live; forwarding did not consume it. A DOT-only exception released the scalar hold only when the ID/EX DOT was ready and had no deferred accumulator dependency. Non-DOT instructions and additional LOADs remained blocked.
+
+The focused H1.2 architectural suite passed 4,258 checks with zero failures, and the copied Stage E benchmark passed 233 checks with zero failures. However, memory-fed totals remained 42/78/150/294 cycles. N=128 therefore showed 0-cycle improvement over H1.1 and H0. The measured H1.2 decomposition remained 32 LOAD-use, 129 DOT-hold, 38 fetch/wait and 95 retirement cycles.
+
+Because the primary checkpoint `N=128 < 294` was not met, no Vivado implementation was run. H1.2 is rejected as a performance candidate, although its forwarding and coexistence assertions remain useful evidence for a future narrowly scoped refinement.
+
 ## Preserved baseline
 
 The Stage D/G3.1 RTL and DOT arithmetic remain unchanged. Stage E still passes 233 checks with the historical memory-fed results above. No H1 implementation result is claimed.
