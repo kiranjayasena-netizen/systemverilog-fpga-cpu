@@ -1,7 +1,7 @@
 import cpu_defs_pkg::*;
 import dot4acc_reference_pkg::*;
 
-module tb_dot4acc_stage_h12_benchmark;
+module tb_dot4acc_stage_h13_benchmark;
 
     localparam int unsigned IMEM_DEPTH = 256;
     localparam int unsigned DMEM_DEPTH = 256;
@@ -111,7 +111,7 @@ module tb_dot4acc_stage_h12_benchmark;
         .retired_instructions(mac_retired_instructions)
     );
 
-    cpu_core_pipeline_dot4acc_memopt_h12 #(
+    cpu_core_pipeline_dot4acc_memopt_h13 #(
         .IMEM_DEPTH(IMEM_DEPTH),
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_INIT_FILE("")
@@ -366,11 +366,11 @@ module tb_dot4acc_stage_h12_benchmark;
                 m.h13_second_load_admitted++;
             if (dot_dut.id_ex_reg.valid &&
                 (dot_dut.id_ex_reg.opcode == OP_LOAD) &&
-                dot_dut.load_overlap_reserved && dot_dut.dot_frontend_hold)
+                dot_dut.second_load_reserved && dot_dut.dot_frontend_hold)
                 m.h13_second_load_idex_held++;
             if (dot_dut.id_ex_reg.valid &&
                 (dot_dut.id_ex_reg.opcode == OP_LOAD) &&
-                dot_dut.deferred_load_valid)
+                dot_dut.second_load_reserved && dot_dut.deferred_load_valid)
                 m.h13_second_load_precompletion_held++;
             step_clock();
             // H0 deterministic priority: classify each measured enabled
