@@ -1,0 +1,5 @@
+benchmark,vector_length,cycles,load_use_cycles,dot_hold_cycles,fetch_wait_cycles,dot_retire_cycles,other_cycles,total_check,pass_fail,notes
+memory_fed,16,42,4,20,13,5,0,42,PASS,"4 LOAD-use + 20 conservative DOT-hold + 13 fetch/wait + 5 retirement"
+memory_fed,32,78,8,40,21,9,0,78,PASS,"8 LOAD-use + 40 conservative DOT-hold + 21 fetch/wait + 9 retirement"
+memory_fed,64,150,16,80,37,17,0,150,PASS,"16 LOAD-use + 80 conservative DOT-hold + 37 fetch/wait + 17 retirement"
+memory_fed,128,294,32,160,69,33,0,294,PASS,"32 LOAD-use + 160 conservative DOT-hold + 69 fetch/wait + 33 retirement"

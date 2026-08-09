@@ -21,6 +21,13 @@ module tb_dot4acc_stage_e_benchmark;
         int dots;
         int stores;
         int hold_cycles;
+        int h0_load_use_cycles;
+        int h0_dot_hold_cycles;
+        int h0_dot_issue_cycles;
+        int h0_dot_complete_cycles;
+        int h0_dot_retire_cycles;
+        int h0_fetch_wait_cycles;
+        int h0_other_cycles;
         int first_issue;
         int last_issue;
         int first_completion;
@@ -248,6 +255,13 @@ module tb_dot4acc_stage_e_benchmark;
         m.dots = 0;
         m.stores = 0;
         m.hold_cycles = 0;
+        m.h0_load_use_cycles = 0;
+        m.h0_dot_hold_cycles = 0;
+        m.h0_dot_issue_cycles = 0;
+        m.h0_dot_complete_cycles = 0;
+        m.h0_dot_retire_cycles = 0;
+        m.h0_fetch_wait_cycles = 0;
+        m.h0_other_cycles = 0;
         m.first_issue = -1;
         m.last_issue = -1;
         m.first_completion = -1;
@@ -319,7 +333,24 @@ module tb_dot4acc_stage_e_benchmark;
         dot_enable = 1'b1;
         while (!done && (timeout < max_cycles)) begin
             step_clock();
-            if (dot_frontend_hold) m.hold_cycles++;
+            // H0 deterministic priority: classify each measured enabled
+            // cycle exactly once, with event/hold causes before fetch/other.
+            if (dot_dut.load_use_stall) begin
+                m.h0_load_use_cycles++;
+            end else if (dot_frontend_hold) begin
+                m.hold_cycles++;
+                m.h0_dot_hold_cycles++;
+            end else if (dot_dut.dot_issue_accept) begin
+                m.h0_dot_issue_cycles++;
+            end else if (dot_complete_valid) begin
+                m.h0_dot_complete_cycles++;
+            end else if (dot_retire_valid) begin
+                m.h0_dot_retire_cycles++;
+            end else if (dot_dut.fetch_pending_valid || dot_dut.fetch_buffer_valid) begin
+                m.h0_fetch_wait_cycles++;
+            end else begin
+                m.h0_other_cycles++;
+            end
             if (dot_issue_valid) begin
                 if (m.first_issue < 0) m.first_issue = dot_total_cycles;
                 m.last_issue = dot_total_cycles;
@@ -669,6 +700,15 @@ module tb_dot4acc_stage_e_benchmark;
             check_equal32("memory-fed final result", m.result, expected);
             check_true("memory-fed LOAD count", m.loads == 2*k);
             check_true("memory-fed DOT count", m.dots == k);
+            $display("H0 memory N=%0d cycles=%0d load_use=%0d dot_hold=%0d dot_issue=%0d dot_complete=%0d dot_retire=%0d fetch_wait=%0d other=%0d sum=%0d",
+                     n, m.cycles, m.h0_load_use_cycles, m.h0_dot_hold_cycles,
+                     m.h0_dot_issue_cycles, m.h0_dot_complete_cycles,
+                     m.h0_dot_retire_cycles, m.h0_fetch_wait_cycles,
+                     m.h0_other_cycles,
+                     m.h0_load_use_cycles + m.h0_dot_hold_cycles +
+                     m.h0_dot_issue_cycles + m.h0_dot_complete_cycles +
+                     m.h0_dot_retire_cycles + m.h0_fetch_wait_cycles +
+                     m.h0_other_cycles);
             record_result("memory_fed", "DOT4ACC", n, n, (3*k)+1, m,
                           "", "", $sformatf("%0.6f", 25.0 * real'(n) / real'(m.cycles)),
                           $sformatf("register-resident cycle ratio=%0.6f",
