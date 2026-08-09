@@ -20,11 +20,13 @@ K LOAD-use + 5K DOT-hold + (2K+5) fetch/wait + (K+1) retirement
 
 For N=128, K=32: `32 + 160 + 69 + 33 = 294` exactly. The classifier found no unexplained residual cycles.
 
-## H1 candidate status
+## H1.1 candidate status
 
-An initial load-only overlap successor was explored, with source-register reuse allowed after DOT issue and active DOT destination/base conflicts blocked. Functional verification exposed duplicate DOT acceptance and stale operands in existing LOAD-dependent DOT tests. The candidate was rejected before implementation timing; no unsafe arbitration or architectural change was retained.
+The H1.1 successor adds an explicit dynamic ID/EX consumption token, a one-LOAD overlap reservation, and a deferred LOAD completion record. Deferred capture is based on the older DOT remaining architecturally pending, not only on a same-cycle RF collision. The normal MEM/WB payload is consumed on the capture edge.
 
-This result confirms that a safe H1 design needs an explicit accepted-DOT capture state plus a complete one-entry deferred normal-completion protocol and backpressure. Simply relaxing the younger-instruction hold is insufficient.
+Focused architectural verification passed 4,258 checks with zero failures. Register-resident Stage E checks also passed. The memory-fed cycles remained unchanged: 42, 78, 150 and 294. H1.1 therefore removed no end-to-end cycles; its category redistribution for N=128 was 32 LOAD-use, 129 DOT-hold, 38 fetch/wait and 95 retirement cycles. Because there was no material workload improvement, no Vivado implementation was run and the candidate is not retained as a performance improvement.
+
+The candidate does establish the required ordering mechanisms: an overlapped LOAD cannot commit before its older DOT, deferred completion is consumed once, and the dynamic acceptance guard is not based on PC equality alone. A future H1.2 design should target the remaining frontend/retirement serialization rather than weaken these protections.
 
 ## Preserved baseline
 
