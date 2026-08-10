@@ -137,8 +137,8 @@ T2's worst path is `cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` to
 with endpoints across ID/EX operand and accumulator reset pins and slacks from
 -0.623 to approximately -0.574 ns. T2 therefore materially improved the
 target family but did not reach 100 MHz; no repeatability runs were started.
-T2 is rejected for closure. No T3, Fmax sweep, or architectural redesign was
-started.
+T2 was rejected for 100 MHz closure at that point; a later T3 experiment and
+the final frozen-T2 frequency characterization are documented below.
 
 ## H1.3b-T3 ID/EX valid-only flush experiment
 
@@ -170,4 +170,55 @@ T3's worst path is `cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` to
 4.633 ns logic, 5.643 ns routing and 12 levels. The payload-reset endpoint
 disappeared, but the late control cone moved to the instruction field and
 included DOT-related combinational logic. T3 worsened WNS by 0.297 ns versus
-T2 and is rejected. No 5/5 run, T4, Fmax sweep or Stage I work was started.
+T2 and is rejected. No 5/5 run or T4 RTL was started from this T3 result; the
+final frozen-T2 frequency characterization is documented below.
+
+## Final Stage H timing study: T4 analysis and frozen T2 frequency
+
+The T2 top-25 report was classified before selecting a final experiment. All
+worst paths belong to one shared family: data-BRAM output clock-to-Q, operand
+and forwarding logic, DOT/branch control, then ID/EX payload/reset endpoints.
+The first endpoints are `operand_a`, followed by accumulator and other ID/EX
+fields; only later paths reach instruction-BRAM controls. The source-level
+priority is global reset, then enabled retirement/pipeline movement; inside
+the ID/EX update, `ex_redirect_taken` clears the packed `id_ex_reg`, followed
+by DOT issue stall hold, decode/non-DOT hold bubbles, normal IF/ID transfer,
+or a full bubble clear. Every architectural consumer is gated by
+`id_ex_reg.valid`, but the packed struct assignment causes Vivado to route
+the late redirect/hold cone to many payload reset pins.
+
+The final T4 hypothesis was structural separation of ID/EX validity/kill from
+payload storage: retain full global reset, update payload only on a genuine
+ID/EX transfer, and make ordinary redirect invalidate a small valid/kill state.
+The proof obligation was not met safely from the current RTL: the packed
+ID/EX fields are assigned by several sequential-priority branches, while
+payload values participate in forwarding, DOT metadata capture, second-LOAD
+ownership and debug/retirement state around the same edge. T3's valid-only
+experiment removed one clear but moved the same cone to another payload field
+and worsened WNS. Therefore no T4 RTL was created; the architecture remains
+H1.3b and the timing-equivalent implementation remains T2.
+
+The frozen T2 implementation was characterized without RTL or constraint
+changes. Five clean default-flow runs at 93 MHz all passed setup and hold:
+`WNS +0.230 ns`, `TNS 0`, setup failures `0`, hold WNS `+0.059 ns`.
+One 94 MHz run failed (`WNS -0.257 ns`, 118 setup failures), so 93 MHz is the
+highest repeatably validated frequency and 94 MHz is the nearest tested fail.
+The common 93 MHz setup path starts at
+`cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` and ends at
+`cpu_inst/id_ex_reg_reg[operand_b][16]/R` (9.878 ns data, 4.651 ns logic,
+5.227 ns routing, 12 levels). Resources were LUT 2008, FF 1812, RAMB18 2,
+DSP48 5, BUFG 1 and latches 0.
+
+| Candidate | N=128 cycles | WNS @ 100 MHz | TNS | Setup fails | Hold WNS | LUT | FF | Status |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| H1.3b T0 | 263 | -1.865 | -817.384 | 698 | +0.059 | 2007 | 1813 | rejected |
+| H1.3b-T1 | 263 | -1.525 | -537.848 | 652 | +0.059 | 1984 | 1812 | rejected |
+| H1.3b-T2 | 263 | -0.623 | -71.487 | 286 | +0.057 | 2014 | 1812 | best 100 MHz candidate |
+| H1.3b-T3 | 263 | -0.920 | -233.654 | 454 | +0.110 | 2050 | 1814 | rejected |
+| Final T2 @ 93 MHz | 263 | validated at 93 MHz | 0 | 0 | +0.059 | 2008 | 1812 | PASS 5/5 |
+
+At the validated 93 MHz clock, N=128 memory-fed throughput is
+`128/263*93 = 45.26 MMAC/s`. The architectural cycle speedup remains
+`294/263 = 1.118x`; nominal 100 MHz throughput is not claimed because 100 MHz
+did not close. Stage H is complete and frozen at H1.3b/T2 with the measured
+93 MHz PASS 5/5 result. Stage I has not begun.
