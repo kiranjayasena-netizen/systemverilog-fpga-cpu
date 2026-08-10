@@ -1,0 +1,5 @@
+benchmark,N,outputs,useful_macs,total_cycles,retired_instructions,load_count,store_count,dot4acc_count,scalar_count,branch_count,stall_cycles,mac_per_cycle,validated_mhz,mmac_per_s,result_check,expected_result,actual_result
+J1,32,1,32,94,41,16,1,8,16,0,48,0.340426,93,31.659574,PASS,000057ba,000057ba
+J1,64,1,64,182,81,32,1,16,32,0,96,0.351648,93,32.703297,PASS,000024e5,000024e5
+J1,128,1,128,358,161,64,1,32,64,0,192,0.357542,93,33.251397,PASS,000028e5,000028e5
+J2,64,2,128,331,134,64,2,32,32,0,192,0.386707,93,35.963746,PASS,000024e5|0000bf7b,000024e5|0000bf7b
