@@ -58,3 +58,84 @@ The H1.3a focused architectural suite passed 4,254 checks with zero failures, an
 | 128 | 294 | 32 | 129 | 38 | 95 | 124 | 0 | 0 |
 
 N=128 therefore improved by 0 cycles versus H0/H1.1/H1.2. The one-entry completion restriction is not yet reached by LOAD B; the dominant limitation remains the existing frontend/retirement serialization. Since the required `N=128 < 294` checkpoint was not met, no Vivado implementation was run and no second deferred entry was added. H1.3a is retained as a verified boundary experiment, not as a performance improvement.
+
+## H1.3b selective second-LOAD admission
+
+H1.3b was derived from H1.3a in separate files. It introduced an atomic `second_load_transfer_fire` event and explicit `second_load_idex_owned` state. The event consumes IF/ID LOAD B and loads ID/EX together; ownership is set once on that event. The first-load context is recognized from the live lifetime of `load_overlap_reserved`, `dot_load_completion_deferred` or `deferred_load_valid`, rather than assuming one particular flag remains asserted.
+
+The exception remains LOAD-only. Non-LOAD scalar instructions continue to be blocked. LOAD B is held in ID/EX only while the deferred entry is valid; it cannot advance to EX/MEM, launch BRAM or create a completion during that state. On release, it transfers once and the diagnostics observed exactly one EX/MEM transfer, BRAM read and completion for every admitted LOAD B.
+
+The focused H1.3b inherited suite passed 4,254 checks with zero failures and the Stage E-derived benchmark passed 233 checks with zero failures. The measured ownership and performance results were:
+
+| N | cycles | LOAD-use | DOT hold | fetch/wait | retirement | IF/ID blocked | admitted | ID/EX held | EX/MEM | BRAM | completion |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 16 | 39 | 1 | 17 | 10 | 11 | 12 | 3 | 0 | 3 | 3 | 3 |
+| 32 | 71 | 1 | 33 | 14 | 23 | 28 | 7 | 0 | 7 | 7 | 7 |
+| 64 | 135 | 1 | 65 | 22 | 47 | 60 | 15 | 0 | 15 | 15 | 15 |
+| 128 | 263 | 1 | 129 | 38 | 95 | 124 | 31 | 0 | 31 | 31 | 31 |
+
+The second LOAD was admitted 31 times at N=128, and the primary performance checkpoint was met: N=128 fell from 294 to 263 cycles, a 31-cycle reduction (1.118x speedup). At nominal 100 MHz this is approximately 48.67 MMAC/s. No deferred rs1/rs2 forwards were consumed in this benchmark; both operands were available through the ordinary path by the time DOT issue occurred. The reduction came from allowing the second LOAD to enter the pipeline, not from deferred-value forwarding.
+
+The ID/EX-held count was zero because the deferred entry drained before the admitted LOAD reached a cycle requiring an ID/EX hold. The one-entry completion rule was therefore not overflowed. A Vivado implementation is justified by the measured cycle improvement, but has not yet been run; functional/regression completion precedes the required 100 MHz comparison.
+
+One clean 100 MHz default-flow attempt was launched with the H1.3b top and unchanged Stage G methodology. Vivado failed before synthesis/implementation with the existing Tcl file-open/tool initialization error (`Could not open 'C' for writing`); consequently no timing or resource result is claimed from that attempt.
+
+## H1.3b-T1 timing-recovery candidate
+
+T1 was derived into separate RTL, wrapper, testbench and script files and made
+one control-only change. The shared `load_overlap_allowed` decode no longer
+carries the late `redirect_pending_valid` and `ex_redirect_taken` terms. A
+separate `load_overlap_transfer_fire` retains both conditions at the sequential
+transfer/ownership boundary, preserving redirect priority and H1.3b behaviour.
+Focused verification remained 4,254/0 and the memory-fed benchmark remained
+39/71/135/263 cycles (`8K+7` exactly).
+
+The earlier Vivado failure was tool initialization: normal user APPDATA caused
+`tclapp::load_apps` to attempt opening the single token `C`. Launching
+`C:\\AMDDesignTools\\2026.1\\Vivado\\bin\\vivado.bat` with temporary clean
+APPDATA/LOCALAPPDATA/XILINX_LOCAL_USER_DATA allowed the flow to run. The T1
+wrapper module-name mismatch was corrected in the new wrapper only.
+
+| candidate | WNS (ns) | TNS (ns) | setup fails | hold WNS (ns) | LUT | FF | RAMB18 | DSP48 | critical path |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| H1.3b T0 | -1.865 | -817.384 | 698 | +0.059 | 2007 | 1813 | 2 | 5 | BRAM → branch/redirect → overlap/frontend → instruction BRAM |
+| H1.3b-T1 | -1.525 | -537.848 | 652 | +0.059 | 1984 | 1812 | 2 | 5 | data BRAM → deferred-load mux → branch/PC reset → ID/EX PC reset |
+
+T1 improved WNS by 0.340 ns and reduced failing endpoints by 46, but remains a
+clear setup failure; 5/5 repeatability was not started. The T1 worst path is
+`cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` to
+`cpu_inst/id_ex_reg_reg[pc][28]/R`, with 10.955 ns data delay (4.633 ns logic,
+6.322 ns routing, 12 levels). It remains a data-memory/branch-PC control
+family, not DOT DSP arithmetic. T1 is rejected for timing closure; H1.3b's
+263-cycle architecture remains the functional baseline for a separately
+approved timing study.
+
+## H1.3b-T2 deferred-load/branch-control isolation
+
+T2 hypothesis: because `scalar_overlap_hold` prevents a non-DOT instruction
+from advancing while `deferred_load_valid` is asserted, branch comparison does
+not need the DOT-only deferred-load forwarding mux; give branches an equivalent
+RF/EX-MEM/MEM-WB/DOT-completion forwarding path that excludes deferred data.
+
+The T2 candidate was created separately and preserved H1.2 deferred rs1/rs2
+forwarding for DOTs. A simulation assertion proves that a branch cannot be in
+ID/EX while a deferred LOAD is pending. Focused verification passed 4,254/0;
+Stage E passed 233/0 and retained 39/71/135/263 cycles, exact `8K+7`, 31/31/31/31
+N=128 ownership counts, register-resident 27/43 cycles and II=1.
+
+The clean 100 MHz routed result was:
+
+| candidate | WNS (ns) | TNS (ns) | setup fails | hold WNS (ns) | LUT | FF | RAMB18 | DSP48 | critical path |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| H1.3b T0 | -1.865 | -817.384 | 698 | +0.059 | 2007 | 1813 | 2 | 5 | WB/redirect/overlap/frontend |
+| H1.3b-T1 | -1.525 | -537.848 | 652 | +0.059 | 1984 | 1812 | 2 | 5 | BRAM/deferred-load/branch-PC/ID-EX reset |
+| H1.3b-T2 | -0.623 | -71.487 | 286 | +0.057 | 2014 | 1812 | 2 | 5 | BRAM/deferred-load/redirect/ID-EX operand reset |
+
+T2's worst path is `cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` to
+`cpu_inst/id_ex_reg_reg[operand_a][1]/R`: 9.989 ns data delay, 4.633 ns logic,
+5.356 ns routing and 12 levels. The first 25 paths remain the same family,
+with endpoints across ID/EX operand and accumulator reset pins and slacks from
+-0.623 to approximately -0.574 ns. T2 therefore materially improved the
+target family but did not reach 100 MHz; no repeatability runs were started.
+T2 is rejected for closure. No T3, Fmax sweep, or architectural redesign was
+started.
