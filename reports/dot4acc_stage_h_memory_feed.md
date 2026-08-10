@@ -139,3 +139,35 @@ with endpoints across ID/EX operand and accumulator reset pins and slacks from
 target family but did not reach 100 MHz; no repeatability runs were started.
 T2 is rejected for closure. No T3, Fmax sweep, or architectural redesign was
 started.
+
+## H1.3b-T3 ID/EX valid-only flush experiment
+
+T3 hypothesis: ordinary EX redirects need only invalidate `id_ex_reg.valid`,
+while global reset and hazard/hold bubbles retain the existing full payload
+clear; stale ID/EX payload is harmless whenever valid is zero.
+
+The valid-bit contract was checked against all ID/EX consumers. Payload fields
+are only architecturally effective through valid-gated EX/MEM, memory, branch,
+DOT issue, forwarding, retirement and performance-counter logic. Global reset
+remained a full `clear_id_ex()` operation. Only the `if (ex_redirect_taken)`
+flush changed from `clear_id_ex()` to `invalidate_id_ex()`.
+
+T3 focused verification passed 4,254/0, Stage E passed 233/0, and all
+39/71/135/263 memory-fed and 27/43 register-resident cycle invariants were
+preserved. Individual A1/A2/C/D/G, MAC8 and Phase12 regressions also passed.
+
+The clean 100 MHz T3 implementation regressed timing:
+
+| candidate | WNS (ns) | TNS (ns) | setup fails | hold WNS (ns) | LUT | FF | RAMB18 | DSP48 | critical path |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| H1.3b T0 | -1.865 | -817.384 | 698 | +0.059 | 2007 | 1813 | 2 | 5 | WB/redirect/overlap/frontend |
+| H1.3b-T1 | -1.525 | -537.848 | 652 | +0.059 | 1984 | 1812 | 2 | 5 | BRAM/deferred-load/branch-PC/ID-EX reset |
+| H1.3b-T2 | -0.623 | -71.487 | 286 | +0.057 | 2014 | 1812 | 2 | 5 | BRAM/deferred-load/redirect/ID-EX operand reset |
+| H1.3b-T3 | -0.920 | -233.654 | 454 | +0.110 | 2050 | 1814 | 2 | 5 | BRAM/deferred-load/DOT logic/instruction reset |
+
+T3's worst path is `cpu_inst/data_mem_inst/mem_reg/CLKARDCLK` to
+`cpu_inst/id_ex_reg_reg[instruction][1]/R`, with 10.276 ns data delay,
+4.633 ns logic, 5.643 ns routing and 12 levels. The payload-reset endpoint
+disappeared, but the late control cone moved to the instruction field and
+included DOT-related combinational logic. T3 worsened WNS by 0.297 ns versus
+T2 and is rejected. No 5/5 run, T4, Fmax sweep or Stage I work was started.

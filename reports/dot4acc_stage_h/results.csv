@@ -21,3 +21,4 @@ H1_3b_memory_fed,64,135,1,65,22,47,0,135,PASS,"atomic second LOAD admission; 15 
 H1_3b_memory_fed,128,263,1,129,38,95,0,263,PASS,"atomic second LOAD admission; 31 admissions, 31 EX/MEM transfers, 31 BRAM reads"
 H1_3b_T1_timing,100MHz,-1.525,-537.848,652,0.059,1984,1812,2,5,REJECT,"single late-redirect removal; functional 39/71/135/263 preserved; one clean routed run"
 H1_3b_T2_timing,100MHz,-0.623,-71.487,286,0.057,2014,1812,2,5,REJECT,"branch-specific forwarding excludes deferred-load mux; functional 39/71/135/263 preserved; one clean routed run"
+H1_3b_T3_timing,100MHz,-0.920,-233.654,454,0.110,2050,1814,2,5,REJECT,"redirect flush clears valid only; functional 39/71/135/263 preserved; one clean routed run"
