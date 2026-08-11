@@ -65,3 +65,4 @@ __pycache__/
 
 # Local Vivado project folders
 vivado/
+build/vector_stage5a/
