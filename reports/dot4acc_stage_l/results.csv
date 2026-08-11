@@ -1,0 +1,4 @@
+implementation,cycles,retired,loads,stores,scalar_arith,mac8_count,dot4acc_count,control_count,stall_cycles,mac_per_cycle,validated_mhz,mmac_per_s,execution_time_us,actual_result,result_check,notes
+SCALAR_REGISTER_EQUIVALENT,230,225,0,1,225,0,0,0,0,0.556522,93,51.756522,2.473118,0x00000205,FAIL,register-resident deterministic equivalent
+MAC8,134,129,0,1,1,128,0,0,0,0.955224,93,88.835821,1.440860,0x00004f25,PASS,register-resident deterministic equivalent
+DOT4ACC,43,33,0,1,1,0,32,0,0,2.976744,93,276.837209,0.462366,0x00004f25,PASS,register-resident deterministic equivalent
