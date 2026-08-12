@@ -21,6 +21,7 @@ module vector_program_core_synth_top (
     output logic        debug_read_data_parity
 );
     logic [127:0] debug_read_data;
+    logic [15:0] current_instruction;
     // A deterministic synthetic load value keeps the load path observable
     // without adding a 128-bit package IO bus to the implementation top.
     localparam logic [127:0] SYNTH_LOAD_DATA =

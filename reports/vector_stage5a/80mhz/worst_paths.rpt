@@ -1,0 +1,361 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Wed Aug 12 11:54:55 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 5 -path_type full -file reports/vector_stage5a/80mhz/worst_paths.rpt
+| Design       : vector_program_core_synth_top
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.480ns  (required time - arrival time)
+  Source:                 core_inst/current_pc_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[5][64]/D
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             vector_core_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (vector_core_clk rise@12.500ns - vector_core_clk rise@0.000ns)
+  Data Path Delay:        11.953ns  (logic 2.772ns (23.190%)  route 9.181ns (76.810%))
+  Logic Levels:           11  (CARRY4=2 LUT2=1 LUT3=2 LUT4=1 LUT6=4 RAMD32=1)
+  Clock Path Skew:        0.036ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.852ns = ( 17.352 - 12.500 ) 
+    Source Clock Delay      (SCD):    5.076ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock vector_core_clk rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.076     5.076    <hidden>
+    SLICE_X28Y18         FDRE                         0.000     5.076 r  core_inst/current_pc_reg[0]/C
+    SLICE_X28Y18         FDRE (Prop_fdre_C_Q)         0.456     5.532 r  core_inst/current_pc_reg[0]/Q
+                         net (fo=24, routed)          1.021     6.553    core_inst/instruction_memory_inst/memory_reg_0_15_12_15/ADDRB0
+    SLICE_X30Y18         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.152     6.705 f  core_inst/instruction_memory_inst/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=27, routed)          1.042     7.747    core_inst/instruction_memory_inst/current_instruction[14]
+    SLICE_X15Y18         LUT6 (Prop_lut6_I3_O)        0.348     8.095 r  core_inst/instruction_memory_inst/regs[0][127]_i_56/O
+                         net (fo=96, routed)          1.364     9.459    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][58]_i_18_0
+    SLICE_X1Y24          LUT6 (Prop_lut6_I2_O)        0.124     9.583 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195/O
+                         net (fo=3, routed)           1.465    11.049    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195_n_0
+    SLICE_X30Y23         LUT3 (Prop_lut3_I0_O)        0.124    11.173 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_59/O
+                         net (fo=14, routed)          1.263    12.436    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data[81]
+    SLICE_X10Y24         LUT2 (Prop_lut2_I0_O)        0.124    12.560 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][81]_i_11/O
+                         net (fo=3, routed)           0.688    13.247    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][83]_i_12_0[1]
+    SLICE_X8Y20          LUT3 (Prop_lut3_I1_O)        0.124    13.371 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_50/O
+                         net (fo=1, routed)           0.000    13.371    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20_0[1]
+    SLICE_X8Y20          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    13.904 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34/CO[3]
+                         net (fo=1, routed)           0.000    13.904    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34_n_0
+    SLICE_X8Y21          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.133 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20/CO[2]
+                         net (fo=1, routed)           0.723    14.856    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_0[0]
+    SLICE_X6Y17          LUT4 (Prop_lut4_I0_O)        0.310    15.166 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7/O
+                         net (fo=1, routed)           0.638    15.805    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7_n_0
+    SLICE_X6Y17          LUT6 (Prop_lut6_I5_O)        0.124    15.929 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3/O
+                         net (fo=1, routed)           0.296    16.225    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_n_0
+    SLICE_X5Y16          LUT6 (Prop_lut6_I2_O)        0.124    16.349 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1/O
+                         net (fo=8, routed)           0.681    17.029    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1_n_0
+    SLICE_X5Y15          FDRE                                         r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[5][64]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock vector_core_clk rise edge)
+                                                     12.500    12.500 r  <hidden>
+                         propagated clock network latency
+                                                      4.852    17.352    <hidden>
+                         clock pessimism              0.260    17.612    <hidden>
+                         clock uncertainty           -0.035    17.577    <hidden>
+    SLICE_X5Y15          FDRE (Setup_fdre_C_D)       -0.067    17.510    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[5][64]
+  -------------------------------------------------------------------
+                         required time                         17.510    <hidden>
+                         arrival time                         -17.029    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.480    <hidden>
+
+Slack (MET) :             0.626ns  (required time - arrival time)
+  Source:                 core_inst/current_pc_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[1][64]/D
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             vector_core_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (vector_core_clk rise@12.500ns - vector_core_clk rise@0.000ns)
+  Data Path Delay:        11.812ns  (logic 2.772ns (23.467%)  route 9.040ns (76.533%))
+  Logic Levels:           11  (CARRY4=2 LUT2=1 LUT3=2 LUT4=1 LUT6=4 RAMD32=1)
+  Clock Path Skew:        0.032ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.848ns = ( 17.348 - 12.500 ) 
+    Source Clock Delay      (SCD):    5.076ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock vector_core_clk rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.076     5.076    <hidden>
+    SLICE_X28Y18         FDRE                         0.000     5.076 r  core_inst/current_pc_reg[0]/C
+    SLICE_X28Y18         FDRE (Prop_fdre_C_Q)         0.456     5.532 r  core_inst/current_pc_reg[0]/Q
+                         net (fo=24, routed)          1.021     6.553    core_inst/instruction_memory_inst/memory_reg_0_15_12_15/ADDRB0
+    SLICE_X30Y18         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.152     6.705 f  core_inst/instruction_memory_inst/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=27, routed)          1.042     7.747    core_inst/instruction_memory_inst/current_instruction[14]
+    SLICE_X15Y18         LUT6 (Prop_lut6_I3_O)        0.348     8.095 r  core_inst/instruction_memory_inst/regs[0][127]_i_56/O
+                         net (fo=96, routed)          1.364     9.459    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][58]_i_18_0
+    SLICE_X1Y24          LUT6 (Prop_lut6_I2_O)        0.124     9.583 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195/O
+                         net (fo=3, routed)           1.465    11.049    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195_n_0
+    SLICE_X30Y23         LUT3 (Prop_lut3_I0_O)        0.124    11.173 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_59/O
+                         net (fo=14, routed)          1.263    12.436    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data[81]
+    SLICE_X10Y24         LUT2 (Prop_lut2_I0_O)        0.124    12.560 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][81]_i_11/O
+                         net (fo=3, routed)           0.688    13.247    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][83]_i_12_0[1]
+    SLICE_X8Y20          LUT3 (Prop_lut3_I1_O)        0.124    13.371 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_50/O
+                         net (fo=1, routed)           0.000    13.371    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20_0[1]
+    SLICE_X8Y20          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    13.904 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34/CO[3]
+                         net (fo=1, routed)           0.000    13.904    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34_n_0
+    SLICE_X8Y21          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.133 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20/CO[2]
+                         net (fo=1, routed)           0.723    14.856    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_0[0]
+    SLICE_X6Y17          LUT4 (Prop_lut4_I0_O)        0.310    15.166 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7/O
+                         net (fo=1, routed)           0.638    15.805    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7_n_0
+    SLICE_X6Y17          LUT6 (Prop_lut6_I5_O)        0.124    15.929 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3/O
+                         net (fo=1, routed)           0.296    16.225    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_n_0
+    SLICE_X5Y16          LUT6 (Prop_lut6_I2_O)        0.124    16.349 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1/O
+                         net (fo=8, routed)           0.540    16.889    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1_n_0
+    SLICE_X7Y18          FDRE                                         r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[1][64]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock vector_core_clk rise edge)
+                                                     12.500    12.500 r  <hidden>
+                         propagated clock network latency
+                                                      4.848    17.348    <hidden>
+                         clock pessimism              0.260    17.608    <hidden>
+                         clock uncertainty           -0.035    17.573    <hidden>
+    SLICE_X7Y18          FDRE (Setup_fdre_C_D)       -0.058    17.515    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[1][64]
+  -------------------------------------------------------------------
+                         required time                         17.515    <hidden>
+                         arrival time                         -16.889    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.626    <hidden>
+
+Slack (MET) :             0.636ns  (required time - arrival time)
+  Source:                 core_inst/current_pc_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[3][64]/D
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             vector_core_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (vector_core_clk rise@12.500ns - vector_core_clk rise@0.000ns)
+  Data Path Delay:        11.797ns  (logic 2.772ns (23.497%)  route 9.025ns (76.503%))
+  Logic Levels:           11  (CARRY4=2 LUT2=1 LUT3=2 LUT4=1 LUT6=4 RAMD32=1)
+  Clock Path Skew:        0.036ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.852ns = ( 17.352 - 12.500 ) 
+    Source Clock Delay      (SCD):    5.076ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock vector_core_clk rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.076     5.076    <hidden>
+    SLICE_X28Y18         FDRE                         0.000     5.076 r  core_inst/current_pc_reg[0]/C
+    SLICE_X28Y18         FDRE (Prop_fdre_C_Q)         0.456     5.532 r  core_inst/current_pc_reg[0]/Q
+                         net (fo=24, routed)          1.021     6.553    core_inst/instruction_memory_inst/memory_reg_0_15_12_15/ADDRB0
+    SLICE_X30Y18         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.152     6.705 f  core_inst/instruction_memory_inst/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=27, routed)          1.042     7.747    core_inst/instruction_memory_inst/current_instruction[14]
+    SLICE_X15Y18         LUT6 (Prop_lut6_I3_O)        0.348     8.095 r  core_inst/instruction_memory_inst/regs[0][127]_i_56/O
+                         net (fo=96, routed)          1.364     9.459    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][58]_i_18_0
+    SLICE_X1Y24          LUT6 (Prop_lut6_I2_O)        0.124     9.583 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195/O
+                         net (fo=3, routed)           1.465    11.049    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195_n_0
+    SLICE_X30Y23         LUT3 (Prop_lut3_I0_O)        0.124    11.173 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_59/O
+                         net (fo=14, routed)          1.263    12.436    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data[81]
+    SLICE_X10Y24         LUT2 (Prop_lut2_I0_O)        0.124    12.560 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][81]_i_11/O
+                         net (fo=3, routed)           0.688    13.247    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][83]_i_12_0[1]
+    SLICE_X8Y20          LUT3 (Prop_lut3_I1_O)        0.124    13.371 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_50/O
+                         net (fo=1, routed)           0.000    13.371    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20_0[1]
+    SLICE_X8Y20          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    13.904 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34/CO[3]
+                         net (fo=1, routed)           0.000    13.904    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34_n_0
+    SLICE_X8Y21          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.133 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20/CO[2]
+                         net (fo=1, routed)           0.723    14.856    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_0[0]
+    SLICE_X6Y17          LUT4 (Prop_lut4_I0_O)        0.310    15.166 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7/O
+                         net (fo=1, routed)           0.638    15.805    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7_n_0
+    SLICE_X6Y17          LUT6 (Prop_lut6_I5_O)        0.124    15.929 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3/O
+                         net (fo=1, routed)           0.296    16.225    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_n_0
+    SLICE_X5Y16          LUT6 (Prop_lut6_I2_O)        0.124    16.349 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1/O
+                         net (fo=8, routed)           0.525    16.874    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1_n_0
+    SLICE_X7Y15          FDRE                                         r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[3][64]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock vector_core_clk rise edge)
+                                                     12.500    12.500 r  <hidden>
+                         propagated clock network latency
+                                                      4.852    17.352    <hidden>
+                         clock pessimism              0.260    17.612    <hidden>
+                         clock uncertainty           -0.035    17.577    <hidden>
+    SLICE_X7Y15          FDRE (Setup_fdre_C_D)       -0.067    17.510    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[3][64]
+  -------------------------------------------------------------------
+                         required time                         17.510    <hidden>
+                         arrival time                         -16.874    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.636    <hidden>
+
+Slack (MET) :             0.637ns  (required time - arrival time)
+  Source:                 core_inst/current_pc_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[7][116]/D
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             vector_core_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (vector_core_clk rise@12.500ns - vector_core_clk rise@0.000ns)
+  Data Path Delay:        11.786ns  (logic 2.315ns (19.642%)  route 9.471ns (80.358%))
+  Logic Levels:           9  (LUT3=1 LUT5=1 LUT6=5 MUXF7=1 RAMD32=1)
+  Clock Path Skew:        0.039ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.855ns = ( 17.355 - 12.500 ) 
+    Source Clock Delay      (SCD):    5.076ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock vector_core_clk rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.076     5.076    <hidden>
+    SLICE_X28Y18         FDRE                         0.000     5.076 r  core_inst/current_pc_reg[0]/C
+    SLICE_X28Y18         FDRE (Prop_fdre_C_Q)         0.456     5.532 r  core_inst/current_pc_reg[0]/Q
+                         net (fo=24, routed)          1.021     6.553    core_inst/instruction_memory_inst/memory_reg_0_15_12_15/ADDRB0
+    SLICE_X30Y18         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.152     6.705 f  core_inst/instruction_memory_inst/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=27, routed)          1.042     7.747    core_inst/instruction_memory_inst/current_instruction[14]
+    SLICE_X15Y18         LUT6 (Prop_lut6_I3_O)        0.348     8.095 r  core_inst/instruction_memory_inst/regs[0][127]_i_56/O
+                         net (fo=96, routed)          1.517     9.612    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][58]_i_18_0
+    SLICE_X15Y33         LUT6 (Prop_lut6_I2_O)        0.124     9.736 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_352/O
+                         net (fo=3, routed)           0.938    10.673    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_352_n_0
+    SLICE_X30Y27         LUT3 (Prop_lut3_I2_O)        0.124    10.797 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_149/O
+                         net (fo=14, routed)          1.655    12.453    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data[111]
+    SLICE_X9Y30          LUT6 (Prop_lut6_I3_O)        0.124    12.577 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][118]_i_16/O
+                         net (fo=2, routed)           0.978    13.555    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][118]_i_16_n_0
+    SLICE_X10Y28         LUT5 (Prop_lut5_I2_O)        0.148    13.703 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][118]_i_11/O
+                         net (fo=2, routed)           0.768    14.470    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][118]_i_11_n_0
+    SLICE_X10Y31         LUT6 (Prop_lut6_I0_O)        0.328    14.798 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][116]_i_5/O
+                         net (fo=1, routed)           0.000    14.798    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][116]_i_5_n_0
+    SLICE_X10Y31         MUXF7 (Prop_muxf7_I1_O)      0.214    15.012 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[0][116]_i_2/O
+                         net (fo=1, routed)           0.889    15.902    core_inst/instruction_memory_inst/regs_reg[7][116]
+    SLICE_X6Y37          LUT6 (Prop_lut6_I0_O)        0.297    16.199 r  core_inst/instruction_memory_inst/regs[0][116]_i_1/O
+                         net (fo=8, routed)           0.664    16.862    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/D[98]
+    SLICE_X5Y38          FDRE                                         r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[7][116]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock vector_core_clk rise edge)
+                                                     12.500    12.500 r  <hidden>
+                         propagated clock network latency
+                                                      4.855    17.355    <hidden>
+                         clock pessimism              0.260    17.615    <hidden>
+                         clock uncertainty           -0.035    17.580    <hidden>
+    SLICE_X5Y38          FDRE (Setup_fdre_C_D)       -0.081    17.499    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[7][116]
+  -------------------------------------------------------------------
+                         required time                         17.499    <hidden>
+                         arrival time                         -16.862    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.637    <hidden>
+
+Slack (MET) :             0.676ns  (required time - arrival time)
+  Source:                 core_inst/current_pc_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[4][64]/D
+                            (rising edge-triggered cell FDRE clocked by vector_core_clk  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             vector_core_clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (vector_core_clk rise@12.500ns - vector_core_clk rise@0.000ns)
+  Data Path Delay:        11.774ns  (logic 2.772ns (23.544%)  route 9.002ns (76.456%))
+  Logic Levels:           11  (CARRY4=2 LUT2=1 LUT3=2 LUT4=1 LUT6=4 RAMD32=1)
+  Clock Path Skew:        0.032ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.848ns = ( 17.348 - 12.500 ) 
+    Source Clock Delay      (SCD):    5.076ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock vector_core_clk rise edge)
+                                                      0.000     0.000 r  <hidden>
+                         propagated clock network latency
+                                                      5.076     5.076    <hidden>
+    SLICE_X28Y18         FDRE                         0.000     5.076 r  core_inst/current_pc_reg[0]/C
+    SLICE_X28Y18         FDRE (Prop_fdre_C_Q)         0.456     5.532 r  core_inst/current_pc_reg[0]/Q
+                         net (fo=24, routed)          1.021     6.553    core_inst/instruction_memory_inst/memory_reg_0_15_12_15/ADDRB0
+    SLICE_X30Y18         RAMD32 (Prop_ramd32_RADR0_O)
+                                                      0.152     6.705 f  core_inst/instruction_memory_inst/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=27, routed)          1.042     7.747    core_inst/instruction_memory_inst/current_instruction[14]
+    SLICE_X15Y18         LUT6 (Prop_lut6_I3_O)        0.348     8.095 r  core_inst/instruction_memory_inst/regs[0][127]_i_56/O
+                         net (fo=96, routed)          1.364     9.459    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][58]_i_18_0
+    SLICE_X1Y24          LUT6 (Prop_lut6_I2_O)        0.124     9.583 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195/O
+                         net (fo=3, routed)           1.465    11.049    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_195_n_0
+    SLICE_X30Y23         LUT3 (Prop_lut3_I0_O)        0.124    11.173 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data_parity_OBUF_inst_i_59/O
+                         net (fo=14, routed)          1.263    12.436    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/debug_read_data[81]
+    SLICE_X10Y24         LUT2 (Prop_lut2_I0_O)        0.124    12.560 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][81]_i_11/O
+                         net (fo=3, routed)           0.688    13.247    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][83]_i_12_0[1]
+    SLICE_X8Y20          LUT3 (Prop_lut3_I1_O)        0.124    13.371 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_50/O
+                         net (fo=1, routed)           0.000    13.371    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20_0[1]
+    SLICE_X8Y20          CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533    13.904 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34/CO[3]
+                         net (fo=1, routed)           0.000    13.904    core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_34_n_0
+    SLICE_X8Y21          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.133 r  core_inst/execution_unit_inst/execution_unit_inst/vector_alu_inst/regs_reg[0][64]_i_20/CO[2]
+                         net (fo=1, routed)           0.723    14.856    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_0[0]
+    SLICE_X6Y17          LUT4 (Prop_lut4_I0_O)        0.310    15.166 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7/O
+                         net (fo=1, routed)           0.638    15.805    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_7_n_0
+    SLICE_X6Y17          LUT6 (Prop_lut6_I5_O)        0.124    15.929 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3/O
+                         net (fo=1, routed)           0.296    16.225    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_3_n_0
+    SLICE_X5Y16          LUT6 (Prop_lut6_I2_O)        0.124    16.349 r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1/O
+                         net (fo=8, routed)           0.501    16.850    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs[0][64]_i_1_n_0
+    SLICE_X6Y18          FDRE                                         r  core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[4][64]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock vector_core_clk rise edge)
+                                                     12.500    12.500 r  <hidden>
+                         propagated clock network latency
+                                                      4.848    17.348    <hidden>
+                         clock pessimism              0.260    17.608    <hidden>
+                         clock uncertainty           -0.035    17.573    <hidden>
+    SLICE_X6Y18          FDRE (Setup_fdre_C_D)       -0.047    17.526    core_inst/execution_unit_inst/execution_unit_inst/vector_register_file_inst/regs_reg[4][64]
+  -------------------------------------------------------------------
+                         required time                         17.526    <hidden>
+                         arrival time                         -16.850    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.676    <hidden>
+
+
+
+
