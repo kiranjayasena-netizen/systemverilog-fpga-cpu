@@ -88,3 +88,4 @@ build/vector_stage5a/
 .stage11_stage12_equiv_xsim/
 .stage12_synth/
 .stage12_impl/
+.stage13_xsim/
