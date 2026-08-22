@@ -1,0 +1,27 @@
+STAGE 10A-V3 PHYSICAL SUMMARY
+
+Target: xc7a35tcpg236-1, Vivado 2026.1
+Synthesis: PASS
+Post-route implementation: PASS at 80 MHz (12.500 ns)
+
+Synthesis utilization: 3197 LUT (3153 logic, 44 LUTRAM), 1416 FF,
+2 RAMB36, 0 RAMB18, 0 DSP48.
+Post-route utilization: 3024 LUT (2980 logic, 44 LUTRAM), 1416 FF,
+2 RAMB36, 0 RAMB18, 0 DSP48.
+
+The 32x128 vector data memory remains two RAMB36E1 blocks. The small
+instruction memories infer RAM32M/LUTRAM-style storage. Prefetch entry data
+is retained in the controller's FF/LUT logic; no additional BRAM is used.
+
+80 MHz timing: setup WNS +0.414 ns, TNS 0, 0 failing endpoints; hold WNS
++0.059 ns, TNS 0, 0 failing endpoints. Worst setup path is
+core/current_pc_reg[0] to core/eu/vector_register_file_inst/regs_reg[5][96]/D,
+with 11.991 ns data delay (3.346 ns logic, 8.645 ns routing) and 13 logic
+levels. Routing is 72.1% of the data delay, so the path remains routing
+dominated.
+
+Against Stage 9 (2847 LUT, 1142 FF, 20 LUTRAM, 2 RAMB36), Stage 10A adds
+177 LUT (+6.22%), 274 FF (+23.99%), and 24 LUTRAM (+120%); BRAM and DSP
+counts are unchanged. Stage 10A array add remains 24 cycles (53.333 MAdds/s
+at 80 MHz), versus Stage 9's 60.952 MAdds/s. Therefore dual-entry storage
+does not improve unchanged-workload performance despite closing timing.

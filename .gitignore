@@ -66,3 +66,18 @@ __pycache__/
 # Local Vivado project folders
 vivado/
 build/vector_stage5a/
+.stage10a_xsim/
+.stage10ab_equiv_xsim/
+.stage10b_bench_xsim/
+.stage11_depth6_xsim/
+.stage11_depth8_xsim/
+.stage11_depth12_xsim/
+.stage11_equiv_xsim/
+.stage11_bench_xsim/
+.stage11_depth6_synth/
+.stage11_depth8_synth/
+.stage11_depth6_impl/
+.stage11_depth8_impl/
+.stage11_depth8_bench_xsim/
+.stage10a_direct_xsim/
+.stage10b_direct_xsim/

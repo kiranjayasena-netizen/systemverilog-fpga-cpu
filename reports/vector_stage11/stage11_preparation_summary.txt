@@ -1,0 +1,6 @@
+STAGE 11 STATUS: EXECUTED / FUNCTIONAL AND PHYSICAL RESULTS AVAILABLE
+
+Stage 10A/10B/CPU RTL was not modified. Vivado 2026.1/XSim executed the
+depth-6 and depth-8 functional suites (32/32 each), eight equivalence
+cases, unchanged benchmarks, synthesis, and 80 MHz implementation. See
+the depth-specific reports and gpu_phase11_extended_lookahead.md.
