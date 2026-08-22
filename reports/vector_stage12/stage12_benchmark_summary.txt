@@ -1,0 +1,7 @@
+REG_VADD: 4 cycles, 4.000000 adds/cycle.
+ARRAY_ADD: 21 cycles, 5.250000 cycles/vector, 1.312500 cycles/scalar,
+0.761905 adds/cycle, 0.190476 ALU fraction.
+XOR: 13 cycles, 1.230769 lane-elements/cycle.
+VSRA: 13 cycles, 1.230769 lane-elements/cycle.
+ARRAY counters: overlap=3, ALU-origin hits=3, requests=4, hits=3,
+outstanding high-watermark=2, second-while-pending=1, useful pairs=1.

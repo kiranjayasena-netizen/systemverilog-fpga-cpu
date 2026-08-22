@@ -1,0 +1,3 @@
+Stage 11 depth-6 vs Stage 12 architectural equivalence: 10 run, 10 passed, 0 failed.
+Compared final PC/done, V0-V7, and relevant memory for ALU, memory, hazards,
+invalid instruction, reset/restart, XOR, and VSRA cases.
