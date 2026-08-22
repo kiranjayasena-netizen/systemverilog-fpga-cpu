@@ -1,0 +1,29 @@
+STAGE 15 LOAD-RESULT FORWARDING FEASIBILITY
+
+Baseline: Stage 14, unchanged ARRAY_ADD, 20 cycles.
+
+Blocked dependency cases:
+
+1. Load PC1: VLOAD V2,[8] -> dependent PC2: VADD V3,V1,V2.
+   Dependent source: srcB=V2. The miss response could be forwarded to the
+   ALU, but the load must write V2 and the VADD writes V3. Two whole-vector
+   RF writes would be required in one cycle. Classification:
+   FORWARDING_ONLY_MOVES_CONFLICT / RF_WRITE_CONFLICT.
+
+2. Load PC5: VLOAD V2,[9] -> dependent PC6: VADD V3,V1,V2.
+   Same srcB dependency and the same single-write-port conflict.
+
+3. Load PC9: VLOAD V2,[10] -> dependent PC10: VADD V3,V1,V2.
+   Same srcB dependency and the same single-write-port conflict.
+
+4. Load PC13: VLOAD V2,[11] -> dependent PC14: VADD V3,V1,V2.
+   Same srcB dependency and the same single-write-port conflict.
+
+Direct response forwarding can make the dependent ALU combinationally
+correct, but it cannot reduce the schedule while preserving one RF write
+per cycle. Capturing the ALU result for a later write would move, rather
+than remove, a cycle and is therefore Stage 16 territory. A second RF
+write port or a broader result queue would be required for a real saving.
+
+MAX THEORETICAL SAFE SAVING: 0 additional cycles beyond Stage 14.
+STAGE 15 DECISION: SKIPPED (feasibility-only).

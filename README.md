@@ -78,6 +78,17 @@ The final physically measured 104 MIPS result uses the Phase 13 five-stage forwa
 
 ## Run Simulations
 
+## GPU release
+
+The `gpu-development` branch contains the verified four-lane SIMD GPU
+milestones through Stage 14. The selected core is
+`rtl/vector_load_overlap_program_core.sv`: 20-cycle unchanged ARRAY_ADD,
+64.000 MAdds/s at 80 MHz, 3277 post-route LUT, two RAMB36 and zero DSP.
+The production wrapper is `rtl/vector_gpu_accelerator.sv`; the Basys 3
+UART/MMCM top is `rtl/basys3_vector_gpu_top.sv`. See the GPU architecture,
+programming, UART, verification and Basys 3 quick-start documents under
+`docs/`. Board hardware testing remains a required local step.
+
 Open a Vivado-enabled PowerShell from the repository root and run:
 
 ```powershell
