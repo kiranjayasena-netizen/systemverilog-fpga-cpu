@@ -13,8 +13,9 @@ HISTORICAL REGRESSIONS: Stage 10A 26/26, Stage 10B 20/20, Stage 11 32/32, Stage 
 FINAL EQUIVALENCE RESULT: Stage 12 <-> Stage 14 10/10 PASS
 ACCELERATOR WRAPPER STATUS: simulation PASS
 BOARD TOP STATUS: synthesis, implementation and bitstream generation PASS
-BOARD HARDWARE TESTS ACTUALLY RUN: NO
-STAGE 26 STATUS: READY FOR LOCAL HARDWARE VALIDATION
+BOARD HARDWARE TESTS ACTUALLY RUN: YES
+STAGE 26A STATUS: PASS (physical PING/STATUS)
+STAGE 26B STATUS: PASS (physical memory roundtrip and 100 UART launches)
 
 FINAL REG_VADD CYCLES: 4
 FINAL ARRAY_ADD CYCLES: 20
@@ -34,8 +35,8 @@ BOARD TOP POST-ROUTE: 3194 LUT, 3126 logic LUT, 68 LUTRAM, 1909 FF, 2 RAMB36, 0 
 BOARD TOP TIMING: clk80 setup WNS +0.351 ns, hold WHS +0.043 ns, zero failing endpoints
 BITSTREAM GENERATED: YES
 
-UART/HOST INTERFACE STATUS: RTL and protocol documentation prepared; UART hardware not exercised here
-END-TO-END REG_VADD/ARRAY_ADD/XOR/VSRA DEMOS: NOT RUN on physical hardware
+UART/HOST INTERFACE STATUS: READ_MEMORY command and host read/write/program/demo CLI physically verified on COM4
+END-TO-END REG_VADD/ARRAY_ADD/XOR/VSRA DEMOS: PASS; 100/100 repeated launches PASS
 DOCUMENTATION STATUS: architecture, ISA, programming, memory, UART, Basys 3, verification, benchmarks, resources, history complete
 
 KNOWN LIMITATIONS: no branches/loops/multiply/floating point; one RF write path; one physical read issue per cycle; small fixed memories; physical board/UART demo still requires local hardware.

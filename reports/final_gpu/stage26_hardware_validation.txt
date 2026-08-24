@@ -1,35 +1,46 @@
 STAGE 26 HARDWARE VALIDATION
+STATUS: STAGE 26B PASS
+DATE: 2026-08-24
+BOARD: Basys 3 xc7a35tcpg236-1
+BITSTREAM: .final_gpu_bitstream/final_gpu_bitstream.runs/impl_1/basys3_vector_gpu_top.bit
+BITSTREAM_GENERATED: YES (0 errors)
+BITSTREAM_TIMESTAMP: 2026-08-24 13:49 (rebuilt after READ_MEMORY and write-byte fix)
+TIMING: setup WNS +0.351 ns; hold WHS +0.066 ns; zero failing endpoints
 
-STATUS: READY FOR LOCAL HARDWARE VALIDATION
-BOARD HARDWARE TESTS ACTUALLY RUN: NO
+UART: COM4, 115200 8-N-1
+PING: PASS, response 81
+STATUS_REPEAT_10: PASS, 10/10 responses 00
 
-Reason: no Basys 3/JTAG/UART device was present in the Codex environment.
-No COM port was discovered by Windows device enumeration.
+PROTOCOL ADDITIONS:
+0x08 READ_MEMORY, address byte, 16-byte little-endian response
+Busy read response: E1
+Host CLI: --write-memory, --read-memory, --write-instr, --demo, --run-all-demos
 
-BITSTREAM_PATH: .final_gpu_bitstream/final_gpu_bitstream.runs/impl_1/basys3_vector_gpu_top.bit
-BITSTREAM_TIMESTAMP: 2026-08-22T13:14:38
-BITSTREAM_SIZE: 2192224 bytes
-BOARD_TOP: rtl/basys3_vector_gpu_top.sv
-PART: xc7a35tcpg236-1
-CONSTRAINT_FILE: constraints/basys3_vector_gpu.xdc
-UART: 115200 baud, 8 data bits, no parity, 1 stop bit
+SIMULATION:
+READ_MEMORY addresses 0/1/15/31: PASS 4/4
+UART controller ping regression after readback ports: PASS
 
-BASYS 3 PROGRAMMING: NOT RUN
-MMCM LOCK: NOT RUN
-HEARTBEAT: NOT RUN
-UART PING/STATUS: NOT RUN
-MEMORY WRITE/READBACK: NOT RUN
-PROGRAM LOAD: NOT RUN
-START/BUSY/DONE: NOT RUN
-REG_VADD/ARRAY_ADD/XOR/VSRA HARDWARE DEMOS: NOT RUN
-100-JOB STABILITY: NOT RUN
+PHYSICAL MEMORY ROUNDTRIP:
+address 0: PASS (all zero)
+address 1: PASS (all ones)
+address 15: PASS (112233445566778899aabbccddeeff00)
+address 31: PASS (0123456789abcdeffedcba9876543210)
+neighbor checks 0/1 and 30/31: PASS; no corruption
 
-Local procedure:
-1. Connect and power the Basys 3; connect the USB cable.
-2. Run scripts/program_final_gpu_basys3.tcl from Vivado batch mode.
-3. Identify the COM port in Device Manager (USB Serial Port / FTDI).
-4. Run `python tools/vector_gpu_host.py --port COMx --ping`.
-5. Run `python tools/vector_gpu_host.py --port COMx --status --repeat 10`.
-6. Run the documented protocol memory/program/demo transactions.
+PHYSICAL DEMOS:
+REG_VADD: PASS
+ARRAY_ADD: PASS, all output vectors verified
+XOR: PASS
+VSRA: PASS
+Second job without reprogramming: PASS
 
-No physical PASS is claimed by this report.
+REPEATED STABILITY:
+TOTAL_JOBS: 100
+PASS_JOBS: 100
+FAIL_JOBS: 0
+UART_ERRORS: 0
+TIMEOUTS: 0
+RESULT_MISMATCHES: 0
+
+No core RTL was modified. UART integration/controller and host utility
+were the only production changes.
