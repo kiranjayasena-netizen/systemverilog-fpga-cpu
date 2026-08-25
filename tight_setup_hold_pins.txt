@@ -1,0 +1,10 @@
++====================+===================+============================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                                        |
++====================+===================+============================================+
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[30]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[25]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_valid_reg/D      |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[20]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/redirect_pending_target_reg[19]/D |
+| sys_clk_pin        | sys_clk_pin       | cpu_inst/if_id_reg_reg[valid]/D            |
++--------------------+-------------------+--------------------------------------------+

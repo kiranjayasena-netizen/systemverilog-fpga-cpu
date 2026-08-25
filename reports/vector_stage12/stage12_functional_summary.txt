@@ -1,0 +1,5 @@
+Stage 12 functional XSim: 46 tests run, 46 passed, 0 failed.
+Two-request issue while request 0 pending: observed.
+Outstanding high-watermark: 2.
+One physical read issue per cycle: PASS.
+Frozen Stage 11/10B/10A regressions: 32/32, 20/20, 26/26 PASS.

@@ -1,0 +1,36 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Wed Aug 12 14:57:08 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file reports/vector_stage9/stage9_80mhz_utilization.rpt
+| Design       : vector_prefetch_program_core_synth_top
+| Device       : xc7a35tcpg236-1
+| Speed File   : -1
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++--------------------------------------------+------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|                  Instance                  |            Module            | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++--------------------------------------------+------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| vector_prefetch_program_core_synth_top     |                        (top) |       2847 |       2827 |      20 |    0 | 1142 |      2 |      0 |          0 |
+|   (vector_prefetch_program_core_synth_top) |                        (top) |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   core                                     | vector_prefetch_program_core |       2847 |       2827 |      20 |    0 | 1142 |      2 |      0 |          0 |
+|     (core)                                 | vector_prefetch_program_core |         36 |         36 |       0 |    0 |  118 |      0 |      0 |          0 |
+|     data_mem                               |           vector_data_memory |         80 |         80 |       0 |    0 |    0 |      2 |      0 |          0 |
+|     eu                                     |        vector_execution_unit |       2486 |       2486 |       0 |    0 | 1024 |      0 |      0 |          0 |
+|       vector_register_file_inst            |         vector_register_file |       2486 |       2486 |       0 |    0 | 1024 |      0 |      0 |          0 |
+|     pim                                    |  vector_instruction_memory_0 |        231 |        219 |      12 |    0 |    0 |      0 |      0 |          0 |
++--------------------------------------------+------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

@@ -1,0 +1,30 @@
+STAGE 12 FINAL SUMMARY
+Functional tests: 46/46 PASS
+Stage 11 depth-6 regression: 32/32 PASS
+Stage 10B regression: 20/20 PASS
+Stage 10A regression: 26/26 PASS
+Stage 11/Stage 12 equivalence: 10/10 PASS
+
+Memory: one-cycle fixed-latency synchronous, in-order responses
+Max outstanding reads: 2
+Max new physical read issues/cycle: 1
+
+Benchmarks (unchanged workloads):
+REG_VADD cycles=4
+ARRAY_ADD cycles=21 cycles/vector=5.25 cycles/scalar=1.3125 adds/cycle=0.761905 ALU_fraction=0.190476
+XOR cycles=13 lane-elements/cycle=1.230769
+VSRA cycles=13 lane-elements/cycle=1.230769
+
+Array counters: ALU_READ_OVERLAP=3 ALU_ORIGIN_HIT=3 STORE_READ_OVERLAP=1 PREFETCH_REQUESTS=4 PREFETCH_HITS=3 MAX_VALID_ENTRIES=2 OUTSTANDING_HIGH=2 SECOND_WHILE_PENDING=1 TWO_USEFUL_PAIRS=1
+XOR counters: ALU_READ_OVERLAP=2 ALU_ORIGIN_HIT=2 PREFETCH_REQUESTS=3 PREFETCH_HITS=3 OUTSTANDING_HIGH=2 TWO_USEFUL_PAIRS=1
+VSRA counters: ALU_READ_OVERLAP=2 ALU_ORIGIN_HIT=2 PREFETCH_REQUESTS=3 PREFETCH_HITS=3 OUTSTANDING_HIGH=2 TWO_USEFUL_PAIRS=1
+
+Synthesis: LUT=3417 LogicLUT=3349 LUTRAM=68 FF=1554 RAMB18=0 RAMB36=2 DSP=0
+Post-route: LUT=3247 LogicLUT=3179 LUTRAM=68 FF=1522 RAMB18=0 RAMB36=2 DSP=0
+80 MHz: setup WNS=+0.348 ns TNS=0 failing=0; hold WHS=+0.200 ns THS=0 failing=0
+Critical path: current_pc_reg[1]/C -> eu/vector_register_file_inst/regs_reg[4][64]/D, total=12.052 ns, logic=3.240 ns, route=8.812 ns, route%=73.116, levels=12
+
+Array throughput at 80 MHz: 60.952 MAdds/s
+XOR/VSRA throughput at 80 MHz: 98.462 million lane-elements/s
+Stage 11 -> Stage 12 array cycle change: 0 cycles
+Stage 12 result: two outstanding reads work and close timing, but unchanged benchmark cycle counts do not improve.

@@ -1,0 +1,45 @@
+STAGE 14 PHASE A FEASIBILITY ANALYSIS
+
+Unchanged ARRAY_ADD instruction pattern:
+PC 0 VLOAD V1,[0]
+PC 1 VLOAD V2,[8]
+PC 2 VADD  V3,V1,V2
+PC 3 VSTORE [16],V3
+PC 4 VLOAD V1,[1]
+PC 5 VLOAD V2,[9]
+PC 6 VADD  V3,V1,V2
+PC 7 VSTORE [17],V3
+PC 8 VLOAD V1,[2]
+PC 9 VLOAD V2,[10]
+PC10 VADD  V3,V1,V2
+PC11 VSTORE [18],V3
+PC12 VLOAD V1,[3]
+PC13 VLOAD V2,[11]
+PC14 VADD  V3,V1,V2
+PC15 VSTORE [19],V3
+
+MISS #1: PC0, destination V1, address 0, next PC1 is VLOAD V2,[8].
+Classification: INDEPENDENT_AND_NO_RF_WRITE_CONFLICT for the next
+instruction. The current miss writeback uses the sole RF write path while
+the memory port can issue the next architectural read. One cycle is
+potentially hideable without a second RF write.
+
+MISS #2: PC1, destination V2, address 8, next PC2 is VADD V3,V1,V2.
+Classification: DEPENDENT_NEXT_INSTRUCTION plus RF_WRITE_CONFLICT.
+The VADD reads V2 and also writes V3; it cannot execute before V2 commits.
+
+MISS #3: PC5, destination V2, address 9, next PC6 is dependent VADD.
+Classification: DEPENDENT_NEXT_INSTRUCTION plus RF_WRITE_CONFLICT.
+
+MISS #4: PC9, destination V2, address 10, next PC10 is dependent VADD.
+Classification: DEPENDENT_NEXT_INSTRUCTION plus RF_WRITE_CONFLICT.
+
+MISS #5: PC13, destination V2, address 11, next PC14 is dependent VADD.
+Classification: DEPENDENT_NEXT_INSTRUCTION plus RF_WRITE_CONFLICT.
+
+MAX THEORETICAL SAFE CYCLES SAVED: 1
+
+The only candidate is the PC0->PC1 VLOAD pair. The four dependent misses
+cannot be hidden without forwarding, a second RF write path, or changing
+the in-order dependency contract. Stage 14 therefore implements only the
+single independent VLOAD-to-VLOAD overlap opportunity.

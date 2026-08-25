@@ -1,0 +1,10 @@
+FINAL CORE COMPARISON
+
+Selected: Stage 14
+REG_VADD: 4 cycles
+ARRAY_ADD: 20 cycles, 64.000 MAdds/s at 80 MHz
+XOR: 13 cycles
+VSRA: 13 cycles
+Post-route: 3277 LUT, 3209 logic LUT, 68 LUTRAM, 1522 FF, 2 RAMB36, 0 RAMB18, 0 DSP
+Timing: setup WNS +0.221 ns, hold WHS +0.185 ns
+Efficiency: 19.53 MAdds/s per 1000 LUT

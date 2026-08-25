@@ -1,0 +1,8 @@
+benchmark,cycles,retired,dots,scalars,scalar_hold_cycles,scalar_overlap_hold_cycles,dot_issue_stall_cycles,decode_stall_cycles,theoretical_baseline_cycles,avoidable_cycles,avoidable_fraction,decision
+I-A-independent-addi,19,4,2,2,10,0,0,0,13,6,0.3158,NO-GO
+I-B-three-independent-addi,17,5,2,3,10,0,0,0,13,4,0.2353,NO-GO
+I-C-dot-raw,15,3,2,1,10,0,0,0,13,0,0.0000,NO-GO
+I-D-memory-mixed,21,7,2,5,10,0,0,2,19,2,0.0952,NO-GO
+I-D-memory-control,19,6,2,4,9,2,0,1,19,0,0.0000,NO-GO
+I-E-branch-mix,19,4,2,2,10,0,0,0,19,0,0.0000,NO-GO
+I-F-independent-store,13,3,1,2,5,0,0,0,12,1,0.0769,NO-GO

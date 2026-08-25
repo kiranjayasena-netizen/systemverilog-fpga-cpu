@@ -1,0 +1,32 @@
+100 MHz worst routed setup path
+SLACK: -0.348
+STARTPOINT_PIN: cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+ENDPOINT_PIN: cpu_inst/dot_chain_open_reg_reg/R
+ENDPOINT_CLOCK: sys_clk_pin
+DATAPATH_DELAY: 9.776
+DATAPATH_LOGIC_DELAY: 4.289
+DATAPATH_NET_DELAY: 5.487
+LOGIC_LEVELS: 9
+UNCERTAINTY: 0.035
+
+Path pins, cells, placement and nets
+cpu_inst/data_mem_inst/mem_reg/DOADO[15] | cell=cpu_inst/data_mem_inst/mem_reg | ref=RAMB18E1 | loc=RAMB18_X0Y8 | bel=RAMB18E1.RAMB18E1 | net=cpu_inst/data_mem_inst/read_data[15]
+cpu_inst/data_mem_inst/pair0_reg_reg_i_27/I2 | cell=cpu_inst/data_mem_inst/pair0_reg_reg_i_27 | ref=LUT5 | loc=SLICE_X10Y23 | bel=SLICEM.A6LUT | net=cpu_inst/data_mem_inst/read_data[15]
+cpu_inst/data_mem_inst/pair0_reg_reg_i_27/O | cell=cpu_inst/data_mem_inst/pair0_reg_reg_i_27 | ref=LUT5 | loc=SLICE_X10Y23 | bel=SLICEM.A6LUT | net=cpu_inst/data_mem_inst/id_ex_reg_reg[operand_a][15]
+cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg_i_9/I4 | cell=cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg_i_9 | ref=LUT5 | loc=SLICE_X10Y25 | bel=SLICEM.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg_0
+cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg_i_9/O | cell=cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg_i_9 | ref=LUT5 | loc=SLICE_X10Y25 | bel=SLICEM.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/ex_operand_a[15]
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13/I4 | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13 | ref=LUT6 | loc=SLICE_X9Y19 | bel=SLICEL.B6LUT | net=cpu_inst/dot4acc_pipeline_inst/ex_operand_a[15]
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13/O | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13 | ref=LUT6 | loc=SLICE_X9Y19 | bel=SLICEL.B6LUT | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/S[1] | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6 | ref=CARRY4 | loc=SLICE_X9Y19 | bel=SLICEL.CARRY4 | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_13_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3] | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6 | ref=CARRY4 | loc=SLICE_X9Y19 | bel=SLICEL.CARRY4 | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3 | ref=CARRY4 | loc=SLICE_X9Y20 | bel=SLICEL.CARRY4 | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2] | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3 | ref=CARRY4 | loc=SLICE_X9Y20 | bel=SLICEL.CARRY4 | net=cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2 | cell=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19 | ref=LUT4 | loc=SLICE_X9Y21 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O | cell=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19 | ref=LUT4 | loc=SLICE_X9Y21 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/I1 | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2 | ref=LUT6 | loc=SLICE_X5Y25 | bel=SLICEL.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/O | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2 | ref=LUT6 | loc=SLICE_X5Y25 | bel=SLICEL.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_1/I1 | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_1 | ref=LUT6 | loc=SLICE_X4Y24 | bel=SLICEL.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_1/O | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_1 | ref=LUT6 | loc=SLICE_X4Y24 | bel=SLICEL.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/id_ex_reg_reg[valid]_0[0]
+cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I0 | cell=cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1 | ref=LUT5 | loc=SLICE_X6Y25 | bel=SLICEM.D6LUT | net=cpu_inst/dot4acc_pipeline_inst/id_ex_reg_reg[valid]_0[0]
+cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O | cell=cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1 | ref=LUT5 | loc=SLICE_X6Y25 | bel=SLICEM.D6LUT | net=cpu_inst/dot4acc_pipeline_inst/id_ex_reg_reg[valid]_1[0]
+cpu_inst/dot_chain_open_reg_reg/R | cell=cpu_inst/dot_chain_open_reg_reg | ref=FDRE | loc=SLICE_X6Y25 | bel=SLICEM.AFF | net=cpu_inst/dot4acc_pipeline_inst_n_87

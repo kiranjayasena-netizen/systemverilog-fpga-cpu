@@ -1,0 +1,2131 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Fri Aug  7 19:31:25 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_timing -delay_type max -path_type full_clock_expanded -input_pins -max_paths 25 -nworst 1 -file C:/FPGA/systemverilog-fpga-cpu/reports/dot4acc_stage_f/details/f_98mhz/top_25_setup_paths.rpt
+| Design       : fpga_top_pipeline_dot4acc_wb
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.341ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_chain_rd_reg_reg[0]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.296ns  (logic 4.261ns (45.835%)  route 5.035ns (54.165%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.007ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.847ns = ( 15.051 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.537    13.550    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I3
+    SLICE_X6Y21          LUT5 (Prop_lut5_I3_O)        0.124    13.674 r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O
+                         net (fo=6, routed)           0.737    14.411    cpu_inst/dot4acc_pipeline_inst_n_87
+    SLICE_X6Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[0]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.506    15.051    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[0]/C
+                         clock pessimism              0.260    15.311    <hidden>
+                         clock uncertainty           -0.035    15.276    <hidden>
+    SLICE_X6Y20          FDRE (Setup_fdre_C_R)       -0.524    14.752    cpu_inst/dot_chain_rd_reg_reg[0]
+  -------------------------------------------------------------------
+                         required time                         14.752    <hidden>
+                         arrival time                         -14.411    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.341    <hidden>
+
+Slack (MET) :             0.341ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_chain_rd_reg_reg[1]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.296ns  (logic 4.261ns (45.835%)  route 5.035ns (54.165%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.007ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.847ns = ( 15.051 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.537    13.550    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I3
+    SLICE_X6Y21          LUT5 (Prop_lut5_I3_O)        0.124    13.674 r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O
+                         net (fo=6, routed)           0.737    14.411    cpu_inst/dot4acc_pipeline_inst_n_87
+    SLICE_X6Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[1]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.506    15.051    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[1]/C
+                         clock pessimism              0.260    15.311    <hidden>
+                         clock uncertainty           -0.035    15.276    <hidden>
+    SLICE_X6Y20          FDRE (Setup_fdre_C_R)       -0.524    14.752    cpu_inst/dot_chain_rd_reg_reg[1]
+  -------------------------------------------------------------------
+                         required time                         14.752    <hidden>
+                         arrival time                         -14.411    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.341    <hidden>
+
+Slack (MET) :             0.378ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][4]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.804ns  (logic 6.667ns (68.006%)  route 3.137ns (31.994%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.068ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.786ns = ( 14.990 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[4])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[4]
+                         net (fo=1, routed)           0.924    14.794    cpu_inst/dot4acc_pipeline_inst/P[4]
+    SLICE_X12Y14                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][4]_i_1/I4
+    SLICE_X12Y14         LUT6 (Prop_lut6_I4_O)        0.124    14.918 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][4]_i_1/O
+                         net (fo=1, routed)           0.000    14.918    cpu_inst/ex_alu_result[4]
+    SLICE_X12Y14         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][4]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.445    14.990    cpu_inst/clk_IBUF_BUFG
+    SLICE_X12Y14         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][4]/C
+                         clock pessimism              0.260    15.250    <hidden>
+                         clock uncertainty           -0.035    15.215    <hidden>
+    SLICE_X12Y14         FDRE (Setup_fdre_C_D)        0.081    15.296    cpu_inst/ex_mem_reg_reg[alu_result][4]
+  -------------------------------------------------------------------
+                         required time                         15.296    <hidden>
+                         arrival time                         -14.918    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.378    <hidden>
+
+Slack (MET) :             0.433ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][17]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.693ns  (logic 6.667ns (68.779%)  route 3.026ns (31.221%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.074ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.780ns = ( 14.984 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[17])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[17]
+                         net (fo=1, routed)           0.813    14.684    cpu_inst/dot4acc_pipeline_inst/P[17]
+    SLICE_X13Y20                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][17]_i_1/I4
+    SLICE_X13Y20         LUT6 (Prop_lut6_I4_O)        0.124    14.808 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][17]_i_1/O
+                         net (fo=1, routed)           0.000    14.808    cpu_inst/ex_alu_result[17]
+    SLICE_X13Y20         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][17]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.439    14.984    cpu_inst/clk_IBUF_BUFG
+    SLICE_X13Y20         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][17]/C
+                         clock pessimism              0.260    15.244    <hidden>
+                         clock uncertainty           -0.035    15.209    <hidden>
+    SLICE_X13Y20         FDRE (Setup_fdre_C_D)        0.032    15.241    cpu_inst/ex_mem_reg_reg[alu_result][17]
+  -------------------------------------------------------------------
+                         required time                         15.241    <hidden>
+                         arrival time                         -14.808    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.433    <hidden>
+
+Slack (MET) :             0.436ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_chain_open_reg_reg/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.296ns  (logic 4.261ns (45.835%)  route 5.035ns (54.165%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.007ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.847ns = ( 15.051 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.537    13.550    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I3
+    SLICE_X6Y21          LUT5 (Prop_lut5_I3_O)        0.124    13.674 r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O
+                         net (fo=6, routed)           0.737    14.411    cpu_inst/dot4acc_pipeline_inst_n_87
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_open_reg_reg/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.506    15.051    cpu_inst/clk_IBUF_BUFG
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_open_reg_reg/C
+                         clock pessimism              0.260    15.311    <hidden>
+                         clock uncertainty           -0.035    15.276    <hidden>
+    SLICE_X7Y20          FDRE (Setup_fdre_C_R)       -0.429    14.847    cpu_inst/dot_chain_open_reg_reg
+  -------------------------------------------------------------------
+                         required time                         14.847    <hidden>
+                         arrival time                         -14.411    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.436    <hidden>
+
+Slack (MET) :             0.436ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_chain_rd_reg_reg[2]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.296ns  (logic 4.261ns (45.835%)  route 5.035ns (54.165%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.007ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.847ns = ( 15.051 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.537    13.550    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I3
+    SLICE_X6Y21          LUT5 (Prop_lut5_I3_O)        0.124    13.674 r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O
+                         net (fo=6, routed)           0.737    14.411    cpu_inst/dot4acc_pipeline_inst_n_87
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[2]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.506    15.051    cpu_inst/clk_IBUF_BUFG
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[2]/C
+                         clock pessimism              0.260    15.311    <hidden>
+                         clock uncertainty           -0.035    15.276    <hidden>
+    SLICE_X7Y20          FDRE (Setup_fdre_C_R)       -0.429    14.847    cpu_inst/dot_chain_rd_reg_reg[2]
+  -------------------------------------------------------------------
+                         required time                         14.847    <hidden>
+                         arrival time                         -14.411    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.436    <hidden>
+
+Slack (MET) :             0.436ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_chain_rd_reg_reg[3]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.296ns  (logic 4.261ns (45.835%)  route 5.035ns (54.165%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.007ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.847ns = ( 15.051 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.537    13.550    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/I3
+    SLICE_X6Y21          LUT5 (Prop_lut5_I3_O)        0.124    13.674 r  cpu_inst/dot4acc_pipeline_inst/dot_chain_rd_reg[4]_i_1/O
+                         net (fo=6, routed)           0.737    14.411    cpu_inst/dot4acc_pipeline_inst_n_87
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[3]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.506    15.051    cpu_inst/clk_IBUF_BUFG
+    SLICE_X7Y20          FDRE                                         r  cpu_inst/dot_chain_rd_reg_reg[3]/C
+                         clock pessimism              0.260    15.311    <hidden>
+                         clock uncertainty           -0.035    15.276    <hidden>
+    SLICE_X7Y20          FDRE (Setup_fdre_C_R)       -0.429    14.847    cpu_inst/dot_chain_rd_reg_reg[3]
+  -------------------------------------------------------------------
+                         required time                         14.847    <hidden>
+                         arrival time                         -14.411    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.436    <hidden>
+
+Slack (MET) :             0.438ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/fetch_pc_reg[10]/CE
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.524ns  (logic 4.385ns (46.041%)  route 5.139ns (53.959%))
+  Logic Levels:           10  (CARRY4=3 LUT4=2 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.001ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.853ns = ( 15.057 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.402    12.733    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/I1
+    SLICE_X6Y21          LUT6 (Prop_lut6_I1_O)        0.124    12.857 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/O
+                         net (fo=3, routed)           0.459    13.317    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+    SLICE_X1Y21                                                       f  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/I4
+    SLICE_X1Y21          LUT5 (Prop_lut5_I4_O)        0.124    13.441 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/O
+                         net (fo=1, routed)           0.154    13.594    cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3_n_0
+    SLICE_X1Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/I2
+    SLICE_X1Y21          LUT4 (Prop_lut4_I2_O)        0.124    13.718 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/O
+                         net (fo=62, routed)          0.920    14.639    cpu_inst/dot4acc_pipeline_inst_n_46
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[10]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.512    15.057    cpu_inst/clk_IBUF_BUFG
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[10]/C
+                         clock pessimism              0.260    15.317    <hidden>
+                         clock uncertainty           -0.035    15.282    <hidden>
+    SLICE_X3Y16          FDRE (Setup_fdre_C_CE)      -0.205    15.077    cpu_inst/fetch_pc_reg[10]
+  -------------------------------------------------------------------
+                         required time                         15.077    <hidden>
+                         arrival time                         -14.639    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.438    <hidden>
+
+Slack (MET) :             0.438ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/fetch_pc_reg[11]/CE
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.524ns  (logic 4.385ns (46.041%)  route 5.139ns (53.959%))
+  Logic Levels:           10  (CARRY4=3 LUT4=2 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.001ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.853ns = ( 15.057 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.402    12.733    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/I1
+    SLICE_X6Y21          LUT6 (Prop_lut6_I1_O)        0.124    12.857 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/O
+                         net (fo=3, routed)           0.459    13.317    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+    SLICE_X1Y21                                                       f  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/I4
+    SLICE_X1Y21          LUT5 (Prop_lut5_I4_O)        0.124    13.441 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/O
+                         net (fo=1, routed)           0.154    13.594    cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3_n_0
+    SLICE_X1Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/I2
+    SLICE_X1Y21          LUT4 (Prop_lut4_I2_O)        0.124    13.718 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/O
+                         net (fo=62, routed)          0.920    14.639    cpu_inst/dot4acc_pipeline_inst_n_46
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[11]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.512    15.057    cpu_inst/clk_IBUF_BUFG
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[11]/C
+                         clock pessimism              0.260    15.317    <hidden>
+                         clock uncertainty           -0.035    15.282    <hidden>
+    SLICE_X3Y16          FDRE (Setup_fdre_C_CE)      -0.205    15.077    cpu_inst/fetch_pc_reg[11]
+  -------------------------------------------------------------------
+                         required time                         15.077    <hidden>
+                         arrival time                         -14.639    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.438    <hidden>
+
+Slack (MET) :             0.438ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/fetch_pc_reg[12]/CE
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.524ns  (logic 4.385ns (46.041%)  route 5.139ns (53.959%))
+  Logic Levels:           10  (CARRY4=3 LUT4=2 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.001ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.853ns = ( 15.057 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.402    12.733    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/I1
+    SLICE_X6Y21          LUT6 (Prop_lut6_I1_O)        0.124    12.857 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/O
+                         net (fo=3, routed)           0.459    13.317    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+    SLICE_X1Y21                                                       f  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/I4
+    SLICE_X1Y21          LUT5 (Prop_lut5_I4_O)        0.124    13.441 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/O
+                         net (fo=1, routed)           0.154    13.594    cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3_n_0
+    SLICE_X1Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/I2
+    SLICE_X1Y21          LUT4 (Prop_lut4_I2_O)        0.124    13.718 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/O
+                         net (fo=62, routed)          0.920    14.639    cpu_inst/dot4acc_pipeline_inst_n_46
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[12]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.512    15.057    cpu_inst/clk_IBUF_BUFG
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[12]/C
+                         clock pessimism              0.260    15.317    <hidden>
+                         clock uncertainty           -0.035    15.282    <hidden>
+    SLICE_X3Y16          FDRE (Setup_fdre_C_CE)      -0.205    15.077    cpu_inst/fetch_pc_reg[12]
+  -------------------------------------------------------------------
+                         required time                         15.077    <hidden>
+                         arrival time                         -14.639    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.438    <hidden>
+
+Slack (MET) :             0.438ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/fetch_pc_reg[9]/CE
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.524ns  (logic 4.385ns (46.041%)  route 5.139ns (53.959%))
+  Logic Levels:           10  (CARRY4=3 LUT4=2 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.001ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.853ns = ( 15.057 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.402    12.733    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/I1
+    SLICE_X6Y21          LUT6 (Prop_lut6_I1_O)        0.124    12.857 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2/O
+                         net (fo=3, routed)           0.459    13.317    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_2_n_0
+    SLICE_X1Y21                                                       f  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/I4
+    SLICE_X1Y21          LUT5 (Prop_lut5_I4_O)        0.124    13.441 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3/O
+                         net (fo=1, routed)           0.154    13.594    cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_3_n_0
+    SLICE_X1Y21                                                       r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/I2
+    SLICE_X1Y21          LUT4 (Prop_lut4_I2_O)        0.124    13.718 r  cpu_inst/dot4acc_pipeline_inst/fetch_pending_pc[31]_i_1/O
+                         net (fo=62, routed)          0.920    14.639    cpu_inst/dot4acc_pipeline_inst_n_46
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[9]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.512    15.057    cpu_inst/clk_IBUF_BUFG
+    SLICE_X3Y16          FDRE                                         r  cpu_inst/fetch_pc_reg[9]/C
+                         clock pessimism              0.260    15.317    <hidden>
+                         clock uncertainty           -0.035    15.282    <hidden>
+    SLICE_X3Y16          FDRE (Setup_fdre_C_CE)      -0.205    15.077    cpu_inst/fetch_pc_reg[9]
+  -------------------------------------------------------------------
+                         required time                         15.077    <hidden>
+                         arrival time                         -14.639    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.438    <hidden>
+
+Slack (MET) :             0.452ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][9]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.680ns  (logic 6.667ns (68.877%)  route 3.013ns (31.123%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.068ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.786ns = ( 14.990 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[9])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[9]
+                         net (fo=1, routed)           0.799    14.670    cpu_inst/dot4acc_pipeline_inst/P[9]
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][9]_i_1/I4
+    SLICE_X13Y13         LUT6 (Prop_lut6_I4_O)        0.124    14.794 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][9]_i_1/O
+                         net (fo=1, routed)           0.000    14.794    cpu_inst/ex_alu_result[9]
+    SLICE_X13Y13         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][9]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.445    14.990    cpu_inst/clk_IBUF_BUFG
+    SLICE_X13Y13         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][9]/C
+                         clock pessimism              0.260    15.250    <hidden>
+                         clock uncertainty           -0.035    15.215    <hidden>
+    SLICE_X13Y13         FDRE (Setup_fdre_C_D)        0.031    15.246    cpu_inst/ex_mem_reg_reg[alu_result][9]
+  -------------------------------------------------------------------
+                         required time                         15.246    <hidden>
+                         arrival time                         -14.794    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.452    <hidden>
+
+Slack (MET) :             0.484ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][8]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.644ns  (logic 6.667ns (69.128%)  route 2.977ns (30.872%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.071ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.783ns = ( 14.987 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[8])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[8]
+                         net (fo=1, routed)           0.764    14.635    cpu_inst/dot4acc_pipeline_inst/P[8]
+    SLICE_X15Y17                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][8]_i_1/I4
+    SLICE_X15Y17         LUT6 (Prop_lut6_I4_O)        0.124    14.759 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][8]_i_1/O
+                         net (fo=1, routed)           0.000    14.759    cpu_inst/ex_alu_result[8]
+    SLICE_X15Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][8]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.442    14.987    cpu_inst/clk_IBUF_BUFG
+    SLICE_X15Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][8]/C
+                         clock pessimism              0.260    15.247    <hidden>
+                         clock uncertainty           -0.035    15.212    <hidden>
+    SLICE_X15Y17         FDRE (Setup_fdre_C_D)        0.031    15.243    cpu_inst/ex_mem_reg_reg[alu_result][8]
+  -------------------------------------------------------------------
+                         required time                         15.243    <hidden>
+                         arrival time                         -14.759    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.484    <hidden>
+
+Slack (MET) :             0.484ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_issue_reg_reg[accumulator][12]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.149ns  (logic 4.261ns (46.574%)  route 4.888ns (53.426%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.011ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.843ns = ( 15.047 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.432    13.445    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y23                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/I4
+    SLICE_X6Y23          LUT5 (Prop_lut5_I4_O)        0.124    13.569 r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.695    14.264    cpu_inst/dot4acc_pipeline_inst_n_41
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][12]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.502    15.047    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][12]/C
+                         clock pessimism              0.260    15.307    <hidden>
+                         clock uncertainty           -0.035    15.272    <hidden>
+    SLICE_X6Y23          FDRE (Setup_fdre_C_R)       -0.524    14.748    cpu_inst/dot_issue_reg_reg[accumulator][12]
+  -------------------------------------------------------------------
+                         required time                         14.748    <hidden>
+                         arrival time                         -14.264    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.484    <hidden>
+
+Slack (MET) :             0.484ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_issue_reg_reg[accumulator][15]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.149ns  (logic 4.261ns (46.574%)  route 4.888ns (53.426%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.011ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.843ns = ( 15.047 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.432    13.445    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y23                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/I4
+    SLICE_X6Y23          LUT5 (Prop_lut5_I4_O)        0.124    13.569 r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.695    14.264    cpu_inst/dot4acc_pipeline_inst_n_41
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][15]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.502    15.047    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][15]/C
+                         clock pessimism              0.260    15.307    <hidden>
+                         clock uncertainty           -0.035    15.272    <hidden>
+    SLICE_X6Y23          FDRE (Setup_fdre_C_R)       -0.524    14.748    cpu_inst/dot_issue_reg_reg[accumulator][15]
+  -------------------------------------------------------------------
+                         required time                         14.748    <hidden>
+                         arrival time                         -14.264    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.484    <hidden>
+
+Slack (MET) :             0.484ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_issue_reg_reg[accumulator][21]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.149ns  (logic 4.261ns (46.574%)  route 4.888ns (53.426%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.011ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.843ns = ( 15.047 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.432    13.445    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y23                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/I4
+    SLICE_X6Y23          LUT5 (Prop_lut5_I4_O)        0.124    13.569 r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.695    14.264    cpu_inst/dot4acc_pipeline_inst_n_41
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][21]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.502    15.047    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][21]/C
+                         clock pessimism              0.260    15.307    <hidden>
+                         clock uncertainty           -0.035    15.272    <hidden>
+    SLICE_X6Y23          FDRE (Setup_fdre_C_R)       -0.524    14.748    cpu_inst/dot_issue_reg_reg[accumulator][21]
+  -------------------------------------------------------------------
+                         required time                         14.748    <hidden>
+                         arrival time                         -14.264    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.484    <hidden>
+
+Slack (MET) :             0.484ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/dot_issue_reg_reg[accumulator][29]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.149ns  (logic 4.261ns (46.574%)  route 4.888ns (53.426%))
+  Logic Levels:           9  (CARRY4=3 LUT4=1 LUT5=3 LUT6=2)
+  Clock Path Skew:        -0.011ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.843ns = ( 15.047 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 f  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.558    12.889    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y22                                                       f  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/I1
+    SLICE_X6Y22          LUT6 (Prop_lut6_I1_O)        0.124    13.013 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_1/O
+                         net (fo=56, routed)          0.432    13.445    cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg
+    SLICE_X6Y23                                                       r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/I4
+    SLICE_X6Y23          LUT5 (Prop_lut5_I4_O)        0.124    13.569 r  cpu_inst/dot4acc_pipeline_inst/dot_issue_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.695    14.264    cpu_inst/dot4acc_pipeline_inst_n_41
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][29]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.502    15.047    cpu_inst/clk_IBUF_BUFG
+    SLICE_X6Y23          FDRE                                         r  cpu_inst/dot_issue_reg_reg[accumulator][29]/C
+                         clock pessimism              0.260    15.307    <hidden>
+                         clock uncertainty           -0.035    15.272    <hidden>
+    SLICE_X6Y23          FDRE (Setup_fdre_C_R)       -0.524    14.748    cpu_inst/dot_issue_reg_reg[accumulator][29]
+  -------------------------------------------------------------------
+                         required time                         14.748    <hidden>
+                         arrival time                         -14.264    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.484    <hidden>
+
+Slack (MET) :             0.485ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][7]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.648ns  (logic 6.667ns (69.099%)  route 2.981ns (30.901%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.067ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.787ns = ( 14.991 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[7])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[7]
+                         net (fo=1, routed)           0.768    14.639    cpu_inst/dot4acc_pipeline_inst/P[7]
+    SLICE_X11Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][7]_i_1/I4
+    SLICE_X11Y13         LUT6 (Prop_lut6_I4_O)        0.124    14.763 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][7]_i_1/O
+                         net (fo=1, routed)           0.000    14.763    cpu_inst/ex_alu_result[7]
+    SLICE_X11Y13         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.446    14.991    cpu_inst/clk_IBUF_BUFG
+    SLICE_X11Y13         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][7]/C
+                         clock pessimism              0.260    15.251    <hidden>
+                         clock uncertainty           -0.035    15.216    <hidden>
+    SLICE_X11Y13         FDRE (Setup_fdre_C_D)        0.032    15.248    cpu_inst/ex_mem_reg_reg[alu_result][7]
+  -------------------------------------------------------------------
+                         required time                         15.248    <hidden>
+                         arrival time                         -14.763    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.485    <hidden>
+
+Slack (MET) :             0.490ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][29]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.688ns  (logic 6.667ns (68.815%)  route 3.021ns (31.185%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.071ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.783ns = ( 14.987 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[29])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[29]
+                         net (fo=1, routed)           0.808    14.679    cpu_inst/dot4acc_pipeline_inst/P[29]
+    SLICE_X14Y17                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][29]_i_1/I4
+    SLICE_X14Y17         LUT6 (Prop_lut6_I4_O)        0.124    14.803 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][29]_i_1/O
+                         net (fo=1, routed)           0.000    14.803    cpu_inst/ex_alu_result[29]
+    SLICE_X14Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][29]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.442    14.987    cpu_inst/clk_IBUF_BUFG
+    SLICE_X14Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][29]/C
+                         clock pessimism              0.260    15.247    <hidden>
+                         clock uncertainty           -0.035    15.212    <hidden>
+    SLICE_X14Y17         FDRE (Setup_fdre_C_D)        0.081    15.293    cpu_inst/ex_mem_reg_reg[alu_result][29]
+  -------------------------------------------------------------------
+                         required time                         15.293    <hidden>
+                         arrival time                         -14.803    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.490    <hidden>
+
+Slack (MET) :             0.495ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/id_ex_reg_reg[accumulator][14]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.070ns  (logic 4.137ns (45.610%)  route 4.933ns (54.390%))
+  Logic Levels:           8  (CARRY4=3 LUT4=1 LUT5=2 LUT6=2)
+  Clock Path Skew:        -0.079ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.775ns = ( 14.979 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.713    13.045    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y24                                                       r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/I2
+    SLICE_X6Y24          LUT6 (Prop_lut6_I2_O)        0.124    13.169 r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          1.016    14.185    cpu_inst/dot4acc_pipeline_inst_n_88
+    SLICE_X10Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][14]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.434    14.979    cpu_inst/clk_IBUF_BUFG
+    SLICE_X10Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][14]/C
+                         clock pessimism              0.260    15.239    <hidden>
+                         clock uncertainty           -0.035    15.204    <hidden>
+    SLICE_X10Y25         FDRE (Setup_fdre_C_R)       -0.524    14.680    cpu_inst/id_ex_reg_reg[accumulator][14]
+  -------------------------------------------------------------------
+                         required time                         14.680    <hidden>
+                         arrival time                         -14.185    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.495    <hidden>
+
+Slack (MET) :             0.495ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/id_ex_reg_reg[accumulator][16]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.070ns  (logic 4.137ns (45.610%)  route 4.933ns (54.390%))
+  Logic Levels:           8  (CARRY4=3 LUT4=1 LUT5=2 LUT6=2)
+  Clock Path Skew:        -0.079ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.775ns = ( 14.979 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.713    13.045    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y24                                                       r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/I2
+    SLICE_X6Y24          LUT6 (Prop_lut6_I2_O)        0.124    13.169 r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          1.016    14.185    cpu_inst/dot4acc_pipeline_inst_n_88
+    SLICE_X10Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][16]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.434    14.979    cpu_inst/clk_IBUF_BUFG
+    SLICE_X10Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][16]/C
+                         clock pessimism              0.260    15.239    <hidden>
+                         clock uncertainty           -0.035    15.204    <hidden>
+    SLICE_X10Y25         FDRE (Setup_fdre_C_R)       -0.524    14.680    cpu_inst/id_ex_reg_reg[accumulator][16]
+  -------------------------------------------------------------------
+                         required time                         14.680    <hidden>
+                         arrival time                         -14.185    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.495    <hidden>
+
+Slack (MET) :             0.498ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][10]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.630ns  (logic 6.667ns (69.230%)  route 2.963ns (30.770%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.071ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.783ns = ( 14.987 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[10])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[10]
+                         net (fo=1, routed)           0.750    14.621    cpu_inst/dot4acc_pipeline_inst/P[10]
+    SLICE_X13Y17                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][10]_i_1/I4
+    SLICE_X13Y17         LUT6 (Prop_lut6_I4_O)        0.124    14.745 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][10]_i_1/O
+                         net (fo=1, routed)           0.000    14.745    cpu_inst/ex_alu_result[10]
+    SLICE_X13Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][10]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.442    14.987    cpu_inst/clk_IBUF_BUFG
+    SLICE_X13Y17         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][10]/C
+                         clock pessimism              0.260    15.247    <hidden>
+                         clock uncertainty           -0.035    15.212    <hidden>
+    SLICE_X13Y17         FDRE (Setup_fdre_C_D)        0.031    15.243    cpu_inst/ex_mem_reg_reg[alu_result][10]
+  -------------------------------------------------------------------
+                         required time                         15.243    <hidden>
+                         arrival time                         -14.745    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.498    <hidden>
+
+Slack (MET) :             0.515ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/ex_mem_reg_reg[alu_result][20]/D
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.662ns  (logic 6.667ns (69.000%)  route 2.995ns (31.000%))
+  Logic Levels:           4  (DSP48E1=1 LUT5=2 LUT6=1)
+  Clock Path Skew:        -0.068ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.786ns = ( 14.990 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[7])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[7]
+                         net (fo=4, routed)           1.124     8.692    cpu_inst/data_mem_inst/read_data[7]
+    SLICE_X13Y13                                                      r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/I2
+    SLICE_X13Y13         LUT5 (Prop_lut5_I2_O)        0.124     8.816 r  cpu_inst/data_mem_inst/product0_reg_reg_i_27/O
+                         net (fo=1, routed)           0.154     8.970    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_4
+    SLICE_X13Y13                                                      r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/I4
+    SLICE_X13Y13         LUT5 (Prop_lut5_I4_O)        0.124     9.094 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_9/O
+                         net (fo=53, routed)          0.936    10.030    cpu_inst/ex_operand_a[7]
+    DSP48_X0Y6                                                        r  cpu_inst/ex_alu_result0/A[12]
+    DSP48_X0Y6           DSP48E1 (Prop_dsp48e1_A[12]_P[20])
+                                                      3.841    13.871 r  cpu_inst/ex_alu_result0/P[20]
+                         net (fo=1, routed)           0.782    14.653    cpu_inst/dot4acc_pipeline_inst/P[20]
+    SLICE_X12Y14                                                      r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][20]_i_1/I4
+    SLICE_X12Y14         LUT6 (Prop_lut6_I4_O)        0.124    14.777 r  cpu_inst/dot4acc_pipeline_inst/ex_mem_reg[alu_result][20]_i_1/O
+                         net (fo=1, routed)           0.000    14.777    cpu_inst/ex_alu_result[20]
+    SLICE_X12Y14         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][20]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.445    14.990    cpu_inst/clk_IBUF_BUFG
+    SLICE_X12Y14         FDRE                                         r  cpu_inst/ex_mem_reg_reg[alu_result][20]/C
+                         clock pessimism              0.260    15.250    <hidden>
+                         clock uncertainty           -0.035    15.215    <hidden>
+    SLICE_X12Y14         FDRE (Setup_fdre_C_D)        0.077    15.292    cpu_inst/ex_mem_reg_reg[alu_result][20]
+  -------------------------------------------------------------------
+                         required time                         15.292    <hidden>
+                         arrival time                         -14.777    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.515    <hidden>
+
+Slack (MET) :             0.517ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/id_ex_reg_reg[accumulator][24]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.047ns  (logic 4.137ns (45.727%)  route 4.910ns (54.273%))
+  Logic Levels:           8  (CARRY4=3 LUT4=1 LUT5=2 LUT6=2)
+  Clock Path Skew:        -0.080ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.774ns = ( 14.978 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.713    13.045    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y24                                                       r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/I2
+    SLICE_X6Y24          LUT6 (Prop_lut6_I2_O)        0.124    13.169 r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.993    14.162    cpu_inst/dot4acc_pipeline_inst_n_88
+    SLICE_X12Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][24]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.433    14.978    cpu_inst/clk_IBUF_BUFG
+    SLICE_X12Y25         FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][24]/C
+                         clock pessimism              0.260    15.238    <hidden>
+                         clock uncertainty           -0.035    15.203    <hidden>
+    SLICE_X12Y25         FDRE (Setup_fdre_C_R)       -0.524    14.679    cpu_inst/id_ex_reg_reg[accumulator][24]
+  -------------------------------------------------------------------
+                         required time                         14.679    <hidden>
+                         arrival time                         -14.162    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.517    <hidden>
+
+Slack (MET) :             0.521ns  (required time - arrival time)
+  Source:                 cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Destination:            cpu_inst/id_ex_reg_reg[accumulator][23]/R
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.102ns period=10.204ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.204ns  (sys_clk_pin rise@10.204ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        9.045ns  (logic 4.137ns (45.738%)  route 4.908ns (54.262%))
+  Logic Levels:           8  (CARRY4=3 LUT4=1 LUT5=2 LUT6=2)
+  Clock Path Skew:        -0.078ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.776ns = ( 14.980 - 10.204 ) 
+    Source Clock Delay      (SCD):    5.115ns
+    Clock Pessimism Removal (CPR):    0.260ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.967     3.425    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.521 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.594     5.115    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y8          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB18_X0Y8          RAMB18E1 (Prop_ramb18e1_CLKARDCLK_DOADO[0])
+                                                      2.454     7.569 r  cpu_inst/data_mem_inst/mem_reg/DOADO[0]
+                         net (fo=4, routed)           0.851     8.419    cpu_inst/data_mem_inst/read_data[0]
+    SLICE_X9Y13                                                       r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/I2
+    SLICE_X9Y13          LUT5 (Prop_lut5_I2_O)        0.124     8.543 r  cpu_inst/data_mem_inst/product0_reg_reg_i_34/O
+                         net (fo=1, routed)           0.666     9.210    cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_8
+    SLICE_X8Y13                                                       r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/I4
+    SLICE_X8Y13          LUT5 (Prop_lut5_I4_O)        0.124     9.334 r  cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_16/O
+                         net (fo=8, routed)           1.106    10.440    cpu_inst/dot4acc_pipeline_inst/packed_a[0]
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/I1
+    SLICE_X7Y15          LUT6 (Prop_lut6_I1_O)        0.124    10.564 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18/O
+                         net (fo=1, routed)           0.000    10.564    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_18_n_0
+    SLICE_X7Y15                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/S[0]
+    SLICE_X7Y15          CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532    11.096 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10/CO[3]
+                         net (fo=1, routed)           0.000    11.096    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_10_n_0
+    SLICE_X7Y16                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CI
+    SLICE_X7Y16          CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.210 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6/CO[3]
+                         net (fo=1, routed)           0.000    11.210    cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_6_n_0
+    SLICE_X7Y17                                                       r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CI
+    SLICE_X7Y17          CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    11.438 r  cpu_inst/dot4acc_pipeline_inst/led_OBUF[12]_inst_i_3/CO[2]
+                         net (fo=18, routed)          0.580    12.018    cpu_inst/dot4acc_pipeline_inst/ex_branch_taken073_in
+    SLICE_X7Y19                                                       r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/I2
+    SLICE_X7Y19          LUT4 (Prop_lut4_I2_O)        0.313    12.331 r  cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19/O
+                         net (fo=38, routed)          0.713    13.045    cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0
+    SLICE_X6Y24                                                       r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/I2
+    SLICE_X6Y24          LUT6 (Prop_lut6_I2_O)        0.124    13.169 r  cpu_inst/dot4acc_pipeline_inst/id_ex_reg[accumulator][31]_i_1/O
+                         net (fo=32, routed)          0.991    14.160    cpu_inst/dot4acc_pipeline_inst_n_88
+    SLICE_X8Y26          FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][23]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                     10.204    10.204 r  <hidden>
+    W5                                                0.000    10.204 r  clk
+                         net (fo=0)                   0.000    10.204    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    11.592 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.862    13.454    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.545 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1713, routed)        1.435    14.980    cpu_inst/clk_IBUF_BUFG
+    SLICE_X8Y26          FDRE                                         r  cpu_inst/id_ex_reg_reg[accumulator][23]/C
+                         clock pessimism              0.260    15.240    <hidden>
+                         clock uncertainty           -0.035    15.205    <hidden>
+    SLICE_X8Y26          FDRE (Setup_fdre_C_R)       -0.524    14.681    cpu_inst/id_ex_reg_reg[accumulator][23]
+  -------------------------------------------------------------------
+                         required time                         14.681    <hidden>
+                         arrival time                         -14.160    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.521    <hidden>
+
+
+
+

@@ -1,0 +1,18 @@
+STAGE 18 FINAL BOTTLENECK ANALYSIS
+
+Selected core: Stage 14.
+
+REG_VADD: 4 cycles = 4 ALU cycles.
+ARRAY_ADD: 20 cycles = 4 ALU + 3 VLOAD hits + 4 VLOAD miss-issue cycles +
+5 VLOAD writeback-state cycles + 4 VSTORE.
+XOR: 13 cycles = 4 ALU + 3 VLOAD hits + 1 VLOAD miss + 1 writeback + 4 VSTORE.
+VSRA: 13 cycles = 4 ALU + 3 VLOAD hits + 1 VLOAD miss + 1 writeback + 4 VSTORE.
+
+No idle/control bubbles were observed. Stage 14 removes the one safe
+independent load-to-load schedule cycle. The remaining four ARRAY_ADD
+misses are RAW-dependent and conflict with the one RF write port. Removing
+those cycles requires forwarding plus a second write path, a result buffer,
+or ISA-level fusion. VSTORE remains one architectural memory-write cycle.
+
+Current realistic lower bound: 20 cycles for ARRAY_ADD under the frozen
+in-order, single-RF-write, one-memory-port model.

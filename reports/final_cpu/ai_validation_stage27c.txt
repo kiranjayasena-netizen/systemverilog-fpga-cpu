@@ -1,0 +1,149 @@
+STAGE 27C VALIDATION INTERFACE ADAPTATION
+
+Canonical CPU cores modified: NO.
+Validation derivatives: created for baseline and DOT4ACC cores.
+Validation memory timing: synchronous instruction/data behavior retained;
+host access is selected only while load_mode holds the core in reset.
+Completion: latched on the existing retiring store predicate.
+Cycle count: existing total_cycles exposed directly; UART time excluded.
+
+Build observations:
+- Baseline validation top synthesized, implemented and generated a bitstream
+  in the initial 93.75 MHz harness experiment. Routed setup WNS was +1.290 ns
+  and hold was +0.053 ns.
+- Optimized validation top synthesized and generated a routed bitstream in
+  the initial 93.75 MHz experiment, but setup WNS was -0.451 ns (94 failing
+  endpoints). This is a validation-harness timing failure, not a change to
+  the canonical DOT4ACC core.
+- After changing the validation tops to a common 80 MHz MMCM output, the
+  optimized routed implementation generated a bitstream with setup WNS
+  +0.443 ns, hold WHS +0.016 ns, and zero failing endpoints. The copied
+  release artifact is `.ai_cpu_optimized/ai_cpu_optimized.bit` when the local
+  Vivado run is retained.
+- Optimized validation-top placed resources in that run were 2942 slice LUTs,
+  2192 slice registers, 1 RAMB18 and 5 DSP48E1. These are whole validation-top
+  numbers, not CPU-hierarchical numbers.
+
+Physical Basys 3 tests: NOT RUN in this environment.
+
+Stage 27C completion gates:
+- baseline/validation architectural equivalence: NOT RUN;
+- optimized/validation architectural equivalence: NOT RUN;
+- DOT4ACC and DOT64 cycle equivalence: NOT RUN;
+- UART/controller and complete wrapper simulation: NOT RUN;
+- paired current 80 MHz baseline/optimized signoff: NOT COMPLETE.
+
+Additional verification performed:
+- UART controller XSim smoke: PASS (PING transaction, deterministic finish).
+- Validation wrapper XSim smoke: PASS (both derivative sources elaborated;
+  host preload path exercised).
+- Full command-protocol and benchmark end-to-end simulation: NOT RUN.
+- Frozen-versus-validation equivalence remains NOT RUN.
+
+The low BRAM `addr[1:0]` warnings are intentional alignment-bit warnings;
+the validation memories use byte-address-to-word conversion matching the
+canonical memory behavior.
+
+Final status: PARTIAL / READY FOR LOCAL COMPLETION. Do not proceed to Stage
+27D hardware comparison until these gates are closed.
+
+Verification update (2026-08-25): baseline and optimized canonical versus
+validation equivalence PASS. The exact programs/dot4acc_stage_d.mem workload
+completes in 18 cycles in both optimized instances; DOT retirement assertions
+pass. The prior metadata failure was corrected by regenerating the optimized
+validation derivative from the frozen canonical source and reapplying only
+validation ports.
+
+Full UART protocol simulation at 80 MHz/115200 baud passes all implemented
+commands with marker AI_CPU_UART_PROTOCOL_PASS. The paired rebuilt bitstreams
+also pass: baseline WNS +1.901 ns, WHS +0.091 ns; optimized WNS +0.265 ns,
+WHS +0.016 ns; both have zero failing endpoints. Whole-top placed resources
+are baseline 2077 LUT/1883 FF/1 RAMB18/0 DSP and optimized 2958 LUT/2192
+FF/1 RAMB18/5 DSP.
+
+Stage 27C remains PARTIAL because the current wrapper test is only a preload
+smoke test; full DOT4/DOT64/matrix-vector/edge UART end-to-end and
+reset/restart simulations were not completed. Physical testing and hardware
+speedup remain NOT RUN.
+
+Paired implementation reference supplied for the current 80 MHz sources:
+- baseline: WNS +1.534 ns, WHS +0.075 ns, TNS/THS 0, bitstream PASS;
+- optimized: WNS +0.438 ns, WHS +0.015 ns, TNS/THS 0, bitstream PASS.
+
+Stage 27 final audit (2026-08-25): no Basys 3 or serial device is visible in
+the current environment. The existing equivalence bench is still a structural
+smoke harness, not a frozen-versus-validation architectural comparison. Full
+DOT4/DOT64/matrix-vector UART-driven simulation and physical measurements were
+therefore not claimed. Stage 27D is NOT RUN and no hardware speedup is
+established.
+
+Latest equivalence attempt:
+- Baseline canonical versus validation side-by-side simulation: PASS;
+  `AI_CPU_BASELINE_EQUIVALENCE_PASS`.
+- Optimized canonical versus validation side-by-side simulation: FAIL. The
+  validation derivative aborts with `DOT retirement metadata misaligned` at
+  its existing DOT assertion during the initialized DOT4ACC workload. The
+  assertion was not disabled.
+
+Stage 27C remains fail-gated. Stage 27D physical testing was not performed.
+
+Debug closure:
+- Root cause was an incorrect validation optimized derivative containing
+  unrelated deferred-load/lookahead pipeline logic rather than a canonical
+  copy plus validation-only changes.
+- The derivative was regenerated from the frozen canonical optimized core;
+  only validation memory ports and completion exposure were reapplied.
+- With identical instruction and initialized data memories, optimized
+  canonical-versus-validation equivalence now passes. The exercised
+  `dot4acc_stage_d.mem` program completes at 18 cycles in both instances.
+- This synthesizable validation change requires paired 80 MHz bitstream
+  rebuild before hardware use.
+
+Current workload-E2E progress: `tb/ai_cpu_validation_e2e_tb.sv` and
+`scripts/run_ai_cpu_validation_e2e_xsim.tcl` exercise both validation
+derivatives through host preload, load-mode release, execution, completion,
+and result/cycle readback. The first run found an integration mismatch in the
+existing `ai_dot_product_dot4acc.mem` asset: baseline result `0xfffffff2`,
+optimized result `0x00000000`. The canonical optimized
+`programs/dot4acc_stage_d.mem` equivalence remains an 18-cycle PASS, so this
+failure is confined to workload/program integration and is not hidden.
+
+The controller idle `READ_DATA` path was corrected to re-enter safe load mode
+for synchronous host readback. This is synthesizable validation RTL; paired
+80 MHz bitstreams must be rebuilt after the workload issue is resolved.
+
+DOT4 root cause and closure: the original optimized image used CPU byte
+addresses 64 and 68, corresponding to validation word indices 16 and 17,
+while the E2E preload initialized unrelated addresses. The original scalar
+image was also the documented -14 example, not the requested 70 workload.
+New equivalent images `programs/ai_dot4_70_baseline.mem` and
+`programs/ai_dot4_70_dot4acc.mem` were added. E2E now passes with baseline
+`0x46` in 41 cycles and optimized `0x46` in 16 cycles; golden result is 70.
+Reset/restart also passes.
+
+DOT64 baseline-comparable, matrix-vector, and signed/edge workload assets are
+not yet available, so full Stage 27C signoff remains open and paired rebuilds
+are deferred until all simulation gates pass.
+
+DOT64 progress: `programs/ai_dot64_baseline.mem` and
+`programs/ai_dot64_dot4acc.mem` were generated with identical 64-element
+all-ones inputs and exercised through the validation wrapper. Both return 64
+against the independent golden model. Baseline cycles are 72 and optimized
+cycles are 31. This is simulation-only evidence.
+
+The repository matrix-vector reference is embedded in
+`tb/tb_dot4acc_stage_h13b_timingopt_t2_benchmark.sv`; host-loadable paired
+images and complete matrix/edge E2E signoff remain outstanding.
+FINAL SIMULATION CLOSURE: DOT4 70/70 (41/16), DOT64 64/64 (72/31), MATVEC
+`0x278,0xffff_ff11`/same (26/19), and EDGE 1/1 (15/16). Completion,
+cycle-counter, reset/restart, and three-run deterministic E2E checks pass;
+`AI_CPU_STAGE27C_SIGNOFF_PASS` was emitted. Physical testing and speedup are
+not claimed. Paired Vivado rebuild is blocked by local tclapp project-write
+failure (`Could not open 'C' for writing`).
+FINAL BUILD SIGNOFF: the minimal Vivado project test failed with the existing
+user TclStore (`tclapp::load_apps`, `Could not open 'C' for writing`). The
+isolated-user wrapper fixed project creation and completed both builds.
+Historical pre-final-rebuild reference: baseline 80 MHz, WNS +1.956 ns, WHS +0.093 ns, TNS/THS 0, 0 failing
+endpoints, 2077 LUT, 1883 FF, 1 RAMB18, 0 DSP. Optimized: 80 MHz, WNS
+Historical pre-final-rebuild reference: optimized +0.443 ns, WHS +0.117 ns, TNS/THS 0, 0 failing endpoints, 2953 LUT, 2192 FF,
+1 RAMB18, 5 DSP. Physical testing is not run.

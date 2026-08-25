@@ -1,0 +1,15 @@
+GPU Stage 9 prefetch benchmark summary
+======================================
+
+Validated clock: 80 MHz (post-route PASS, WNS +0.138 ns, TNS 0 ns)
+
+Workload                         Stage 8 cycles  Stage 9 cycles  Stage 9 ops/cycle
+Register-only VADD chain                    4               4           4.000000
+Four-vector array add                      24              21           0.761905
+Four-vector XOR transform                  16              13           1.230769
+Four-vector VSRA transform                 16              13           1.230769
+
+Array-add throughput: 60.952 Madd/s at 80 MHz (baseline 53.333 Madd/s).
+Prefetch requests: 3; hits: 3; compulsory misses: 1; store/read overlaps: 3.
+
+Stage 9 post-route resources: 2847 LUT, 1142 FF, 20 LUTRAM, 2 RAMB36, 0 DSP48.

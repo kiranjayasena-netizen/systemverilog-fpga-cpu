@@ -78,6 +78,17 @@ The final physically measured 104 MIPS result uses the Phase 13 five-stage forwa
 
 ## Run Simulations
 
+## GPU release
+
+The `gpu-development` branch contains the verified four-lane SIMD GPU
+milestones through Stage 14. The selected core is
+`rtl/vector_load_overlap_program_core.sv`: 20-cycle unchanged ARRAY_ADD,
+64.000 MAdds/s at 80 MHz, 3277 post-route LUT, two RAMB36 and zero DSP.
+The production wrapper is `rtl/vector_gpu_accelerator.sv`; the Basys 3
+UART/MMCM top is `rtl/basys3_vector_gpu_top.sv`. See the GPU architecture,
+programming, UART, verification and Basys 3 quick-start documents under
+`docs/`. Board hardware testing remains a required local step.
+
 Open a Vivado-enabled PowerShell from the repository root and run:
 
 ```powershell
@@ -244,6 +255,40 @@ Vivado closed timing at 100 and 105 MHz, but 110 MHz failed setup timing. Becaus
 | `docs/` | Project notes, verification logs, architecture and book-planning docs |
 | `docs/images/` | Selected screenshots and board evidence images |
 | `reports/` | Human-written reports and selected summaries |
+
+## CPU AI / DOT4ACC
+
+Stage 27 freezes a validation-specific baseline and signed-INT8 DOT4ACC CPU
+pair for the Basys 3. Both run at 80 MHz through the same UART validation
+interface. Measured physical results are:
+
+| Benchmark | Baseline cycles | Optimized cycles | Speedup | Result |
+|---|---:|---:|---:|---|
+| DOT4 | 42 | 17 | 2.4706x | PASS |
+| DOT64 | 73 | 32 | 2.2813x | PASS |
+| MATVEC | 27 | 20 | 1.3500x | PASS |
+| EDGE | 16 | 17 | 0.9412x | PASS; optimized slower |
+
+These measurements are from a Digilent Basys 3 at 80 MHz and use independent
+golden references. The optimized image passed 100/100 stability jobs. Build,
+programming, and workload instructions are in
+[`docs/cpu_ai_v1_reproduction.md`](docs/cpu_ai_v1_reproduction.md); detailed
+evidence and hashes are in the [release manifest](docs/cpu_ai_v1_release_manifest.md).
+
+## Canonical implementations and releases
+
+| Area | Canonical implementation | Board-facing entry point |
+|---|---|---|
+| CPU baseline | `rtl/cpu_core_pipeline_timingopt.sv` | Stage 27 validation wrapper |
+| CPU AI optimized | `rtl/cpu_core_pipeline_dot4acc_memopt_h13b_timingopt_t2.sv` | `rtl/basys3_ai_cpu_validation_top.sv` |
+| GPU | `rtl/vector_load_overlap_program_core.sv` | `rtl/basys3_vector_gpu_top.sv` |
+
+Other pipeline and vector RTL variants are retained as historical engineering
+stages. Published milestones are [book-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/book-v1.0),
+[gpu-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/gpu-v1.0),
+and [cpu-ai-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/cpu-ai-v1.0).
+The [CPU-AI reproduction guide](docs/cpu_ai_v1_reproduction.md) and GPU
+quick-start documents provide build and validation commands.
 
 ## Repository Status
 

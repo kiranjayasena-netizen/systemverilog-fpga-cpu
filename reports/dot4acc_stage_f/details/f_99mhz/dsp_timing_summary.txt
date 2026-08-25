@@ -1,0 +1,16 @@
+DOT DSP count: 4
+Non-DOT/MAC8 DSP count: 1
+
+DOT paths found: 5
+DOT path 1: slack=0.647 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/dot4acc_pipeline_inst/pair1_reg_reg/CEB2 delay=8.891 logic=2.315 route=6.576 levels=10
+DOT path 2: slack=0.650 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg/CEB2 delay=8.890 logic=2.315 route=6.575 levels=10
+DOT path 3: slack=0.655 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/dot4acc_pipeline_inst/pair0_reg_reg/CEB2 delay=8.877 logic=2.315 route=6.562 levels=10
+DOT path 4: slack=0.664 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/dot4acc_pipeline_inst/pair1_reg_reg/CEA2 delay=8.891 logic=2.315 route=6.576 levels=10
+DOT path 5: slack=0.667 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/dot4acc_pipeline_inst/product2_reg_reg/CEA2 delay=8.890 logic=2.315 route=6.575 levels=10
+
+MAC8 paths found: 5
+MAC8 path 1: slack=-0.256 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/ex_mem_reg_reg[alu_result][20]/D delay=10.296 logic=4.794 route=5.502 levels=6
+MAC8 path 2: slack=-0.232 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/ex_mem_reg_reg[alu_result][31]/D delay=10.268 logic=4.794 route=5.474 levels=6
+MAC8 path 3: slack=-0.176 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/ex_mem_reg_reg[alu_result][27]/D delay=10.215 logic=4.794 route=5.421 levels=6
+MAC8 path 4: slack=-0.156 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/ex_mem_reg_reg[alu_result][13]/D delay=10.144 logic=4.794 route=5.350 levels=6
+MAC8 path 5: slack=-0.117 start=cpu_inst/id_ex_reg_reg[rs2][2]/C end=cpu_inst/ex_mem_reg_reg[alu_result][25]/D delay=10.156 logic=4.794 route=5.362 levels=6

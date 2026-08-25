@@ -1,0 +1,557 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Aug  8 12:54:01 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_timing -delay_type min -path_type full_clock_expanded -input_pins -max_paths 10 -nworst 1 -file C:/FPGA/systemverilog-fpga-cpu/reports/dot4acc_stage_g/details/g1_100mhz/top_10_hold_paths.rpt
+| Design       : fpga_top_pipeline_dot4acc_timingopt
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.034ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][31]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIBDI[13]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.248ns  (logic 0.141ns (56.898%)  route 0.107ns (43.102%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.058ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.006ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y6           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][31]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y6           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][31]/Q
+                         net (fo=1, routed)           0.107     1.697    cpu_inst/data_mem_inst/mem_reg_1[31]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIBDI[13]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.878     2.006    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+                         clock pessimism             -0.498     1.508    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKBWRCLK_DIBDI[13])
+                                                      0.155     1.663    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.663    <hidden>
+                         arrival time                           1.697    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.034    <hidden>
+
+Slack (MET) :             0.035ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][11]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIADI[11]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.247ns  (logic 0.141ns (57.072%)  route 0.106ns (42.928%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.005ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y5           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][11]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y5           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][11]/Q
+                         net (fo=1, routed)           0.106     1.696    cpu_inst/data_mem_inst/mem_reg_1[11]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIADI[11]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.877     2.005    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                         clock pessimism             -0.498     1.507    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKARDCLK_DIADI[11])
+                                                      0.155     1.662    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.662    <hidden>
+                         arrival time                           1.696    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.035    <hidden>
+
+Slack (MET) :             0.035ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][20]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIBDI[2]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.249ns  (logic 0.141ns (56.669%)  route 0.108ns (43.331%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.058ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.006ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y5           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][20]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y5           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][20]/Q
+                         net (fo=1, routed)           0.108     1.698    cpu_inst/data_mem_inst/mem_reg_1[20]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIBDI[2]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.878     2.006    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+                         clock pessimism             -0.498     1.508    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKBWRCLK_DIBDI[2])
+                                                      0.155     1.663    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.663    <hidden>
+                         arrival time                           1.698    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.035    <hidden>
+
+Slack (MET) :             0.036ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][12]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIADI[12]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.249ns  (logic 0.141ns (56.669%)  route 0.108ns (43.331%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.005ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y6           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][12]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y6           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][12]/Q
+                         net (fo=1, routed)           0.108     1.698    cpu_inst/data_mem_inst/mem_reg_1[12]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIADI[12]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.877     2.005    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                         clock pessimism             -0.498     1.507    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKARDCLK_DIADI[12])
+                                                      0.155     1.662    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.662    <hidden>
+                         arrival time                           1.698    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.036    <hidden>
+
+Slack (MET) :             0.058ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][1]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIADI[1]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.271ns  (logic 0.164ns (60.558%)  route 0.107ns (39.442%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.005ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X8Y5           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X8Y5           FDRE (Prop_fdre_C_Q)         0.164     1.613 r  cpu_inst/ex_mem_reg_reg[store_data][1]/Q
+                         net (fo=1, routed)           0.107     1.720    cpu_inst/data_mem_inst/mem_reg_1[1]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIADI[1]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.877     2.005    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                         clock pessimism             -0.498     1.507    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKARDCLK_DIADI[1])
+                                                      0.155     1.662    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.662    <hidden>
+                         arrival time                           1.720    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.058    <hidden>
+
+Slack (MET) :             0.087ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][22]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIBDI[4]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.301ns  (logic 0.141ns (46.852%)  route 0.160ns (53.148%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.058ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.006ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y6           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][22]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y6           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][22]/Q
+                         net (fo=1, routed)           0.160     1.750    cpu_inst/data_mem_inst/mem_reg_1[22]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIBDI[4]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.878     2.006    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+                         clock pessimism             -0.498     1.508    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKBWRCLK_DIBDI[4])
+                                                      0.155     1.663    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.663    <hidden>
+                         arrival time                           1.750    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.087    <hidden>
+
+Slack (MET) :             0.097ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][2]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIADI[2]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.309ns  (logic 0.141ns (45.612%)  route 0.168ns (54.388%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.005ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X9Y5           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X9Y5           FDRE (Prop_fdre_C_Q)         0.141     1.590 r  cpu_inst/ex_mem_reg_reg[store_data][2]/Q
+                         net (fo=1, routed)           0.168     1.758    cpu_inst/data_mem_inst/mem_reg_1[2]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIADI[2]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.877     2.005    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                         clock pessimism             -0.498     1.507    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKARDCLK_DIADI[2])
+                                                      0.155     1.662    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.662    <hidden>
+                         arrival time                           1.758    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.097    <hidden>
+
+Slack (MET) :             0.111ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][23]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIBDI[5]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.326ns  (logic 0.164ns (50.315%)  route 0.162ns (49.685%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.059ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.006ns
+    Source Clock Delay      (SCD):    1.448ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.565     1.448    cpu_inst/clk_IBUF_BUFG
+    SLICE_X8Y8           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][23]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X8Y8           FDRE (Prop_fdre_C_Q)         0.164     1.612 r  cpu_inst/ex_mem_reg_reg[store_data][23]/Q
+                         net (fo=1, routed)           0.162     1.774    cpu_inst/data_mem_inst/mem_reg_1[23]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIBDI[5]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.878     2.006    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+                         clock pessimism             -0.498     1.508    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKBWRCLK_DIBDI[5])
+                                                      0.155     1.663    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.663    <hidden>
+                         arrival time                           1.774    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.111    <hidden>
+
+Slack (MET) :             0.111ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][3]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIADI[3]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.324ns  (logic 0.164ns (50.625%)  route 0.160ns (49.375%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.005ns
+    Source Clock Delay      (SCD):    1.449ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.566     1.449    cpu_inst/clk_IBUF_BUFG
+    SLICE_X8Y5           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X8Y5           FDRE (Prop_fdre_C_Q)         0.164     1.613 r  cpu_inst/ex_mem_reg_reg[store_data][3]/Q
+                         net (fo=1, routed)           0.160     1.773    cpu_inst/data_mem_inst/mem_reg_1[3]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIADI[3]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.877     2.005    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+                         clock pessimism             -0.498     1.507    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKARDCLK_DIADI[3])
+                                                      0.155     1.662    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.662    <hidden>
+                         arrival time                           1.773    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.111    <hidden>
+
+Slack (MET) :             0.116ns  (arrival time - required time)
+  Source:                 cpu_inst/ex_mem_reg_reg[store_data][25]/C
+                            (rising edge-triggered cell FDRE clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            cpu_inst/data_mem_inst/mem_reg/DIBDI[7]
+                            (rising edge-triggered cell RAMB18E1 clocked by sys_clk_pin  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             sys_clk_pin
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (sys_clk_pin rise@0.000ns - sys_clk_pin rise@0.000ns)
+  Data Path Delay:        0.330ns  (logic 0.164ns (49.642%)  route 0.166ns (50.358%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.059ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.006ns
+    Source Clock Delay      (SCD):    1.448ns
+    Clock Pessimism Removal (CPR):    0.498ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.226     0.226 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.631     0.858    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.026     0.884 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.565     1.448    cpu_inst/clk_IBUF_BUFG
+    SLICE_X8Y8           FDRE                                         r  cpu_inst/ex_mem_reg_reg[store_data][25]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X8Y8           FDRE (Prop_fdre_C_Q)         0.164     1.612 r  cpu_inst/ex_mem_reg_reg[store_data][25]/Q
+                         net (fo=1, routed)           0.166     1.778    cpu_inst/data_mem_inst/mem_reg_1[25]
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/DIBDI[7]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock sys_clk_pin rise edge)
+                                                      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                                                                r  clk_IBUF_inst/I
+    W5                   IBUF (Prop_ibuf_I_O)         0.414     0.414 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           0.685     1.099    clk_IBUF
+    BUFGCTRL_X0Y0                                                     r  clk_IBUF_BUFG_inst/I
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.029     1.128 r  clk_IBUF_BUFG_inst/O
+                         net (fo=1714, routed)        0.878     2.006    cpu_inst/data_mem_inst/clk_IBUF_BUFG
+    RAMB18_X0Y2          RAMB18E1                                     r  cpu_inst/data_mem_inst/mem_reg/CLKBWRCLK
+                         clock pessimism             -0.498     1.508    <hidden>
+    RAMB18_X0Y2          RAMB18E1 (Hold_ramb18e1_CLKBWRCLK_DIBDI[7])
+                                                      0.155     1.663    cpu_inst/data_mem_inst/mem_reg
+  -------------------------------------------------------------------
+                         required time                         -1.663    <hidden>
+                         arrival time                           1.778    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.116    <hidden>
+
+
+
+

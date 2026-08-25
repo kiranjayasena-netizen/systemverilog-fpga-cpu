@@ -1,0 +1,10 @@
+Stage 14 final summary
+
+Phase A: one of five ARRAY_ADD misses (PC0 VLOAD V1,[0], followed by independent VLOAD V2,[8]) is safely overlapable. Four misses are dependency-blocked; the single RF write path prevents overlapping an ALU writeback. Maximum safe saving = 1 cycle.
+
+Functional: Stage 14 50/50 PASS.
+Equivalence: Stage 12 vs Stage 14 10/10 PASS.
+Regressions: Stage 12 46/46, Stage 11 depth6 32/32, Stage 10B 20/20, Stage 10A 26/26.
+Benchmark: REG 4, ARRAY 20, XOR 13, VSRA 13.
+Physical: post-route LUT 3277, logic LUT 3209, LUTRAM 68, FF 1522, RAMB36 2, RAMB18 0, DSP 0. Setup WNS +0.221 ns, hold WHS +0.185 ns.
+Worst path: core/current_pc_reg[1]/C -> core/eu/vector_register_file_inst/regs_reg[3][69]/D, 12.131 ns (logic 2.038 ns, route 10.093 ns, 83.2% route, 9 levels).

@@ -34,10 +34,15 @@ The register fields address the 32-register file, so register indexes run from `
 | `4'h9` | BEQ | Branch if `rs1 == rs2` |
 | `4'ha` | JUMP | Unconditional PC-relative jump |
 | `4'hb` | MAC8 | Phase 12 core only: `rd = rd + signed8(rs1[7:0]) * signed8(rs2[7:0])` |
+| `4'hc` | DOT4ACC | Stage D experimental core only: four packed signed-INT8 products accumulated into `rd` |
 
-Opcodes `4'hc` through `4'hf` remain invalid. Historical cores that do not
-implement the Phase 12 AI extension also continue to treat `4'hb` as invalid;
-this prevents them from silently executing MAC8 incorrectly.
+Opcodes `4'hd` through `4'hf` remain unassigned and invalid. Opcode `4'hc` is
+executable only in `cpu_core_pipeline_dot4acc_wb`; every historical CPU core
+still treats it as invalid and side-effect free. The Stage C
+`cpu_core_pipeline_dot4acc_issue` core observes arithmetic completions but has
+no architectural DOT writeback or retirement. Historical cores that do not implement the
+Phase 12 AI extension also continue to treat `4'hb` as invalid; this prevents
+them from silently executing unsupported AI instructions.
 
 ## MAC8 Encoding And Arithmetic
 
@@ -79,6 +84,40 @@ ADDI x1, x0, -3
 ADDI x2, x0,  4
 MAC8 x3, x1, x2       // x3 = 10 + (-3 * 4) = -2
 ```
+
+## Experimental DOT4ACC Encoding And Arithmetic
+
+`DOT4ACC rd, rs1, rs2` is architecturally executable only in the Stage D
+experimental core `cpu_core_pipeline_dot4acc_wb`.
+
+| Bits | DOT4ACC meaning |
+| --- | --- |
+| `[31:28]` | `4'hc` (`OP_DOT4ACC`) |
+| `[27:23]` | `rd`, accumulator source and destination |
+| `[22:18]` | `rs1`, packed signed INT8 source A |
+| `[17:13]` | `rs2`, packed signed INT8 source B |
+| `[12:0]` | reserved; canonical encoding must be zero |
+
+The Stage A1 encoder always writes zero to `[12:0]`, and its reference checker
+flags nonzero reserved bits as non-canonical. The Stage D core rejects a
+non-canonical instruction with any nonzero reserved bit.
+
+Arithmetic is precisely:
+
+```text
+dot = signed(rs1[7:0])   * signed(rs2[7:0])
+    + signed(rs1[15:8])  * signed(rs2[15:8])
+    + signed(rs1[23:16]) * signed(rs2[23:16])
+    + signed(rs1[31:24]) * signed(rs2[31:24])
+rd  = (rd_old + sign_extend(dot)) mod 2^32
+```
+
+The implementation uses signed 8-bit lanes, full signed 16-bit products,
+signed 17-bit pair sums, a signed 18-bit dot sum, and explicit signed 32-bit
+accumulation. There is no saturation or overflow flag. `DOT4ACC x0,...`
+retires normally in the Stage D core but its register write is suppressed, so
+`x0` remains zero. These semantics do not imply support in any historical CPU
+variant.
 
 ## Immediate Sign Extension
 
