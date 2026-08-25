@@ -1,0 +1,24 @@
+Final frozen Stage H implementation: H1.3b-T2
+Flow: default synth_design, opt_design, place_design, route_design
+Part: xc7a35tcpg236-1; clock: sys_clk_pin
+
+Validated frequency: 93 MHz, PASS 5/5
+Nearest tested failure: 94 MHz, one run, WNS -0.257 ns, 118 setup failures
+Additional failure: 95 MHz, one run, WNS -0.215 ns, 104 setup failures
+
+93 MHz setup path (all five runs):
+  startpoint: cpu_inst/data_mem_inst/mem_reg/CLKARDCLK
+  endpoint: cpu_inst/id_ex_reg_reg[operand_b][16]/R
+  data delay: 9.878 ns
+  logic delay: 4.651 ns
+  routing delay: 5.227 ns
+  logic levels: 12
+
+93 MHz hold path (all five runs):
+  startpoint: cpu_inst/ex_mem_reg_reg[store_data][0]/C
+  endpoint: cpu_inst/data_mem_inst/mem_reg/DIADI[0]
+  worst hold WNS: +0.059 ns
+  hold TNS: 0.000 ns
+
+Resources (93 MHz runs): LUT 2008, FF 1812, RAMB18 2, DSP48 5,
+BUFG 1, latches 0.

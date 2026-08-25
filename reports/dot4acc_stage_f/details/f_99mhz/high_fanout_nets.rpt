@@ -1,0 +1,122 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Fri Aug  7 19:32:28 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_high_fanout_nets -fanout_greater_than 16 -max_nets 100 -file C:/FPGA/systemverilog-fpga-cpu/reports/dot4acc_stage_f/details/f_99mhz/high_fanout_nets.rpt
+| Design       : fpga_top_pipeline_dot4acc_wb
+| Device       : xc7a35t
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+High Fan-out Nets Information
+
+1. Summary
+----------
+
++-----------------------------------------------------------------+--------+-------------+
+| Net Name                                                        | Fanout | Driver Type |
++-----------------------------------------------------------------+--------+-------------+
+| rst_btn_IBUF                                                    |   1493 | IBUF        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][24]                    |    260 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][23]                    |    260 | FDRE        |
+| enable_sw_IBUF                                                  |    258 | IBUF        |
+| cpu_inst/id_ex_reg19_out                                        |    170 | LUT2        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][25]                    |    132 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][15]                    |    132 | FDRE        |
+| cpu_inst/mem_wb_reg_reg[mem_to_reg]__0                          |    128 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][20]                    |    112 | FDRE        |
+| cpu_inst/id_ex_reg_reg[use_imm]__0                              |     97 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][18]                    |     88 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][14]                    |     88 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][18]_rep__0_n_0              |     86 | FDRE        |
+| cpu_inst/redirect_pending_valid                                 |     86 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][18]_rep_n_0                 |     86 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][14]_rep__0_n_0              |     86 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][14]_rep_n_0                 |     86 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][19]_rep__1_n_0              |     85 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][13]_rep__0_n_0              |     85 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][19]_rep__0_n_0              |     85 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][19]_rep_n_0                 |     85 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][13]_rep_n_0                 |     85 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction][13]_rep__1_n_0              |     85 | FDRE        |
+| cpu_inst/fetch_buffer_valid                                     |     84 | FDRE        |
+| cpu_inst/id_ex_reg_reg[instruction_n_0_][12]                    |     81 | FDRE        |
+| cpu_inst/dot4acc_pipeline_inst/dot_complete_meta_reg_reg[valid] |     79 | LUT3        |
+| cpu_inst/dot4acc_pipeline_inst/if_id_reg                        |     73 | LUT4        |
+| cpu_inst/dot4acc_pipeline_inst/id_ex_reg_reg[valid]_2           |     68 | LUT5        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][26]                    |     68 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][21]                    |     68 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][16]                    |     68 | FDRE        |
+| cpu_inst/dot_complete_meta_reg_reg[chain_continue]__0           |     64 | FDRE        |
+| cpu_inst/ex_alu_result0_i_34_n_0                                |     64 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg_2[0]  |     63 | LUT2        |
+| cpu_inst/dot4acc_pipeline_inst/E[0]                             |     62 | LUT4        |
+| cpu_inst/dot4acc_pipeline_inst/redirect_pending_valid_reg       |     56 | LUT6        |
+| cpu_inst/fetch_pending_valid_reg_n_0                            |     54 | FDRE        |
+| cpu_inst/dot4acc_pipeline_inst/packed_a[7]                      |     53 | LUT5        |
+| cpu_inst/id_ex_reg_reg[opcode_n_0_][3]                          |     38 | FDRE        |
+| cpu_inst/id_ex_reg_reg[opcode_n_0_][1]                          |     38 | FDRE        |
+| cpu_inst/id_ex_reg_reg[opcode_n_0_][0]                          |     38 | FDRE        |
+| cpu_inst/id_ex_reg_reg[opcode_n_0_][2]                          |     38 | FDRE        |
+| cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_19_n_0        |     38 | LUT4        |
+| cpu_inst/dot4acc_pipeline_inst/id_ex_reg_reg[valid]_0[0]        |     36 | LUT6        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][17]                    |     36 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][22]                    |     36 | FDRE        |
+| cpu_inst/if_id_reg_reg[instruction_n_0_][27]                    |     36 | FDRE        |
+| cpu_inst/ex_alu_result0_i_68_n_0                                |     32 | LUT6        |
+| cpu_inst/ex_alu_result0_i_69_n_0                                |     32 | LUT6        |
+| cpu_inst/ex_mem_reg[alu_result][31]_i_9_n_0                     |     32 | LUT4        |
+| cpu_inst/ex_mem_reg[alu_result][31]_i_10_n_0                    |     32 | LUT4        |
+| cpu_inst/id_ex_reg[accumulator][31]_i_4_n_0                     |     32 | LUT6        |
+| cpu_inst/id_ex_reg[operand_a][31]_i_4_n_0                       |     32 | LUT6        |
+| cpu_inst/id_ex_reg[operand_b][31]_i_5_n_0                       |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/mem_wb_reg_reg[valid]_0          |     32 | LUT5        |
+| cpu_inst/dot4acc_pipeline_inst/mem_wb_reg_reg[valid]            |     32 | LUT5        |
+| cpu_inst/dot4acc_pipeline_inst/ex_mem_reg_reg[rd][0]            |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/dot_complete_meta_reg_reg[rd][3] |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/SR[0]                            |     32 | LUT5        |
+| cpu_inst/regs[30][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[31][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/ex_mem_reg[alu_result][31]_i_5_n_0                     |     32 | LUT4        |
+| cpu_inst/ex_mem_reg[alu_result][31]_i_6_n_0                     |     32 | LUT4        |
+| cpu_inst/regs[3][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[4][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[5][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[6][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/ex_alu_result0_i_33_n_0                                |     32 | LUT4        |
+| cpu_inst/regs[7][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[8][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[9][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/rst_btn[0]                       |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/rst_btn_0[0]                     |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/rst_btn_1[0]                     |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_33_n_0        |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/product2_reg_reg_i_34_n_0        |     32 | LUT6        |
+| cpu_inst/regs[20][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/dot_chain_accumulator_reg[0]_i_1_n_0                   |     32 | LUT2        |
+| cpu_inst/regs[10][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[11][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[12][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[13][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[14][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[15][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[16][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[17][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[18][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[19][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[1][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/regs[21][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[22][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[23][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[24][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[25][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[26][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[27][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[28][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[29][31]_i_1_n_0                                   |     32 | LUT6        |
+| cpu_inst/regs[2][31]_i_1_n_0                                    |     32 | LUT6        |
+| cpu_inst/dot4acc_pipeline_inst/mem_reg[29]                      |     31 | LUT5        |
++-----------------------------------------------------------------+--------+-------------+
+
+

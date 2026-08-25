@@ -1,0 +1,16 @@
+STAGE 11 STATUS: EXPERIMENTALLY COMPLETE
+
+FUNCTIONAL DEPTH 6: 32/32 PASS
+FUNCTIONAL DEPTH 8: 32/32 PASS
+EQUIVALENCE: 8/8 PASS
+BENCHMARK CYCLES (DEPTH 6/8): REG_VADD 4, ARRAY_ADD 21, XOR 13, VSRA 13
+DEEP PREFETCH: distance 5 request and subsequent hit observed
+
+DEPTH 6 POST-ROUTE: LUT 3177, LUTRAM 68, FF 1450, RAMB36 2, DSP 0,
+SETUP WNS +0.001 ns, HOLD WHS +0.249 ns
+DEPTH 8 POST-ROUTE: LUT 3349, LUTRAM 76, FF 1446, RAMB36 2, DSP 0,
+SETUP WNS +0.334 ns, HOLD WHS +0.219 ns
+
+CONCLUSION: deeper visibility is correct and demonstrably used, but does
+not improve the unchanged benchmarks. Depth 6 is preferred on area;
+Stage 12 multiple-outstanding-read investigation is the next experiment.

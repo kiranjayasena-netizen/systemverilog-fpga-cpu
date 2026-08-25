@@ -1,0 +1,16 @@
+GPU Stage 8 benchmark summary
+=============================
+
+Clock basis: 80 MHz, Stage 7 post-route PASS (WNS +0.155 ns, TNS 0, hold WNS +0.263 ns)
+
+Workload                         Cycles  Elements  Useful ops/cycle  ALU fraction  Result
+Register-only VADD chain              4        16          4.000000      1.000000  PASS
+Four-vector array add                24        16          0.666667      0.166667  PASS
+Four-vector XOR transform            16        16          1.000000      0.250000  PASS
+Four-vector VSRA transform           16        16          1.000000      0.250000  PASS
+
+Array-add detail: 8 VLOAD, 4 VSTORE, 4 VADD, 16 scalar additions,
+6 cycles/vector, 1.5 cycles/scalar element, 192 logical bytes.
+
+Post-route resources: 2784 LUT, 1039 FF, 12 LUTRAM, 2 RAMB36, 0 DSP48.
+Stage 5A post-route delta: +500 LUT (+21.89%), +4 FF (+0.39%), +2 RAMB36.

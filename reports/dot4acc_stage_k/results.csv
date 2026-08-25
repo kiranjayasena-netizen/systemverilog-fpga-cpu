@@ -1,0 +1,19 @@
+category,benchmark_or_metric,workload,useful_macs,cycles,retired,validated_mhz,mac_per_cycle,mmac_per_s,wns_ns,tns_ns,hold_wns_ns,setup_failures,lut,ff,ramb18,dsp48,bufg,latches,result,status,notes
+timing,T2_final,93MHz,,,,93,,,0.230,0,0.059,0,2008,1812,2,5,1,0,,PASS,5/5 default-flow runs
+timing,T2_nearest_failure,94MHz,,,,94,,,-0.257,-9.970,0.035,118,2006,1812,2,5,1,0,,FAIL,one run
+Stage_H,memory_feed_N128,N=128,128,263,,93,0.486692,45.2624,,,,,2008,1812,2,5,1,0,,PASS,8K+7; 31/31/31/31
+Stage_H,register_resident_N64,N=64,,27,,93,,,,,,,,,,,,,PASS,established invariant
+Stage_H,register_resident_N128,N=128,,43,,93,,,,,,,,,,,,,PASS,established invariant
+Stage_J,J1,N=32,32,94,41,93,0.340426,31.6596,,,,,,,,,,,0x000057ba,PASS,golden checked
+Stage_J,J1,N=64,64,182,81,93,0.351648,32.7033,,,,,,,,,,,0x000024e5,PASS,golden checked
+Stage_J,J1,N=128,128,358,161,93,0.357542,33.2514,,,,,,,,,,,0x000028e5,PASS,golden checked
+Stage_J,J2_2x64,2 outputs x 64,128,331,134,93,0.386707,35.9637,,,,,,,,,,,0x000024e5|0x0000bf7b,PASS,golden checked
+regression,A1,reference,,,,,,,,,,,,,,,,,,306/0,PASS,individual retained result
+regression,A2,arithmetic pipeline,,,,,,,,,,,,,,,,,,2859/0,PASS,individual retained result
+regression,C,issue dependency,,,,,,,,,,,,,,,,,,1468/0,PASS,individual retained result
+regression,D,writeback retirement,,,,,,,,,,,,,,,,,,3945/0,PASS,individual retained result
+regression,Stage_G,timing functional,,,,,,,,,,,,,,,,,,4258/0,PASS,individual retained result
+regression,Stage_H,T2 focused,,,,,,,,,,,,,,,,,,4254/0,PASS,individual retained result
+regression,Stage_E,benchmark,,,,,,,,,,,,,,,,,,233/0,PASS,individual retained result
+regression,MAC8,scalar/MAC8,,,,,,,,,,,,,,,,,,29/19;0xfffffff2,PASS,retained result
+regression,Phase12,aggregate,,,,,,,,,,,,,,,,,,457 cycles;319 retired,PASS,retained result

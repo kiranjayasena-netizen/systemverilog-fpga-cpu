@@ -1,0 +1,42 @@
+Startpoint: cpu_inst/mem_wb_reg_reg[rd][2]/C
+Endpoint: cpu_inst/instr_mem_inst/instruction_reg/RSTRAMARSTRAM
+Path group: sys_clk_pin
+Clock: sys_clk_pin
+Setup slack (ns): -1.865
+Data path delay (ns): 11.395
+Logic delay (ns): 2.947
+Routing delay (ns): 8.448
+Clock uncertainty (ns): 0.035
+Logic levels: 14
+
+Path pins, cells, placement and nets
+cpu_inst/mem_wb_reg_reg[rd][2]/Q | cell=cpu_inst/mem_wb_reg_reg[rd][2] | ref=FDRE | loc=SLICE_X2Y14 | bel=SLICEM.BFF | net=cpu_inst/mem_wb_reg_reg[rd][2]
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7/I2 | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7 | ref=LUT5 | loc=SLICE_X2Y14 | bel=SLICEM.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/product0_reg_reg_i_39_0[2]
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7/O | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7 | ref=LUT5 | loc=SLICE_X2Y14 | bel=SLICEM.C6LUT | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_4/I0 | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_4 | ref=LUT3 | loc=SLICE_X2Y14 | bel=SLICEM.D6LUT | net=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_7_n_0
+cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_4/O | cell=cpu_inst/dot4acc_pipeline_inst/led_OBUF[10]_inst_i_4 | ref=LUT3 | loc=SLICE_X2Y14 | bel=SLICEM.D6LUT | net=cpu_inst/dot4acc_pipeline_inst/mem_wb_reg_reg[reg_write]
+cpu_inst/dot4acc_pipeline_inst/ex_alu_result0_i_42/I0 | cell=cpu_inst/dot4acc_pipeline_inst/ex_alu_result0_i_42 | ref=LUT6 | loc=SLICE_X4Y15 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/mem_wb_reg_reg[reg_write]
+cpu_inst/dot4acc_pipeline_inst/ex_alu_result0_i_42/O | cell=cpu_inst/dot4acc_pipeline_inst/ex_alu_result0_i_42 | ref=LUT6 | loc=SLICE_X4Y15 | bel=SLICEL.A6LUT | net=cpu_inst/dot4acc_pipeline_inst/mem_wb_reg_reg[rd][2]
+cpu_inst/data_mem_inst/ex_alu_result0_i_4/I3 | cell=cpu_inst/data_mem_inst/ex_alu_result0_i_4 | ref=LUT5 | loc=SLICE_X9Y21 | bel=SLICEL.A6LUT | net=cpu_inst/data_mem_inst/ex_alu_result0_11
+cpu_inst/data_mem_inst/ex_alu_result0_i_4/O | cell=cpu_inst/data_mem_inst/ex_alu_result0_i_4 | ref=LUT5 | loc=SLICE_X9Y21 | bel=SLICEL.A6LUT | net=cpu_inst/data_mem_inst/A[4]
+cpu_inst/data_mem_inst/product0_reg_reg_i_33/I0 | cell=cpu_inst/data_mem_inst/product0_reg_reg_i_33 | ref=LUT5 | loc=SLICE_X9Y18 | bel=SLICEL.B6LUT | net=cpu_inst/data_mem_inst/A[4]
+cpu_inst/data_mem_inst/product0_reg_reg_i_33/O | cell=cpu_inst/data_mem_inst/product0_reg_reg_i_33 | ref=LUT5 | loc=SLICE_X9Y18 | bel=SLICEL.B6LUT | net=cpu_inst/data_mem_inst/ex_mem_reg[alu_result][7]_i_10_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15/I0 | cell=cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15 | ref=LUT6 | loc=SLICE_X8Y15 | bel=SLICEM.B6LUT | net=cpu_inst/data_mem_inst/ex_mem_reg[alu_result][7]_i_10_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15/O | cell=cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15 | ref=LUT6 | loc=SLICE_X8Y15 | bel=SLICEM.B6LUT | net=cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8/S[1] | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8 | ref=CARRY4 | loc=SLICE_X8Y15 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/fetch_buffer_pc[31]_i_15_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8/CO[3] | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8 | ref=CARRY4 | loc=SLICE_X8Y15 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4/CI | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4 | ref=CARRY4 | loc=SLICE_X8Y16 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_8_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4/CO[3] | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4 | ref=CARRY4 | loc=SLICE_X8Y16 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_2/CI | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_2 | ref=CARRY4 | loc=SLICE_X8Y17 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_4_n_0
+cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_2/CO[2] | cell=cpu_inst/data_mem_inst/fetch_buffer_pc_reg[31]_i_2 | ref=CARRY4 | loc=SLICE_X8Y17 | bel=SLICEM.CARRY4 | net=cpu_inst/data_mem_inst/ex_branch_taken0
+cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4/I3 | cell=cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4 | ref=LUT4 | loc=SLICE_X10Y17 | bel=SLICEM.B6LUT | net=cpu_inst/data_mem_inst/ex_branch_taken0
+cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4/O | cell=cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4 | ref=LUT4 | loc=SLICE_X10Y17 | bel=SLICEM.B6LUT | net=cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4_n_0
+cpu_inst/data_mem_inst/load_overlap_reserved_i_2/I3 | cell=cpu_inst/data_mem_inst/load_overlap_reserved_i_2 | ref=LUT6 | loc=SLICE_X8Y18 | bel=SLICEM.A6LUT | net=cpu_inst/data_mem_inst/if_id_reg[pc][31]_i_4_n_0
+cpu_inst/data_mem_inst/load_overlap_reserved_i_2/O | cell=cpu_inst/data_mem_inst/load_overlap_reserved_i_2 | ref=LUT6 | loc=SLICE_X8Y18 | bel=SLICEM.A6LUT | net=cpu_inst/data_mem_inst/load_overlap_allowed
+cpu_inst/data_mem_inst/instruction_reg_i_15/I2 | cell=cpu_inst/data_mem_inst/instruction_reg_i_15 | ref=LUT6 | loc=SLICE_X4Y16 | bel=SLICEL.A6LUT | net=cpu_inst/data_mem_inst/load_overlap_allowed
+cpu_inst/data_mem_inst/instruction_reg_i_15/O | cell=cpu_inst/data_mem_inst/instruction_reg_i_15 | ref=LUT6 | loc=SLICE_X4Y16 | bel=SLICEL.A6LUT | net=cpu_inst/data_mem_inst/instruction_reg_i_15_n_0
+cpu_inst/data_mem_inst/instruction_reg_i_12/I1 | cell=cpu_inst/data_mem_inst/instruction_reg_i_12 | ref=LUT2 | loc=SLICE_X4Y19 | bel=SLICEL.B6LUT | net=cpu_inst/data_mem_inst/instruction_reg_i_15_n_0
+cpu_inst/data_mem_inst/instruction_reg_i_12/O | cell=cpu_inst/data_mem_inst/instruction_reg_i_12 | ref=LUT2 | loc=SLICE_X4Y19 | bel=SLICEL.B6LUT | net=cpu_inst/data_mem_inst/instruction_reg_i_12_n_0
+cpu_inst/data_mem_inst/instruction_reg_i_1/I2 | cell=cpu_inst/data_mem_inst/instruction_reg_i_1 | ref=LUT6 | loc=SLICE_X4Y20 | bel=SLICEL.C6LUT | net=cpu_inst/data_mem_inst/instruction_reg_i_12_n_0
+cpu_inst/data_mem_inst/instruction_reg_i_1/O | cell=cpu_inst/data_mem_inst/instruction_reg_i_1 | ref=LUT6 | loc=SLICE_X4Y20 | bel=SLICEL.C6LUT | net=cpu_inst/data_mem_inst/redirect_pending_valid_reg_3
+cpu_inst/instr_mem_inst/instruction_reg/RSTRAMARSTRAM | cell=cpu_inst/instr_mem_inst/instruction_reg | ref=RAMB18E1 | loc=RAMB18_X0Y8 | bel=RAMB18E1.RAMB18E1 | net=cpu_inst/instr_mem_inst/instruction_reg_0

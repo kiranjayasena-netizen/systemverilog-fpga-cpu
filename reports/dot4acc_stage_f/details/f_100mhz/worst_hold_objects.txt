@@ -1,0 +1,14 @@
+100 MHz worst routed hold path
+SLACK: 0.058
+STARTPOINT_PIN: cpu_inst/ex_mem_reg_reg[store_data][23]/C
+ENDPOINT_PIN: cpu_inst/data_mem_inst/mem_reg/DIBDI[5]
+ENDPOINT_CLOCK: sys_clk_pin
+DATAPATH_DELAY: 0.289
+DATAPATH_LOGIC_DELAY: 0.164
+DATAPATH_NET_DELAY: 0.125
+LOGIC_LEVELS: 0
+UNCERTAINTY: 
+
+Path pins, cells, placement and nets
+cpu_inst/ex_mem_reg_reg[store_data][23]/Q | cell=cpu_inst/ex_mem_reg_reg[store_data][23] | ref=FDRE | loc=SLICE_X10Y21 | bel=SLICEM.BFF | net=cpu_inst/ex_mem_reg_reg[store_data_n_0_][23]
+cpu_inst/data_mem_inst/mem_reg/DIBDI[5] | cell=cpu_inst/data_mem_inst/mem_reg | ref=RAMB18E1 | loc=RAMB18_X0Y8 | bel=RAMB18E1.RAMB18E1 | net=cpu_inst/data_mem_inst/mem_reg_0[23]

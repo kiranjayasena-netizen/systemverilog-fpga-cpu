@@ -1,0 +1,15 @@
+stage,category,benchmark,implementation,workload,useful_macs,cycles,retired,validated_mhz,mac_per_cycle,mmac_per_s,speedup,wns_ns,tns_ns,hold_wns_ns,setup_failures,lut,ff,ramb18,dsp48,result,status,notes
+Stage_H,kernel,N128,H0,memory-fed,128,294,,93,0.435374,40.4082,1.000,,,,,,,,,,PASS,9K+6 baseline
+Stage_H,kernel,N128,H1.3b,memory-fed,128,263,,93,0.486692,45.2624,1.11787,,,,,,,,,,PASS,8K+7;31/31/31/31
+Timing,physical,T0,H1.3b_T0,100MHz,,,,100,,,,-1.865,-817.384,+0.059,698,2007,1813,2,5,,FAIL,default flow
+Timing,physical,T1,H1.3b_T1,100MHz,,,,100,,,,-1.525,-537.848,+0.059,652,1984,1812,2,5,,FAIL,redirect qualification removed
+Timing,physical,T2,H1.3b_T2,100MHz,,,,100,,,,-0.623,-71.487,+0.057,286,2014,1812,2,5,,FAIL,branch/deferred forwarding separation
+Timing,physical,T3,H1.3b_T3,100MHz,,,,100,,,,-0.920,-233.654,+0.110,454,2050,1814,2,5,,FAIL,valid-only flush rejected
+Timing,physical,final,T2,93MHz,,,,93,,,,+0.230,0,+0.059,0,2008,1812,2,5,,PASS,highest repeatably validated; PASS 5/5
+Stage_J,application,J1_N32,DOT4ACC,signed-int8 dot,32,94,41,93,0.340426,31.6596,,,,,,,,,0x000057ba,PASS,golden checked
+Stage_J,application,J1_N64,DOT4ACC,signed-int8 dot,64,182,81,93,0.351648,32.7033,,,,,,,,,0x000024e5,PASS,golden checked
+Stage_J,application,J1_N128,DOT4ACC,signed-int8 dot,128,358,161,93,0.357542,33.2514,,,,,,,,,0x000028e5,PASS,golden checked
+Stage_J,application,J2_2x64,DOT4ACC,2x64 matvec,128,331,134,93,0.386707,35.9637,,,,,,,,,0x000024e5|0x0000bf7b,PASS,golden checked
+Stage_L,comparison,J1_N128,MAC8,register pattern repeated 32x,128,134,129,93,0.955224,88.8358,1.000,,,,,,,,0x00004f25,PASS,same-workload valid comparison
+Stage_L,comparison,J1_N128,DOT4ACC,register pattern repeated 32x,128,43,33,93,2.976744,276.8372,3.1163,,,,,,,,0x00004f25,PASS,same-workload valid comparison
+Stage_L,comparison,J1_N128,SCALAR_REGISTER_EQUIVALENT,diagnostic only,128,230,225,93,,,,,,,,,,,,0x00000205,INVALID_DIAGNOSTIC,wrong result; no speedup claim

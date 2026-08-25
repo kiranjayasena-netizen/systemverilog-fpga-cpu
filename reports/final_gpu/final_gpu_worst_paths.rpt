@@ -1,0 +1,825 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Aug 22 13:10:43 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 10 -file C:/FPGA/systemverilog-fpga-cpu/reports/final_gpu/final_gpu_worst_paths.rpt
+| Design       : basys3_vector_gpu_top
+| Device       : 7a35t-cpg236
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.351ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[1][32]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.922ns  (logic 3.519ns (29.517%)  route 8.403ns (70.483%))
+  Logic Levels:           11  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 MUXF7=2 RAMD32=1)
+  Clock Path Skew:        -0.114ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.739ns = ( 18.239 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.282     9.328    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X39Y32         LUT4 (Prop_lut4_I0_O)        0.376     9.704 r  gpu/core/pim/regs[0][63]_i_24/O
+                         net (fo=64, routed)          2.010    11.714    gpu/core/eu/vector_register_file_inst/regs_reg[0][63]_i_5_0
+    SLICE_X29Y60         LUT6 (Prop_lut6_I2_O)        0.332    12.046 r  gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15/O
+                         net (fo=1, routed)           0.000    12.046    gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15_n_0
+    SLICE_X29Y60         MUXF7 (Prop_muxf7_I1_O)      0.217    12.263 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][46]_i_13/O
+                         net (fo=7, routed)           1.340    13.603    gpu/core/eu/vector_register_file_inst/rf_vector_b[46]
+    SLICE_X34Y55         LUT6 (Prop_lut6_I3_O)        0.299    13.902 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47/O
+                         net (fo=1, routed)           0.000    13.902    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47_n_0
+    SLICE_X34Y55         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    14.415 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.415    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30_n_0
+    SLICE_X34Y56         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.644 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20/CO[2]
+                         net (fo=1, routed)           0.712    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20_n_1
+    SLICE_X34Y52         LUT4 (Prop_lut4_I0_O)        0.310    15.666 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10/O
+                         net (fo=1, routed)           0.425    16.091    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10_n_0
+    SLICE_X34Y52         LUT6 (Prop_lut6_I5_O)        0.124    16.215 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7/O
+                         net (fo=1, routed)           0.000    16.215    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7_n_0
+    SLICE_X34Y52         MUXF7 (Prop_muxf7_I1_O)      0.214    16.429 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_4/O
+                         net (fo=1, routed)           0.505    16.934    gpu/core/pim/regs_reg[7][32]_0
+    SLICE_X34Y50         LUT5 (Prop_lut5_I3_O)        0.297    17.231 r  gpu/core/pim/regs[0][32]_i_1/O
+                         net (fo=8, routed)           0.775    18.006    gpu/core/eu/vector_register_file_inst/D[32]
+    SLICE_X34Y53         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[1][32]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.434    18.239    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X34Y53         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[1][32]/C
+                         clock pessimism              0.232    18.471    <hidden>
+                         clock uncertainty           -0.082    18.388    <hidden>
+    SLICE_X34Y53         FDRE (Setup_fdre_C_D)       -0.031    18.357    gpu/core/eu/vector_register_file_inst/regs_reg[1][32]
+  -------------------------------------------------------------------
+                         required time                         18.357    <hidden>
+                         arrival time                         -18.006    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.351    <hidden>
+
+Slack (MET) :             0.421ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[2][32]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.836ns  (logic 3.519ns (29.730%)  route 8.317ns (70.270%))
+  Logic Levels:           11  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 MUXF7=2 RAMD32=1)
+  Clock Path Skew:        -0.093ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.751ns = ( 18.251 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.240ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.282     9.328    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X39Y32         LUT4 (Prop_lut4_I0_O)        0.376     9.704 r  gpu/core/pim/regs[0][63]_i_24/O
+                         net (fo=64, routed)          2.010    11.714    gpu/core/eu/vector_register_file_inst/regs_reg[0][63]_i_5_0
+    SLICE_X29Y60         LUT6 (Prop_lut6_I2_O)        0.332    12.046 r  gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15/O
+                         net (fo=1, routed)           0.000    12.046    gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15_n_0
+    SLICE_X29Y60         MUXF7 (Prop_muxf7_I1_O)      0.217    12.263 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][46]_i_13/O
+                         net (fo=7, routed)           1.340    13.603    gpu/core/eu/vector_register_file_inst/rf_vector_b[46]
+    SLICE_X34Y55         LUT6 (Prop_lut6_I3_O)        0.299    13.902 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47/O
+                         net (fo=1, routed)           0.000    13.902    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47_n_0
+    SLICE_X34Y55         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    14.415 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.415    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30_n_0
+    SLICE_X34Y56         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.644 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20/CO[2]
+                         net (fo=1, routed)           0.712    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20_n_1
+    SLICE_X34Y52         LUT4 (Prop_lut4_I0_O)        0.310    15.666 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10/O
+                         net (fo=1, routed)           0.425    16.091    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10_n_0
+    SLICE_X34Y52         LUT6 (Prop_lut6_I5_O)        0.124    16.215 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7/O
+                         net (fo=1, routed)           0.000    16.215    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7_n_0
+    SLICE_X34Y52         MUXF7 (Prop_muxf7_I1_O)      0.214    16.429 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_4/O
+                         net (fo=1, routed)           0.505    16.934    gpu/core/pim/regs_reg[7][32]_0
+    SLICE_X34Y50         LUT5 (Prop_lut5_I3_O)        0.297    17.231 r  gpu/core/pim/regs[0][32]_i_1/O
+                         net (fo=8, routed)           0.690    17.921    gpu/core/eu/vector_register_file_inst/D[32]
+    SLICE_X33Y49         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[2][32]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.446    18.251    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X33Y49         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[2][32]/C
+                         clock pessimism              0.240    18.491    <hidden>
+                         clock uncertainty           -0.082    18.409    <hidden>
+    SLICE_X33Y49         FDRE (Setup_fdre_C_D)       -0.067    18.342    gpu/core/eu/vector_register_file_inst/regs_reg[2][32]
+  -------------------------------------------------------------------
+                         required time                         18.342    <hidden>
+                         arrival time                         -17.921    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.421    <hidden>
+
+Slack (MET) :             0.432ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[3][0]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.851ns  (logic 3.411ns (28.781%)  route 8.440ns (71.219%))
+  Logic Levels:           12  (CARRY4=2 LUT2=1 LUT3=1 LUT4=1 LUT5=1 LUT6=4 MUXF7=1 RAMD32=1)
+  Clock Path Skew:        -0.103ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.748ns = ( 18.248 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.082ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.545     6.082    gpu/core/clk
+    SLICE_X39Y24         FDRE                                         r  gpu/core/current_pc_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X39Y24         FDRE (Prop_fdre_C_Q)         0.456     6.538 r  gpu/core/current_pc_reg[2]/Q
+                         net (fo=51, routed)          0.950     7.488    gpu/core/pim/memory_reg_0_15_12_15/ADDRB2
+    SLICE_X38Y24         RAMD32 (Prop_ramd32_RADR2_O)
+                                                      0.150     7.638 f  gpu/core/pim/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=52, routed)          0.789     8.427    gpu/core/pim/memory_reg_0_15_12_15_n_3
+    SLICE_X40Y25         LUT2 (Prop_lut2_I1_O)        0.348     8.775 r  gpu/core/pim/reg_read_data[127]_INST_0_i_6/O
+                         net (fo=13, routed)          0.575     9.350    gpu/core/pim/reg_read_data[127]_INST_0_i_6_n_0
+    SLICE_X45Y30         LUT6 (Prop_lut6_I5_O)        0.124     9.474 r  gpu/core/pim/reg_read_data[31]_INST_0_i_5/O
+                         net (fo=64, routed)          1.914    11.388    gpu/core/eu/vector_register_file_inst/regs[0][31]_i_33_1
+    SLICE_X58Y56         LUT6 (Prop_lut6_I4_O)        0.124    11.512 r  gpu/core/eu/vector_register_file_inst/reg_read_data[17]_INST_0_i_1/O
+                         net (fo=4, routed)           1.065    12.577    gpu/core/eu/vector_register_file_inst/reg_read_data[17]_INST_0_i_1_n_0
+    SLICE_X57Y56         LUT3 (Prop_lut3_I0_O)        0.152    12.729 r  gpu/core/eu/vector_register_file_inst/reg_read_data[17]_INST_0/O
+                         net (fo=13, routed)          0.938    13.667    gpu/core/eu/vector_register_file_inst/regs_reg[7][17]_0
+    SLICE_X53Y54         LUT6 (Prop_lut6_I2_O)        0.326    13.993 r  gpu/core/eu/vector_register_file_inst/regs[0][0]_i_46/O
+                         net (fo=1, routed)           0.000    13.993    gpu/core/eu/vector_register_file_inst/regs[0][0]_i_46_n_0
+    SLICE_X53Y54         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550    14.543 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][0]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.543    gpu/core/eu/vector_register_file_inst/regs_reg[0][0]_i_30_n_0
+    SLICE_X53Y55         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.228    14.771 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][0]_i_20/CO[2]
+                         net (fo=1, routed)           0.585    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][0]_i_20_n_1
+    SLICE_X53Y51         LUT4 (Prop_lut4_I0_O)        0.313    15.669 r  gpu/core/eu/vector_register_file_inst/regs[0][0]_i_10/O
+                         net (fo=1, routed)           0.288    15.957    gpu/core/eu/vector_register_file_inst/regs[0][0]_i_10_n_0
+    SLICE_X51Y51         LUT6 (Prop_lut6_I5_O)        0.124    16.081 r  gpu/core/eu/vector_register_file_inst/regs[0][0]_i_7/O
+                         net (fo=1, routed)           0.000    16.081    gpu/core/eu/vector_register_file_inst/regs[0][0]_i_7_n_0
+    SLICE_X51Y51         MUXF7 (Prop_muxf7_I1_O)      0.217    16.298 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][0]_i_4/O
+                         net (fo=1, routed)           0.439    16.737    gpu/core/pim/regs_reg[7][0]_0
+    SLICE_X51Y50         LUT5 (Prop_lut5_I3_O)        0.299    17.036 r  gpu/core/pim/regs[0][0]_i_1/O
+                         net (fo=8, routed)           0.898    17.934    gpu/core/eu/vector_register_file_inst/D[0]
+    SLICE_X52Y50         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.443    18.248    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X52Y50         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][0]/C
+                         clock pessimism              0.232    18.480    <hidden>
+                         clock uncertainty           -0.082    18.397    <hidden>
+    SLICE_X52Y50         FDRE (Setup_fdre_C_D)       -0.031    18.366    gpu/core/eu/vector_register_file_inst/regs_reg[3][0]
+  -------------------------------------------------------------------
+                         required time                         18.366    <hidden>
+                         arrival time                         -17.934    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.432    <hidden>
+
+Slack (MET) :             0.434ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[3][27]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.796ns  (logic 2.286ns (19.380%)  route 9.510ns (80.620%))
+  Logic Levels:           9  (LUT2=1 LUT3=2 LUT5=1 LUT6=4 RAMD32=1)
+  Clock Path Skew:        -0.107ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.744ns = ( 18.244 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.082ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.545     6.082    gpu/core/clk
+    SLICE_X39Y24         FDRE                                         r  gpu/core/current_pc_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X39Y24         FDRE (Prop_fdre_C_Q)         0.456     6.538 r  gpu/core/current_pc_reg[2]/Q
+                         net (fo=51, routed)          0.950     7.488    gpu/core/pim/memory_reg_0_15_12_15/ADDRB2
+    SLICE_X38Y24         RAMD32 (Prop_ramd32_RADR2_O)
+                                                      0.150     7.638 f  gpu/core/pim/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=52, routed)          0.789     8.427    gpu/core/pim/memory_reg_0_15_12_15_n_3
+    SLICE_X40Y25         LUT2 (Prop_lut2_I1_O)        0.348     8.775 r  gpu/core/pim/reg_read_data[127]_INST_0_i_6/O
+                         net (fo=13, routed)          0.570     9.345    gpu/core/pim/reg_read_data[127]_INST_0_i_6_n_0
+    SLICE_X45Y30         LUT6 (Prop_lut6_I5_O)        0.124     9.469 r  gpu/core/pim/reg_read_data[31]_INST_0_i_4/O
+                         net (fo=64, routed)          2.114    11.583    gpu/core/eu/vector_register_file_inst/regs[0][31]_i_33_0
+    SLICE_X55Y62         LUT6 (Prop_lut6_I2_O)        0.124    11.707 r  gpu/core/eu/vector_register_file_inst/reg_read_data[28]_INST_0_i_1/O
+                         net (fo=4, routed)           1.035    12.742    gpu/core/eu/vector_register_file_inst/reg_read_data[28]_INST_0_i_1_n_0
+    SLICE_X55Y61         LUT3 (Prop_lut3_I0_O)        0.152    12.894 r  gpu/core/eu/vector_register_file_inst/reg_read_data[28]_INST_0/O
+                         net (fo=19, routed)          0.960    13.854    gpu/core/eu/vector_register_file_inst/regs_reg[7][28]_0
+    SLICE_X47Y60         LUT5 (Prop_lut5_I4_O)        0.326    14.180 r  gpu/core/eu/vector_register_file_inst/regs[0][28]_i_11/O
+                         net (fo=2, routed)           0.859    15.039    gpu/core/eu/vector_register_file_inst/regs[0][28]_i_11_n_0
+    SLICE_X48Y60         LUT3 (Prop_lut3_I2_O)        0.150    15.189 r  gpu/core/eu/vector_register_file_inst/regs[0][28]_i_5/O
+                         net (fo=2, routed)           0.788    15.976    gpu/core/eu/vector_register_file_inst/regs[0][28]_i_5_n_0
+    SLICE_X49Y61         LUT6 (Prop_lut6_I0_O)        0.332    16.308 r  gpu/core/eu/vector_register_file_inst/regs[0][27]_i_3/O
+                         net (fo=1, routed)           0.588    16.896    gpu/core/pim/regs_reg[7][27]
+    SLICE_X54Y61         LUT6 (Prop_lut6_I1_O)        0.124    17.020 r  gpu/core/pim/regs[0][27]_i_1/O
+                         net (fo=8, routed)           0.858    17.878    gpu/core/eu/vector_register_file_inst/D[27]
+    SLICE_X55Y61         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][27]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.439    18.244    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X55Y61         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][27]/C
+                         clock pessimism              0.232    18.476    <hidden>
+                         clock uncertainty           -0.082    18.393    <hidden>
+    SLICE_X55Y61         FDRE (Setup_fdre_C_D)       -0.081    18.312    gpu/core/eu/vector_register_file_inst/regs_reg[3][27]
+  -------------------------------------------------------------------
+                         required time                         18.312    <hidden>
+                         arrival time                         -17.878    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.434    <hidden>
+
+Slack (MET) :             0.500ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[3][32]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.738ns  (logic 3.519ns (29.979%)  route 8.219ns (70.021%))
+  Logic Levels:           11  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 MUXF7=2 RAMD32=1)
+  Clock Path Skew:        -0.113ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.740ns = ( 18.240 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.282     9.328    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X39Y32         LUT4 (Prop_lut4_I0_O)        0.376     9.704 r  gpu/core/pim/regs[0][63]_i_24/O
+                         net (fo=64, routed)          2.010    11.714    gpu/core/eu/vector_register_file_inst/regs_reg[0][63]_i_5_0
+    SLICE_X29Y60         LUT6 (Prop_lut6_I2_O)        0.332    12.046 r  gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15/O
+                         net (fo=1, routed)           0.000    12.046    gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15_n_0
+    SLICE_X29Y60         MUXF7 (Prop_muxf7_I1_O)      0.217    12.263 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][46]_i_13/O
+                         net (fo=7, routed)           1.340    13.603    gpu/core/eu/vector_register_file_inst/rf_vector_b[46]
+    SLICE_X34Y55         LUT6 (Prop_lut6_I3_O)        0.299    13.902 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47/O
+                         net (fo=1, routed)           0.000    13.902    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47_n_0
+    SLICE_X34Y55         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    14.415 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.415    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30_n_0
+    SLICE_X34Y56         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.644 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20/CO[2]
+                         net (fo=1, routed)           0.712    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20_n_1
+    SLICE_X34Y52         LUT4 (Prop_lut4_I0_O)        0.310    15.666 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10/O
+                         net (fo=1, routed)           0.425    16.091    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10_n_0
+    SLICE_X34Y52         LUT6 (Prop_lut6_I5_O)        0.124    16.215 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7/O
+                         net (fo=1, routed)           0.000    16.215    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7_n_0
+    SLICE_X34Y52         MUXF7 (Prop_muxf7_I1_O)      0.214    16.429 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_4/O
+                         net (fo=1, routed)           0.505    16.934    gpu/core/pim/regs_reg[7][32]_0
+    SLICE_X34Y50         LUT5 (Prop_lut5_I3_O)        0.297    17.231 r  gpu/core/pim/regs[0][32]_i_1/O
+                         net (fo=8, routed)           0.591    17.822    gpu/core/eu/vector_register_file_inst/D[32]
+    SLICE_X35Y52         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][32]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.435    18.240    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X35Y52         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[3][32]/C
+                         clock pessimism              0.232    18.472    <hidden>
+                         clock uncertainty           -0.082    18.389    <hidden>
+    SLICE_X35Y52         FDRE (Setup_fdre_C_D)       -0.067    18.322    gpu/core/eu/vector_register_file_inst/regs_reg[3][32]
+  -------------------------------------------------------------------
+                         required time                         18.322    <hidden>
+                         arrival time                         -17.822    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.500    <hidden>
+
+Slack (MET) :             0.520ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[5][32]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.740ns  (logic 3.519ns (29.973%)  route 8.221ns (70.027%))
+  Logic Levels:           11  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 MUXF7=2 RAMD32=1)
+  Clock Path Skew:        -0.113ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.740ns = ( 18.240 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.282     9.328    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X39Y32         LUT4 (Prop_lut4_I0_O)        0.376     9.704 r  gpu/core/pim/regs[0][63]_i_24/O
+                         net (fo=64, routed)          2.010    11.714    gpu/core/eu/vector_register_file_inst/regs_reg[0][63]_i_5_0
+    SLICE_X29Y60         LUT6 (Prop_lut6_I2_O)        0.332    12.046 r  gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15/O
+                         net (fo=1, routed)           0.000    12.046    gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15_n_0
+    SLICE_X29Y60         MUXF7 (Prop_muxf7_I1_O)      0.217    12.263 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][46]_i_13/O
+                         net (fo=7, routed)           1.340    13.603    gpu/core/eu/vector_register_file_inst/rf_vector_b[46]
+    SLICE_X34Y55         LUT6 (Prop_lut6_I3_O)        0.299    13.902 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47/O
+                         net (fo=1, routed)           0.000    13.902    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47_n_0
+    SLICE_X34Y55         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    14.415 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.415    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30_n_0
+    SLICE_X34Y56         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.644 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20/CO[2]
+                         net (fo=1, routed)           0.712    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20_n_1
+    SLICE_X34Y52         LUT4 (Prop_lut4_I0_O)        0.310    15.666 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10/O
+                         net (fo=1, routed)           0.425    16.091    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10_n_0
+    SLICE_X34Y52         LUT6 (Prop_lut6_I5_O)        0.124    16.215 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7/O
+                         net (fo=1, routed)           0.000    16.215    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7_n_0
+    SLICE_X34Y52         MUXF7 (Prop_muxf7_I1_O)      0.214    16.429 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_4/O
+                         net (fo=1, routed)           0.505    16.934    gpu/core/pim/regs_reg[7][32]_0
+    SLICE_X34Y50         LUT5 (Prop_lut5_I3_O)        0.297    17.231 r  gpu/core/pim/regs[0][32]_i_1/O
+                         net (fo=8, routed)           0.594    17.825    gpu/core/eu/vector_register_file_inst/D[32]
+    SLICE_X34Y52         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[5][32]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.435    18.240    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X34Y52         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[5][32]/C
+                         clock pessimism              0.232    18.472    <hidden>
+                         clock uncertainty           -0.082    18.389    <hidden>
+    SLICE_X34Y52         FDRE (Setup_fdre_C_D)       -0.045    18.344    gpu/core/eu/vector_register_file_inst/regs_reg[5][32]
+  -------------------------------------------------------------------
+                         required time                         18.344    <hidden>
+                         arrival time                         -17.825    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.520    <hidden>
+
+Slack (MET) :             0.527ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[7][32]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.698ns  (logic 3.519ns (30.081%)  route 8.179ns (69.919%))
+  Logic Levels:           11  (CARRY4=2 LUT4=2 LUT5=1 LUT6=3 MUXF7=2 RAMD32=1)
+  Clock Path Skew:        -0.112ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.741ns = ( 18.241 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.282     9.328    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X39Y32         LUT4 (Prop_lut4_I0_O)        0.376     9.704 r  gpu/core/pim/regs[0][63]_i_24/O
+                         net (fo=64, routed)          2.010    11.714    gpu/core/eu/vector_register_file_inst/regs_reg[0][63]_i_5_0
+    SLICE_X29Y60         LUT6 (Prop_lut6_I2_O)        0.332    12.046 r  gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15/O
+                         net (fo=1, routed)           0.000    12.046    gpu/core/eu/vector_register_file_inst/regs[0][46]_i_15_n_0
+    SLICE_X29Y60         MUXF7 (Prop_muxf7_I1_O)      0.217    12.263 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][46]_i_13/O
+                         net (fo=7, routed)           1.340    13.603    gpu/core/eu/vector_register_file_inst/rf_vector_b[46]
+    SLICE_X34Y55         LUT6 (Prop_lut6_I3_O)        0.299    13.902 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47/O
+                         net (fo=1, routed)           0.000    13.902    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_47_n_0
+    SLICE_X34Y55         CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.513    14.415 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30/CO[3]
+                         net (fo=1, routed)           0.000    14.415    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_30_n_0
+    SLICE_X34Y56         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.229    14.644 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20/CO[2]
+                         net (fo=1, routed)           0.712    15.356    gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_20_n_1
+    SLICE_X34Y52         LUT4 (Prop_lut4_I0_O)        0.310    15.666 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10/O
+                         net (fo=1, routed)           0.425    16.091    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_10_n_0
+    SLICE_X34Y52         LUT6 (Prop_lut6_I5_O)        0.124    16.215 r  gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7/O
+                         net (fo=1, routed)           0.000    16.215    gpu/core/eu/vector_register_file_inst/regs[0][32]_i_7_n_0
+    SLICE_X34Y52         MUXF7 (Prop_muxf7_I1_O)      0.214    16.429 r  gpu/core/eu/vector_register_file_inst/regs_reg[0][32]_i_4/O
+                         net (fo=1, routed)           0.505    16.934    gpu/core/pim/regs_reg[7][32]_0
+    SLICE_X34Y50         LUT5 (Prop_lut5_I3_O)        0.297    17.231 r  gpu/core/pim/regs[0][32]_i_1/O
+                         net (fo=8, routed)           0.551    17.783    gpu/core/eu/vector_register_file_inst/D[32]
+    SLICE_X33Y51         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[7][32]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.436    18.241    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X33Y51         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[7][32]/C
+                         clock pessimism              0.232    18.473    <hidden>
+                         clock uncertainty           -0.082    18.390    <hidden>
+    SLICE_X33Y51         FDRE (Setup_fdre_C_D)       -0.081    18.309    gpu/core/eu/vector_register_file_inst/regs_reg[7][32]
+  -------------------------------------------------------------------
+                         required time                         18.309    <hidden>
+                         arrival time                         -17.783    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.527    <hidden>
+
+Slack (MET) :             0.535ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[4][26]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.717ns  (logic 2.513ns (21.447%)  route 9.204ns (78.553%))
+  Logic Levels:           9  (LUT4=2 LUT6=5 MUXF7=1 RAMD32=1)
+  Clock Path Skew:        -0.108ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.745ns = ( 18.245 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.104     9.150    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X46Y33         LUT4 (Prop_lut4_I0_O)        0.340     9.490 r  gpu/core/pim/regs[0][31]_i_23/O
+                         net (fo=64, routed)          1.368    10.858    gpu/core/eu/vector_register_file_inst/regs_reg[0][31]_i_5_0
+    SLICE_X52Y49         LUT6 (Prop_lut6_I2_O)        0.328    11.186 f  gpu/core/eu/vector_register_file_inst/regs[0][31]_i_28/O
+                         net (fo=1, routed)           0.000    11.186    gpu/core/eu/vector_register_file_inst/regs[0][31]_i_28_n_0
+    SLICE_X52Y49         MUXF7 (Prop_muxf7_I1_O)      0.214    11.400 f  gpu/core/eu/vector_register_file_inst/regs_reg[0][31]_i_13/O
+                         net (fo=120, routed)         1.629    13.029    gpu/core/eu/vector_register_file_inst/rf_vector_b[4]
+    SLICE_X58Y55         LUT4 (Prop_lut4_I3_O)        0.325    13.354 r  gpu/core/eu/vector_register_file_inst/regs[0][30]_i_12/O
+                         net (fo=4, routed)           0.990    14.344    gpu/core/eu/vector_register_file_inst/regs[0][30]_i_12_n_0
+    SLICE_X59Y58         LUT6 (Prop_lut6_I3_O)        0.326    14.670 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_12/O
+                         net (fo=4, routed)           0.829    15.500    gpu/core/eu/vector_register_file_inst/regs[0][26]_i_12_n_0
+    SLICE_X58Y60         LUT6 (Prop_lut6_I0_O)        0.124    15.624 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_7/O
+                         net (fo=1, routed)           0.688    16.312    gpu/core/eu/vector_register_file_inst/regs[0][26]_i_7_n_0
+    SLICE_X54Y61         LUT6 (Prop_lut6_I0_O)        0.124    16.436 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_4/O
+                         net (fo=1, routed)           0.564    17.000    gpu/core/pim/regs_reg[7][26]_0
+    SLICE_X51Y61         LUT6 (Prop_lut6_I4_O)        0.124    17.124 r  gpu/core/pim/regs[0][26]_i_1/O
+                         net (fo=8, routed)           0.677    17.801    gpu/core/eu/vector_register_file_inst/D[26]
+    SLICE_X57Y61         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[4][26]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.440    18.245    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X57Y61         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[4][26]/C
+                         clock pessimism              0.232    18.477    <hidden>
+                         clock uncertainty           -0.082    18.394    <hidden>
+    SLICE_X57Y61         FDRE (Setup_fdre_C_D)       -0.058    18.336    gpu/core/eu/vector_register_file_inst/regs_reg[4][26]
+  -------------------------------------------------------------------
+                         required time                         18.336    <hidden>
+                         arrival time                         -17.801    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.535    <hidden>
+
+Slack (MET) :             0.538ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[6][26]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.710ns  (logic 2.513ns (21.459%)  route 9.197ns (78.541%))
+  Logic Levels:           9  (LUT4=2 LUT6=5 MUXF7=1 RAMD32=1)
+  Clock Path Skew:        -0.108ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.745ns = ( 18.245 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.084ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.547     6.084    gpu/core/clk
+    SLICE_X36Y23         FDRE                                         r  gpu/core/current_pc_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X36Y23         FDRE (Prop_fdre_C_Q)         0.456     6.540 r  gpu/core/current_pc_reg[1]/Q
+                         net (fo=63, routed)          1.353     7.894    gpu/core/pim/memory_reg_0_15_0_5/ADDRB1
+    SLICE_X38Y27         RAMD32 (Prop_ramd32_RADR1_O)
+                                                      0.152     8.046 r  gpu/core/pim/memory_reg_0_15_0_5/RAMB/O
+                         net (fo=6, routed)           1.104     9.150    gpu/core/pim/memory_reg_0_15_0_5_n_3
+    SLICE_X46Y33         LUT4 (Prop_lut4_I0_O)        0.340     9.490 r  gpu/core/pim/regs[0][31]_i_23/O
+                         net (fo=64, routed)          1.368    10.858    gpu/core/eu/vector_register_file_inst/regs_reg[0][31]_i_5_0
+    SLICE_X52Y49         LUT6 (Prop_lut6_I2_O)        0.328    11.186 f  gpu/core/eu/vector_register_file_inst/regs[0][31]_i_28/O
+                         net (fo=1, routed)           0.000    11.186    gpu/core/eu/vector_register_file_inst/regs[0][31]_i_28_n_0
+    SLICE_X52Y49         MUXF7 (Prop_muxf7_I1_O)      0.214    11.400 f  gpu/core/eu/vector_register_file_inst/regs_reg[0][31]_i_13/O
+                         net (fo=120, routed)         1.629    13.029    gpu/core/eu/vector_register_file_inst/rf_vector_b[4]
+    SLICE_X58Y55         LUT4 (Prop_lut4_I3_O)        0.325    13.354 r  gpu/core/eu/vector_register_file_inst/regs[0][30]_i_12/O
+                         net (fo=4, routed)           0.990    14.344    gpu/core/eu/vector_register_file_inst/regs[0][30]_i_12_n_0
+    SLICE_X59Y58         LUT6 (Prop_lut6_I3_O)        0.326    14.670 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_12/O
+                         net (fo=4, routed)           0.829    15.500    gpu/core/eu/vector_register_file_inst/regs[0][26]_i_12_n_0
+    SLICE_X58Y60         LUT6 (Prop_lut6_I0_O)        0.124    15.624 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_7/O
+                         net (fo=1, routed)           0.688    16.312    gpu/core/eu/vector_register_file_inst/regs[0][26]_i_7_n_0
+    SLICE_X54Y61         LUT6 (Prop_lut6_I0_O)        0.124    16.436 r  gpu/core/eu/vector_register_file_inst/regs[0][26]_i_4/O
+                         net (fo=1, routed)           0.564    17.000    gpu/core/pim/regs_reg[7][26]_0
+    SLICE_X51Y61         LUT6 (Prop_lut6_I4_O)        0.124    17.124 r  gpu/core/pim/regs[0][26]_i_1/O
+                         net (fo=8, routed)           0.671    17.795    gpu/core/eu/vector_register_file_inst/D[26]
+    SLICE_X55Y60         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[6][26]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.440    18.245    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X55Y60         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[6][26]/C
+                         clock pessimism              0.232    18.477    <hidden>
+                         clock uncertainty           -0.082    18.394    <hidden>
+    SLICE_X55Y60         FDRE (Setup_fdre_C_D)       -0.061    18.333    gpu/core/eu/vector_register_file_inst/regs_reg[6][26]
+  -------------------------------------------------------------------
+                         required time                         18.333    <hidden>
+                         arrival time                         -17.795    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.538    <hidden>
+
+Slack (MET) :             0.555ns  (required time - arrival time)
+  Source:                 gpu/core/current_pc_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Destination:            gpu/core/eu/vector_register_file_inst/regs_reg[0][16]/D
+                            (rising edge-triggered cell FDRE clocked by clk80  {rise@0.000ns fall@6.250ns period=12.500ns})
+  Path Group:             clk80
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            12.500ns  (clk80 rise@12.500ns - clk80 rise@0.000ns)
+  Data Path Delay:        11.764ns  (logic 2.052ns (17.444%)  route 9.712ns (82.556%))
+  Logic Levels:           9  (LUT2=1 LUT3=1 LUT5=1 LUT6=5 RAMD32=1)
+  Clock Path Skew:        -0.038ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    5.813ns = ( 18.313 - 12.500 ) 
+    Source Clock Delay      (SCD):    6.082ns
+    Clock Pessimism Removal (CPR):    0.232ns
+  Clock Uncertainty:      0.082ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.149ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk80 rise edge)      0.000     0.000 r  <hidden>
+    W5                                                0.000     0.000 r  clk
+                         net (fo=0)                   0.000     0.000    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.458     1.458 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.233     2.691    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.088     2.779 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.661     4.441    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     4.537 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.545     6.082    gpu/core/clk
+    SLICE_X39Y24         FDRE                                         r  gpu/core/current_pc_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X39Y24         FDRE (Prop_fdre_C_Q)         0.456     6.538 r  gpu/core/current_pc_reg[2]/Q
+                         net (fo=51, routed)          0.950     7.488    gpu/core/pim/memory_reg_0_15_12_15/ADDRB2
+    SLICE_X38Y24         RAMD32 (Prop_ramd32_RADR2_O)
+                                                      0.150     7.638 f  gpu/core/pim/memory_reg_0_15_12_15/RAMB/O
+                         net (fo=52, routed)          0.789     8.427    gpu/core/pim/memory_reg_0_15_12_15_n_3
+    SLICE_X40Y25         LUT2 (Prop_lut2_I1_O)        0.348     8.775 r  gpu/core/pim/reg_read_data[127]_INST_0_i_6/O
+                         net (fo=13, routed)          0.575     9.350    gpu/core/pim/reg_read_data[127]_INST_0_i_6_n_0
+    SLICE_X45Y30         LUT6 (Prop_lut6_I5_O)        0.124     9.474 r  gpu/core/pim/reg_read_data[31]_INST_0_i_5/O
+                         net (fo=64, routed)          2.056    11.530    gpu/core/eu/vector_register_file_inst/regs[0][31]_i_33_1
+    SLICE_X56Y60         LUT6 (Prop_lut6_I4_O)        0.124    11.654 r  gpu/core/eu/vector_register_file_inst/reg_read_data[26]_INST_0_i_1/O
+                         net (fo=4, routed)           0.852    12.506    gpu/core/eu/vector_register_file_inst/reg_read_data[26]_INST_0_i_1_n_0
+    SLICE_X54Y60         LUT3 (Prop_lut3_I0_O)        0.150    12.656 r  gpu/core/eu/vector_register_file_inst/reg_read_data[26]_INST_0/O
+                         net (fo=17, routed)          1.207    13.863    gpu/core/eu/vector_register_file_inst/regs_reg[7][26]_0
+    SLICE_X49Y58         LUT5 (Prop_lut5_I0_O)        0.328    14.191 r  gpu/core/eu/vector_register_file_inst/regs[0][18]_i_10/O
+                         net (fo=4, routed)           0.794    14.984    gpu/core/eu/vector_register_file_inst/regs[0][18]_i_10_n_0
+    SLICE_X49Y58         LUT6 (Prop_lut6_I1_O)        0.124    15.108 r  gpu/core/eu/vector_register_file_inst/regs[0][16]_i_5/O
+                         net (fo=2, routed)           0.888    15.996    gpu/core/eu/vector_register_file_inst/regs[0][16]_i_5_n_0
+    SLICE_X51Y57         LUT6 (Prop_lut6_I1_O)        0.124    16.120 r  gpu/core/eu/vector_register_file_inst/regs[0][16]_i_3/O
+                         net (fo=1, routed)           0.812    16.933    gpu/core/pim/regs_reg[7][16]
+    SLICE_X56Y55         LUT6 (Prop_lut6_I1_O)        0.124    17.057 r  gpu/core/pim/regs[0][16]_i_1/O
+                         net (fo=8, routed)           0.789    17.846    gpu/core/eu/vector_register_file_inst/D[16]
+    SLICE_X58Y54         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[0][16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk80 rise edge)     12.500    12.500 r  <hidden>
+    W5                                                0.000    12.500 r  clk
+                         net (fo=0)                   0.000    12.500    clk
+    W5                   IBUF (Prop_ibuf_I_O)         1.388    13.888 r  clk_IBUF_inst/O
+                         net (fo=1, routed)           1.162    15.050    clk_IBUF
+    MMCME2_ADV_X1Y0      MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                      0.083    15.133 r  mmcm/CLKOUT0
+                         net (fo=1, routed)           1.581    16.714    clk80
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    16.805 r  gpu_bufg/O
+                         net (fo=2049, routed)        1.508    18.313    gpu/core/eu/vector_register_file_inst/clk
+    SLICE_X58Y54         FDRE                                         r  gpu/core/eu/vector_register_file_inst/regs_reg[0][16]/C
+                         clock pessimism              0.232    18.545    <hidden>
+                         clock uncertainty           -0.082    18.462    <hidden>
+    SLICE_X58Y54         FDRE (Setup_fdre_C_D)       -0.061    18.401    gpu/core/eu/vector_register_file_inst/regs_reg[0][16]
+  -------------------------------------------------------------------
+                         required time                         18.401    <hidden>
+                         arrival time                         -17.846    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.555    <hidden>
+
+
+
+

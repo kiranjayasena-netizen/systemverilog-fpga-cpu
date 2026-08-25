@@ -1,0 +1,15 @@
+STAGE 10A-V2 BENCHMARK SUMMARY
+
+Workload                 Cycles  Cycles/vector  Useful ops/cycle
+Register-only VADD             4          1.00          4.000000
+Vector array add              24          6.00          0.666667
+XOR transform                 16          4.00          1.000000
+VSRA transform                16          4.00          1.000000
+
+Stage 10A array-add statistics: 2 prefetch requests, entry 0/entry 1 both
+became valid simultaneously (max=2), but neither was consumed as a hit in the
+unchanged benchmark schedule. The conservative dual-entry controller did not
+improve the Stage 9 workload; Stage 9 reference is 21 cycles.
+
+Stage 10A 80 MHz values are projections only; physical validation belongs to
+Stage 10A-V3.

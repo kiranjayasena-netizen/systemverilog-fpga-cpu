@@ -4505,3 +4505,543 @@ Vivado synthesis inferred one DSP48E1 for the MAC and post-route implementation
 met 100 MHz with WNS `+0.031 ns`, TNS `0.000 ns`, WHS `+0.040 ns`, THS
 `0.000 ns`, and zero routing errors. Bitstream generation passed. See
 `reports/ai_mac_phase2/README.md` for resource details.
+
+### MAC8 Fmax Sweep
+
+The follow-up Vivado 2026.1 sweep implemented 95, 100, 102, 104, 106, 108 and
+110 MHz targets. It repeated the 100/102 MHz pass-fail boundary five times in
+independent Vivado processes. These are repetition labels, not controlled
+placer seeds; every CSV row records `seed_applied=false`.
+
+| Target | Timing passes | Setup WNS | Hold WNS | Failing setup endpoints |
+| ---: | ---: | ---: | ---: | ---: |
+| 100 MHz | 5/5 | +0.031 ns | +0.040 ns | 0 |
+| 102 MHz | 0/5 | -0.074 ns | +0.057 ns | 36 |
+
+All 15 sweep implementations routed fully, passed hold timing and generated a
+bitstream. The tested setup-frequency bracket for the exact sweep flow is
+`100 MHz <= Fmax < 102 MHz`. See `reports/ai_mac_fmax_sweep.md` and
+`reports/ai_mac_fmax_sweep/results.csv` for the complete method and result set.
+
+### MAC8 Post-Route Timing Optimisation
+
+The original 100 MHz post-route critical path was inspected from the preserved
+checkpoint before RTL changes. It starts at the data RAMB18E1
+`CLKBWRCLK`, passes through LOAD write-back selection, MEM/WB-to-EX forwarding,
+the 32-bit BEQ comparison, and redirect/flush logic, and ends at
+`fetch_buffer_instruction_reg[15]/R`. WNS is `+0.031 ns`; the 9.339 ns data
+delay is 4.113 ns logic (44.040%) and 5.226 ns routing (55.960%) over nine
+logic levels. The DSP path is near-critical but is not the original absolute
+limiter.
+
+The accepted experimental core is
+`rtl/cpu_core_pipeline_mac8_timingopt.sv`, with the matching top
+`rtl/fpga_top_pipeline_mac8_timingopt.sv`. Reset still initializes frontend
+payloads, while redirect/bubble invalidation clears only valid bits and leaves
+invalid payload data as don't-care state. The baseline
+`rtl/cpu_core_pipeline_full.sv` is unchanged.
+
+Candidate XSim commands used `-d MAC8_TIMINGOPT_DUT` so the existing
+self-checking testbenches selected the experimental core. Results:
+
+| Test | Checks | Failures | Other invariants |
+| --- | ---: | ---: | --- |
+| Focused MAC8 | 83 | 0 | dot products `0xfffffff2`; 29/19 cycles |
+| Original Phase 12 | 2,793 | 0 | 457 cycles; 319 retired instructions |
+
+The focused run rechecked signed positive/negative/mixed operands, INT8 extrema,
+repeated accumulation, modulo-`2^32` wrap, back-to-back dependencies, EX/MEM
+and MEM/WB forwarding, all three MAC8 load-use hazards, reset, invalid opcode
+safety, `x0`, STORE forwarding, and dot-product equivalence.
+
+Post-route Vivado 2026.1 results for the accepted candidate:
+
+| Target | Timing passes | Setup WNS | Setup TNS | Hold WNS | Hold TNS | Failing setup endpoints | Route/bitstream |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 100 MHz | 3/3 | +0.198 ns | 0.000 ns | +0.035 ns | 0.000 ns | 0 | passed/passed |
+| 102 MHz | 1/1 | +0.071 ns | 0.000 ns | +0.037 ns | 0.000 ns | 0 | passed/passed |
+| 104 MHz | 3/3 | +0.062 ns | 0.000 ns | +0.055 ns | 0.000 ns | 0 | passed/passed |
+| 106 MHz | 0/3 | -0.081 ns | -0.815 ns | +0.033 ns | 0.000 ns | 13 | passed/passed |
+
+On 6 August 2026, fresh baseline and candidate routes at the three required
+comparison points reproduced the stored results exactly. Candidate setup WNS
+improved by `+0.167 ns` at 100 MHz (`+0.031` to `+0.198 ns`), `+0.145 ns` at
+102 MHz (`-0.074` to `+0.071 ns`), and `+0.335 ns` at 104 MHz (`-0.273` to
+`+0.062 ns`). All six routes passed hold timing and generated bitstreams.
+
+The 100 MHz implementation uses 1,457 LUTs, 1,507 FFs, one DSP48E1 and one
+BRAM tile, versus 1,454 LUTs, 1,507 FFs, one DSP48E1 and one BRAM tile for the
+original MAC8. The new tested boundary is
+`104 MHz <= Fmax < 106 MHz`.
+
+The three repetitions at 100, 104 and 106 MHz used fresh Vivado processes with
+identical deterministic settings. They were not controlled placement-seed
+experiments; every row records `seed_applied=false`. Full results and analysis
+are in `reports/ai_mac8_validonly_fmax/results.csv` and
+`reports/ai_mac8_timing_optimisation.md`.
+
+### Timing-Optimised MAC8 Boundary Sweep
+
+On 6 August 2026, a focused Vivado 2026.1 boundary sweep tested 104, 105, 106,
+107 and 108 MHz with the timing-optimized top. The default flow used fresh
+Vivado processes, separate run directories and identical default synthesis,
+optimization, placement and routing commands. Repetition labels are not
+placement seeds.
+
+| Target | Default runs | Pass/fail | Min/mean/max setup WNS | Hold WNS | Setup endpoints |
+| ---: | ---: | ---: | --- | ---: | ---: |
+| 104 MHz | 5 | 5 / 0 | +0.062 / +0.062 / +0.062 ns | +0.055 ns | 0 |
+| 105 MHz | 5 | 0 / 5 | -0.148 / -0.148 / -0.148 ns | +0.139 ns | 12 |
+| 106 MHz | 1 | 0 / 1 | -0.081 ns | +0.033 ns | 13 |
+| 107 MHz | 1 | 0 / 1 | -0.379 ns | +0.034 ns | 155 |
+| 108 MHz | 1 | 0 / 1 | -0.416 ns | +0.035 ns | 104 |
+
+All implementations routed fully, passed hold timing and generated
+bitstreams. Both five-run sets had zero WNS range and zero standard deviation.
+The repeatable boundary is 104 MHz pass / 105 MHz fail. The conservative
+operating recommendation remains 100 MHz with the preserved `+0.198 ns`
+repeatable margin; 104 MHz has only `+0.062 ns`.
+
+Two clearly separate single-run directive variations passed 105 MHz:
+`place_design -directive ExtraNetDelay_high` at `+0.034 ns`, and
+`route_design -directive AggressiveExplore` at `+0.106 ns`. These are
+observed strategy passes, not deterministic default-flow repeatability.
+
+All five 104 MHz runs were limited by data BRAM through LOAD writeback,
+forwarding, BEQ/redirect control and redirect-target addition to
+`redirect_pending_target_reg[30]/D`. All five default 105 MHz runs were
+limited by data BRAM through writeback, rs1 forwarding, one DSP48E1 and result
+selection to `ex_mem_reg_reg[alu_result][25]/D`. The original dynamic
+fetch-buffer payload-reset endpoint remains absent, but both frontend control
+and the unregistered DSP path are near-critical.
+
+The pre- and post-sweep candidate regressions each passed 83 focused MAC8
+checks and 2,793 Phase 12 checks. The result remained `0xfffffff2`; totals
+remained 457 cycles and 319 retired instructions. The post-sweep complete
+repository XSim regression also completed with exit code 0. Detailed analysis is in
+`reports/ai_mac8_boundary_sweep.md`, with compact per-run data in
+`reports/ai_mac8_boundary_sweep/results.csv`.
+
+### DOT4ACC Stage A1 Encoding And Reference Verification
+
+On 6 August 2026, Stage A1 reserved `OP_DOT4ACC = 4'hc` without adding the
+opcode to any shared or Phase 12 validity predicate. No CPU execution RTL,
+pipeline state, hazard logic, forwarding, writeback, retirement, synthesis, or
+implementation flow was added.
+
+The simulation-only package `tb/dot4acc_reference_pkg.sv` defines the canonical
+encoder and explicit-width arithmetic reference. The focused
+`tb/tb_dot4acc_reference.sv` run passed:
+
+| Test group | Checks | Failures |
+| --- | ---: | ---: |
+| Encoding, reserved-field and shared-helper checks | 14 | 0 |
+| Directed arithmetic and range checks | 36 | 0 |
+| Deterministic independent-model comparisons | 256 | 0 |
+| Total | 306 | 0 |
+
+The encoder produced `32'hc190_a000` for `rd=x3`, `rs1=x4`, `rs2=x5`, proving
+the field layout and zero reserved `[12:0]` value. A nonzero reserved field was
+flagged as non-canonical. The shared `opcode_is_valid`, `opcode_writes_rd`,
+`opcode_uses_rs1`, and `opcode_uses_rs2` helpers all continued to reject
+`OP_DOT4ACC`; opcode `4'hd` also remained invalid.
+
+Every lane is explicitly signed 8-bit, every product is signed 16-bit, pair
+sums are signed 17-bit, and the four-product sum is signed 18-bit before signed
+32-bit accumulation. Exhaustive extrema analysis and directed simulation
+confirmed the asymmetric mathematical range:
+
+```text
+maximum = 4 * (-128 * -128) = +65,536
+minimum = 4 * (-128 * +127) = -65,024
+```
+
+The directed cases covered zeros, all-positive and all-negative inputs,
+mixed signs, cancellation, every requested INT8 extreme pairing, both range
+extrema, nonzero/positive/negative accumulators, modulo-`2^32` wrapping, and
+distinct lane order. The canonical balanced-tree model also matched a
+separately structured sequential 64-bit model for 256 deterministic vectors.
+
+The Phase 12 invalid-opcode program now uses `4'hd` as its generic invalid
+instruction and separately injects reserved `OP_DOT4ACC`. Both the baseline
+and timing-optimised MAC8 cores passed 2,796 checks with zero failures. Neither
+invalid instruction retired, changed its target register, changed memory, or
+caused a redirect, jump, or branch event. The three new side-effect assertions
+account for the increase from the previous 2,793 checks; aggregate behaviour
+remained exactly 457 cycles and 319 retired instructions.
+
+Post-change focused MAC8 verification remained 83 checks with zero failures,
+29/19 baseline/MAC8 cycles, and dot-product result `0xfffffff2`. The complete
+repository XSim regression, including the new reference test, completed with
+exit code 0 in the final 295.4-second run.
+
+### DOT4ACC Stage A2 Isolated Pipeline Verification
+
+On 6 August 2026, Stage A2 added only the synthesizable isolated arithmetic
+module `rtl/dot4acc_pipeline.sv` and its focused self-checking testbench
+`tb/tb_dot4acc_pipeline.sv`. No CPU core, decoder, register file, hazard,
+forwarding, writeback, retirement, wrapper, or implementation RTL was changed.
+
+The interface is a synchronous active-high reset and global pipeline enable,
+an input-valid bit, three 32-bit operands (`accumulator`, `packed_a`, and
+`packed_b`), and registered 32-bit result/output-valid outputs. The registered
+stages are four signed 16-bit products, two signed 17-bit pair sums, and the
+signed 18-bit total plus explicitly sign-extended signed 32-bit accumulator
+addition. Final overflow wraps modulo `2^32`.
+
+The exact latency convention counts the accepting edge as stage advance 1:
+stage 1 captures products on that edge, stage 2 advances on the next enabled
+edge, and stage 3 asserts `output_valid` on the following enabled edge. Thus a
+transaction is valid on the third advancing edge counting acceptance. The
+module accepts one independent transaction per enabled edge (II=1). Disabled
+edges do not count and freeze every valid, arithmetic, accumulator, result,
+and output-valid register.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 2,859 |
+| Failures | 0 |
+| Accepted transactions | 420 |
+| Completed transactions | 415 |
+| Intentionally reset-flushed transactions | 5 |
+| Deterministic stress length | 700 cycles |
+
+Directed arithmetic covered zero, positive/negative/mixed lanes, cancellation,
+distinct lane ordering, all four INT8 boundary products, maximum `+65,536`
+and minimum `-65,024` sums, positive and negative accumulators, mixed-sign
+accumulation, and both wrap directions. Every completed result matched the
+Stage A1 canonical function, and directed vectors also matched an independent
+sequential four-scalar-MAC model.
+
+Pipeline coverage included an isolated operation, at least 16 back-to-back
+inputs, a 64-operation continuous-valid stream, explicit bubbles, adjacent
+transactions with distinct operands/accumulators, exact valid displacement,
+ordered drain, and one result per advancing clock after fill. Enable tests
+froze empty, partial, and full pipelines for single and multiple clocks,
+repeatedly toggled enable, held every payload stable, rejected input-valid
+while disabled, and resumed without loss or duplication. Reset tests covered
+empty, one/multiple in-flight operations, the edge immediately before output,
+stale-output suppression, and post-reset recovery. A fixed-seed stress run
+combined varied operands, accumulators, bubbles, freezes, and three resets.
+
+The Stage A2 focused test is ordered immediately after Stage A1 in
+`scripts/run_xsim_regression.ps1`, before MAC8 and Phase 12 CPU regressions.
+
+An optional module-only Vivado 2026.1 synthesis for `xc7a35tcpg236-1`
+completed successfully with zero inferred latches. The synthesized isolated
+top used 50 slice LUTs, 99 flip-flops, four DSP48E1 blocks, and no BRAM. The
+four DSPs implement the four signed lane multipliers; the 18-bit reduction and
+32-bit accumulator addition remain in fabric. Unconstrained-I/O and DSP
+pipelining advisory DRCs are expected for this artificial module-only top.
+No placement, routing, clock constraint, or timing claim was made.
+
+The final complete repository XSim regression, with Stage A1 followed by
+Stage A2 and then the existing MAC8/CPU suite, completed with exit code 0 in
+298.9 seconds. The historical Phase 12 cores therefore remain at 2,796 checks
+with zero failures, 457 cycles, and 319 retired instructions; focused MAC8
+verification remains 83 checks with zero failures.
+
+### DOT4ACC Stage C Experimental Issue-Control Verification
+
+On 6 August 2026, Stage C added the copied experimental core
+`rtl/cpu_core_pipeline_dot4acc_issue.sv` and focused self-checking testbench
+`tb/tb_cpu_core_pipeline_dot4acc_issue.sv`. The experiment reuses the unchanged
+Stage A2 arithmetic pipeline and does not modify any historical core.
+
+Only canonical zero-reserved-field opcode `4'hc` encodings enter the private
+DOT path. Forwarded `rs1`, `rs2`, and old-`rd` values terminate at a registered
+issue boundary. Valid nonzero destinations are compared against the issue,
+product, pair-sum, and completion-aligned metadata positions; a match in an
+unfinished stage stalls the consumer, while an aligned completion can feed a
+waiting DOT-only operand. The existing one-cycle LOAD-use bubble covers all
+three logical source roles. `x0` is never marked eligible or chained.
+
+An issue accepted at advancing edge `I` is observed with its aligned result and
+destination at `I+3`. Independent streams and contiguous eight-operation
+same-`rd` streams both issued every advancing clock. Because the unchanged
+Stage A2 interface cannot receive a predecessor result at its late accumulator
+stage, the verified chain implementation is an ordered completion recurrence:
+the head carries the architectural accumulator, continuations carry zero and
+produce raw dot sums, and observation folds each raw sum into the immediately
+preceding logical chain result. Every folded result matched the Stage A1 oracle.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 1,468 |
+| Failures | 0 |
+| Accepted DOT transactions | 128 |
+| Completed DOT transactions | 123 |
+| Intentionally reset-flushed transactions | 5 |
+| Younger DOT cancellations before issue | 26 |
+| Mixed-control stress length | 520 wall-clock cycles |
+
+Directed coverage included canonical/noncanonical decode, `rd=x0`, EX/MEM and
+MEM/WB scalar forwarding into all operand roles, LOAD-to-`rs1`, LOAD-to-`rs2`,
+LOAD-to-accumulator with exactly one bubble each, two packed-source RAW cases,
+a noncontiguous accumulator RAW case, independent and same-`rd` II=1 streams,
+chain breaks, younger ADD/LOAD/STORE/branch/jump holds, global-enable metadata
+freeze, taken/not-taken branches, jump cancellation, reset at multiple occupied
+states, and post-reset recovery. The deterministic stress phase mixed DOT and
+non-DOT instructions, chains, loads, bubbles, redirects, enable freezes, and
+two reset windows. Its scoreboard accounted for every accepted transaction as
+exactly one completion or an intentional reset flush, with ordered destination
+metadata and exact three-advance latency.
+
+Architectural-state protection was checked continuously: DOT valid is removed
+before EX/MEM, no retire event carries `OP_DOT4ACC`, no DOT completion drives
+register or memory write enables, `rd` remains unchanged by observation, and
+DOT does not increment retired-instruction state. Younger non-DOT instructions
+remain outside EX until all older DOT observation metadata drains.
+
+`scripts/run_xsim_regression.ps1` now orders Stage A1, Stage A2, and Stage C
+before the existing MAC8 and CPU tests. The complete post-change XSim suite
+passed with exit code 0 in 301.2 seconds. Historical invariant results remain
+Stage A1 306/0, Stage A2 2,859/0, focused MAC8 83/0 with 29/19 cycles and
+`0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate cycles and 319 retired
+instructions. No post-route timing or complete DOT4ACC execution claim is made.
+
+An optional top-level synthesis-only check of the experimental core for
+`xc7a35tcpg236-1` completed with zero errors, zero critical warnings, and zero
+latches. It reported 1,919 slice LUTs, 2,332 flip-flops, two RAMB18E1 blocks,
+and five DSP48E1 blocks: four in the unchanged DOT pipeline plus the existing
+MAC8 DSP. The DOT DSP report retained registered A/B pipeline inputs, confirming
+that the CPU forwarding network ends at the issue register rather than driving
+the multipliers combinationally. The four ordinary warnings cover unused low
+address bits on the two word-addressed memories. This unconstrained exposed-core
+synthesis is resource/structure evidence only, not placement or timing evidence.
+
+### DOT4ACC Stage D Architectural Writeback And Retirement Verification
+
+On 7 August 2026, Stage D added the separate experimental successor
+`rtl/cpu_core_pipeline_dot4acc_wb.sv`, its self-checking architectural testbench
+`tb/tb_cpu_core_pipeline_dot4acc_wb.sv`, and compact executable image
+`programs/dot4acc_stage_d.mem`. The committed Stage C issue-only core, the
+Stage A2 arithmetic module, and every historical CPU core remain unchanged.
+
+The existing single register-file write port now has explicit normal MEM/WB and
+DOT completion request predicates. The Stage C hold policy makes these requests
+structurally mutually exclusive: older normal work drains before a DOT reaches
+architectural completion, and younger normal work remains held. An assertion
+rejects either a write-port or retirement collision, so no result depends on a
+lossy priority choice. Eligible nonzero DOT destinations write on the same
+enabled edge that consumes the completion. A valid `rd=x0` DOT still retires
+and increments the instruction counter once but never enables register write.
+
+PC, opcode, destination, eligibility, chain state, and arithmetic data advance
+in lockstep. Integrated issue at advancing edge `I` remains observable at
+`I+3` and is written/retired exactly once at `I+4`. A disabled completion is
+held stable and consumed once after resume; reset discards it. Every same-`rd`
+chain member exposes, writes, and retires its own logical `A1`, `A2`, ... value
+on consecutive enabled edges, preserving issue II=1 and program order.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 3,945 |
+| Failures | 0 |
+| Accepted DOT transactions | 140 |
+| Arithmetic completions observed | 135 |
+| DOT instructions retired | 133 |
+| DOT register writes | 132 |
+| Intentionally reset-flushed before retirement | 7 |
+| Younger DOT cancellations before issue | 26 |
+| Mixed-control stress length | 520 wall-clock cycles |
+
+The two arithmetic completions beyond the retirement total were deliberately
+reset while awaiting architectural consumption; neither wrote nor retired.
+The scoreboard accounted for all 140 accepted transactions as 133 exactly-once
+retirements or seven reset flushes. Directed checks covered signed boundaries
+and wraparound, canonical decode, result/PC/opcode/`rd` alignment, `x0`, older
+ADD and LOAD writeback, independent and eight-member same-`rd` streams,
+DOT-to-DOT dependencies, LOAD/ALU-to-DOT forwarding, DOT-to-ADD/SUB/STORE/BEQ
+visibility, taken/not-taken redirects, reset, and completion-cycle enable
+freezes. The retired-instruction counter was checked on every clock against
+the exact normal-or-DOT retirement event equation.
+
+The executable program loads two packed inputs and an accumulator, executes a
+two-instruction same-`rd` chain, and stores the result. It produced and stored
+`0x000000ac`; the focused functional run reached the STORE retirement in 18
+enabled cycles. This is preliminary correctness evidence, not a performance or
+post-route timing claim.
+
+`scripts/run_xsim_regression.ps1` runs Stage D after Stage C and before the
+historical MAC8/CPU suite. The complete post-change XSim regression passed with
+exit code 0 in 316.4 seconds. Historical invariant results remain Stage A1
+306/0, Stage A2 2,859/0, Stage C 1,468/0, focused MAC8 83/0 with 29/19 cycles
+and `0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate cycles and 319 retired
+instructions. Optional Stage D synthesis is structural evidence only and is
+recorded separately if run; no post-route timing claim is made here.
+
+The optional isolated Vivado 2026.1 synthesis of
+`cpu_core_pipeline_dot4acc_wb` for `xc7a35tcpg236-1` completed with zero errors,
+zero critical warnings, and zero latches. It reported 2,162 LUTs, 2,471 FFs,
+two RAMB18E1s, and five DSP48E1s. The five DSPs are the existing MAC8 DSP plus
+four DOT DSPs; every DOT DSP reports `AREG=1` and `BREG=1`, confirming that the
+registered issue boundary remains ahead of the multipliers. The four ordinary
+synthesis warnings are the expected unused low address bits on the two
+word-addressed BRAM interfaces. This unconstrained exposed-core synthesis is
+resource and structure evidence only, not post-route timing or Fmax evidence.
+
+### DOT4ACC Stage E Architectural Performance Benchmarking
+
+On 7 August 2026, Stage E added a self-checking three-core benchmark harness,
+`tb/tb_dot4acc_stage_e_benchmark.sv`, without changing any RTL. It instantiates
+the committed timing-optimised core for scalar and MAC8 programs and the
+committed Stage D core for DOT4ACC. Every direct comparison uses the same
+signed INT8 operands, initial accumulator, useful INT8 MAC count, 10 ns clock,
+and final STORE retirement boundary. The reference package supplies the DOT
+arithmetic oracle. The measured cycle count begins at the first enabled edge
+after reset/preload and ends on the enabled edge that retires the final STORE.
+
+Focused Vivado XSim result:
+
+| Coverage/result | Measured value |
+| --- | ---: |
+| Total self-checks | 233 |
+| Failures | 0 |
+| Machine-readable result rows | 48 |
+| Historical workload result | `0xfffffff2` |
+| Historical scalar cycles/instructions | 29 / 24 |
+| Historical MAC8 cycles/instructions | 19 / 14 |
+| Equivalent DOT4ACC cycles/instructions | 16 / 6 |
+| Longest same-`rd` chain | 32 DOTs, II=1 |
+| Deterministic vector range | 4–128 useful MACs |
+
+The primary 64-element neuron produced `0x000027a5` in all three variants.
+Scalar measured 118 cycles and 113 retired instructions, MAC8 measured 70 and
+65, and DOT4ACC measured 27 and 17. At the equal nominal 100 MHz clock these
+correspond to 54.24, 91.43, and 237.04 MMAC/s. DOT4ACC therefore measured
+4.37x speedup over scalar, 2.59x over MAC8, and 59.26% of its 400 MMAC/s
+theoretical arithmetic peak. The 128-element register-resident chain reached
+297.67 MMAC/s and 74.42% peak utilization in 43 cycles.
+
+The focused suite also verified independent DOT streams, per-member chain
+results, memory-fed vectors, interleaved independent scalar work, and
+DOT-to-ADD/STORE/taken-BEQ consumers. A 128-element memory-fed workload took
+294 cycles versus 43 register-resident cycles. Interleaving one independent
+ADDI after every DOT made the issue interval seven rather than one and added
+six cycles per gap under the intentional conservative hold policy. The
+optional 4x16 matrix-vector kernel produced all four expected outputs and
+measured 114 scalar, 70 MAC8, and 27 DOT4ACC cycles.
+
+The source data are `reports/dot4acc_stage_e/results.csv`; the reproducible
+plots and detailed interpretation are in
+`reports/dot4acc_stage_e_benchmark.md`. All throughput values are same-clock
+architectural/simulation results at a nominal 100 MHz. They are not board,
+post-route timing, Fmax, power, or complete neural-network inference claims.
+
+`scripts/run_xsim_regression.ps1` runs Stage E after Stages A1, A2, C, and D
+and before the historical MAC8/Phase 12 suite. The complete post-change XSim
+regression passed with exit code 0 in 310.2 seconds. Historical invariant
+results remain Stage A1 306/0, Stage A2 2,859/0, Stage C 1,468/0, Stage D
+3,945/0, focused MAC8 83/0 with 29/19 cycles and `0xfffffff2`, and Phase 12
+2,796/0 with 457 aggregate cycles and 319 retired instructions.
+
+### DOT4ACC Stage F Post-Route Timing Characterisation
+
+On 7 August 2026, Stage F added the board-only
+`fpga_top_pipeline_dot4acc_wb` implementation target and reusable default-flow
+Vivado scripts. The wrapper instantiates the unchanged Stage D/E core; no CPU,
+DOT arithmetic, issue, chain, forwarding, writeback, retirement, or benchmark
+RTL changed.
+
+The flow uses Vivado 2026.1, `xc7a35tcpg236-1`, the real Basys 3 XDC and a
+per-run `sys_clk_pin` period override. Each repetition is a fresh deterministic
+Vivado process with its own implementation directory. Commands and directives
+match the historical MAC8 default method: default `synth_design`, `opt_design`,
+`place_design`, and `route_design`, with no `phys_opt_design`.
+
+Fifteen complete routes established the setup boundary:
+
+| Frequency | Runs passing | Setup WNS | Setup TNS | Failing setup endpoints | Hold WNS | Pulse-width WNS |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 98 MHz | 5/5 | +0.341 ns | 0.000 ns | 0 | +0.129 ns | +4.602 ns |
+| 99 MHz | 0/5 | -0.274 ns | -11.476 ns | 109 | +0.037 ns | +4.550 ns |
+| 100 MHz | 0/5 | -0.348 ns | -2.091 ns | 6 | +0.058 ns | +4.500 ns |
+
+All 15 implementations fully routed, generated bitstreams, and had zero hold
+or pulse-width failing endpoints. The fixed DUT therefore does not meet the
+intended 100 MHz constraint under this flow. Its highest repeatable passing
+frequency is 98 MHz and the immediately higher repeatable failing frequency is
+99 MHz. There was no isolated passing result above 98 MHz.
+
+The 98 and 100 MHz worst setup paths begin at the data BRAM, cross LOAD
+writeback/forwarding and BEQ/redirect cancellation logic, and end at DOT chain
+state reset pins. The 99 MHz worst path begins in ID/EX dependency metadata and
+ends at the frontend PC clock enable after dependency/branch/redirect control.
+The four-DSP DOT arithmetic is not on an absolute worst path: its worst
+through-DSP slack is +0.726 ns at 98 MHz, +0.647 ns at 99 MHz, and +0.693 ns at
+100 MHz. DOT result writeback data is likewise absent from the absolute worst
+paths. At 99 MHz the inherited MAC8 DSP path is also failing at -0.256 ns.
+
+Routed 98 MHz utilization is 1,810 slice LUTs, 1,705 slice FFs, two RAMB18E1s,
+zero RAMB36E1s, five DSP48E1s, one BUFG, and zero latches. All four DOT DSPs
+retain `AREG=1` and `BREG=1`; pair cells have `MREG=1/PREG=1`, while product
+cells have `MREG=0/PREG=1`. The five total DSPs remain one MAC8 plus four DOT.
+
+Constraint review reports one internal clock, zero no-clock pins, zero
+unconstrained internal endpoints, zero clock interaction problems, zero
+combinational loops, and zero latch loops. The two missing input delays and 16
+missing output delays belong to asynchronous board controls and LEDs; external
+I/O timing is excluded from the internal CPU Fmax claim. Methodology warnings
+are the documented BRAM output-register, board-I/O-delay, and intentional clock
+override messages. Every recorded run has zero errors and zero critical
+warnings, and post-route DRC reports no related violations.
+
+The pre-change Stage D test passed 3,945 checks and Stage E passed 233 checks
+with 48 result rows. The complete post-change XSim regression passed with exit
+code 0 in 340.7 seconds. Historical invariants remain Stage A1 306/0, Stage A2
+2,859/0, Stage C 1,468/0, Stage D 3,945/0, Stage E 233/0, focused MAC8 83/0
+with 29/19 cycles and `0xfffffff2`, and Phase 12 2,796/0 with 457 aggregate
+cycles and 319 retired instructions. Detailed timing data and reproducibility
+instructions are in `reports/dot4acc_stage_f_timing.md` and
+`reports/dot4acc_stage_f/results.csv`.
+
+### DOT4ACC Stage G Timing-Architecture Recovery Verification
+
+On 8 August 2026, Stage G added the isolated successor
+`cpu_core_pipeline_dot4acc_timingopt` and matching focused testbench. The Stage
+D core and all arithmetic RTL remain unchanged. G1 changes only the copied
+DOT-chain next-state dependency: decoded non-DOT contiguity closes the chain,
+without feeding the late `redirect_taken` signal into the chain-state reset.
+The candidate adds a simulation-only assertion that a valid DOT cannot also be
+an EX redirecting instruction.
+
+The G1 focused test passed 4,258 checks with zero failures. It includes the full
+Stage D architectural suite plus taken/not-taken branch chain-boundary tests,
+wrong-path cancellation, same-rd chain metadata, reset, freeze, dependencies,
+consumers, writeback, retirement, and deterministic stress. The executable
+program remains 18 cycles with result `0x000000ac`.
+
+G1's first clean default-flow post-route implementation at 100 MHz reported
+`-0.004 ns` WNS, `-0.004 ns` TNS, one setup endpoint, `+0.034 ns` hold slack,
+and `+4.500 ns` pulse-width slack. The original Stage F
+BRAM→LOAD-forwarding→BEQ→redirect→DOT-chain endpoint disappeared; the new
+worst path is the inherited MAC8 data-BRAM→DSP48E1→EX/MEM path. G1 therefore
+improves timing materially but does not satisfy repeatable 100 MHz closure.
+
+A G2 candidate qualified DOT-completion forwarding with `id_ex_is_dot`. It
+passed the same focused functional checks but worsened routed 100 MHz WNS to
+`-0.181 ns` with 26 setup endpoints and restored the DOT chain-control path as
+the limiter. G2 was rejected and reverted; the retained experimental source is
+G1.
+
+Final post-G1 full regression passed with exit code 0 in 332 seconds. Results
+remain Stage A1 306/0, Stage A2 2,859/0, Stage C 1,468/0, Stage D 3,945/0,
+Stage G1 4,258/0, Stage E 233/0, focused MAC8 83/0 with 29/19 cycles and
+`0xfffffff2`, and Phase 12 2,796/0 with 457 cycles and 319 retired
+instructions. Stage E N=64 and N=128 cycle counts remain 27 and 43, and
+same-rd DOT II remains 1.
+### Stage G3.1 inherited MAC8 timing recovery
+
+G3.1 added a dedicated 8-bit MAC8 operand-A forwarding path in the experimental
+DOT core. Full regression and Stage G focused verification passed with the
+existing invariants. Five clean default-flow implementations passed at 100 MHz
+with WNS `+0.111 ns`, TNS `0.000 ns`, and hold WNS `+0.084 ns` in every run.
+The first observed failing sweep point was 101 MHz at `-0.230 ns`; its
+follow-up repeatability run was interrupted and is not claimed as 5/5 evidence.

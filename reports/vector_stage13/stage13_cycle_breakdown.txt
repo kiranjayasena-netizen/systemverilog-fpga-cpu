@@ -1,0 +1,23 @@
+STAGE 13 CYCLE BREAKDOWN
+
+REG_VADD: TOTAL=4 ALU=4 VLOAD_HIT=0 VLOAD_MISS=0 LOAD_WAIT=0 LOAD_WB=0 VSTORE=0 CONTROL=0 IDLE=0 OTHER=0 OVERLAP=0 TWO_OUTSTANDING=0
+ARRAY_ADD: TOTAL=21 ALU=4 VLOAD_HIT=3 VLOAD_MISS=5 LOAD_WAIT=0 LOAD_WB=5 VSTORE=4 CONTROL=0 IDLE=0 OTHER=0 OVERLAP=4 TWO_OUTSTANDING=1
+XOR: TOTAL=13 ALU=4 VLOAD_HIT=3 VLOAD_MISS=1 LOAD_WAIT=0 LOAD_WB=1 VSTORE=4 CONTROL=0 IDLE=0 OTHER=0 OVERLAP=3 TWO_OUTSTANDING=2
+VSRA: TOTAL=13 ALU=4 VLOAD_HIT=3 VLOAD_MISS=1 LOAD_WAIT=0 LOAD_WB=1 VSTORE=4 CONTROL=0 IDLE=0 OTHER=0 OVERLAP=3 TWO_OUTSTANDING=2
+
+Primary-category sums: REG_VADD=4, ARRAY_ADD=21, XOR=13, VSRA=13.
+Accounting failures: 0.
+
+ARRAY_ADD ranking:
+1. VLOAD miss issue + writeback: 10 cycles total (5 misses x 2)
+2. VSTORE execution: 4 cycles
+3. ALU execution: 4 cycles
+4. Prefetch-hit VLOAD execution: 3 cycles
+5. Control/idle/other: 0 cycles
+
+ARRAY_ADD overlap flags: 4 cycles (3 ALU/read issues and 1 store/read issue).
+Two-outstanding overlap: 1 cycle.
+Useful prefetch hits: 3. Total requests: 4. Useless requests: 1.
+
+Current-architecture lower bound:
+4 ALU + 4 VSTORE + (3 hit loads x 1) + (5 miss loads x 2) = 21 cycles.

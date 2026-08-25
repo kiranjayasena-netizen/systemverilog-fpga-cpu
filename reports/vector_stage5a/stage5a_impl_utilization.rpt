@@ -1,0 +1,36 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Tue Aug 11 20:55:05 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file reports/vector_stage5a/stage5a_impl_utilization.rpt
+| Design       : vector_program_core_synth_top
+| Device       : xc7a35tcpg236-1
+| Speed File   : -1
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-----------------------------------+-----------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|              Instance             |               Module              | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++-----------------------------------+-----------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| vector_program_core_synth_top     |                             (top) |       2284 |       2272 |      12 |    0 | 1035 |      0 |      0 |          0 |
+|   (vector_program_core_synth_top) |                             (top) |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   core_inst                       |               vector_program_core |       2284 |       2272 |      12 |    0 | 1035 |      0 |      0 |          0 |
+|     instruction_memory_inst       |         vector_instruction_memory |        153 |        141 |      12 |    0 |    0 |      0 |      0 |          0 |
+|     execution_unit_inst           | vector_instruction_execution_unit |       2120 |       2120 |       0 |    0 | 1024 |      0 |      0 |          0 |
+|       execution_unit_inst         |             vector_execution_unit |       2120 |       2120 |       0 |    0 | 1024 |      0 |      0 |          0 |
+|         vector_alu_inst           |                        vector_alu |          4 |          4 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         vector_register_file_inst |              vector_register_file |       2120 |       2120 |       0 |    0 | 1024 |      0 |      0 |          0 |
++-----------------------------------+-----------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

@@ -1,0 +1,26 @@
+STAGE 13 FINAL SUMMARY
+Analysis testbench: PASS
+REG_VADD: 4 cycles = 4 ALU cycles, no memory/control bubbles.
+ARRAY_ADD: 21 cycles = 4 ALU + 3 hit loads + 5 miss loads + 5 load-WB + 4 stores.
+XOR: 13 cycles = 4 ALU + 3 hit loads + 1 miss load + 1 load-WB + 4 stores.
+VSRA: 13 cycles = same primary pattern as XOR.
+All primary categories sum exactly to measured totals.
+
+ARRAY_ADD has no idle, control, or unclassified bubble cycles. Three
+prefetch hits save three miss/writeback phases, but five loads still miss.
+The current frozen state model therefore has a measured lower bound of
+4 + 4 + 3 + (5 x 2) = 21 cycles, equal to the observed result.
+
+WHY STAGE 11 DID NOT HELP:
+Depth-6 visibility discovers earlier candidates, but the instruction order
+still leaves five architectural loads without a valid entry at consumption.
+
+WHY STAGE 12 DID NOT HELP:
+Two requests can overlap (one two-outstanding cycle and one useful pair),
+but the remaining five misses still require their separate writeback phase.
+
+NEXT RECOMMENDED ARCHITECTURAL STAGE:
+Stage 14 should target load-miss/writeback sequencing or a fused load
+completion path, after confirming that the intended ISA/retirement contract
+permits removing a miss writeback cycle. More prefetch capacity alone is not
+indicated by this trace.

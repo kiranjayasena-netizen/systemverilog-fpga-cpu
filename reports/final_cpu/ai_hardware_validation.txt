@@ -1,0 +1,45 @@
+STAGE 27 AI CPU HARDWARE VALIDATION
+STATUS: NOT COMPLETE — PHYSICAL VALIDATION BLOCKED BY MISSING CPU HOST INTERFACE
+
+OPTIMIZED CORE: rtl/cpu_core_pipeline_dot4acc_memopt_h13b_timingopt_t2.sv
+OPTIMIZED TOP: rtl/fpga_top_pipeline_dot4acc_memopt_h13b_timingopt_t2.sv
+KNOWN BASELINE: approximately 93 MHz, 2008 LUT, 1812 FF, 2 RAMB18, 5 DSP
+
+DOT4ACC SEMANTICS: opcode 0xc; four signed INT8 lane products accumulated
+into rd; 32-bit modulo wrap; reserved immediate bits zero.
+
+SIMULATION ARTIFACTS:
+scripts/run_ai_cpu_dot4acc_xsim.tcl
+tools/ai_cpu_golden.py
+
+PHYSICAL BLOCKER:
+The frozen CPU board top exposes only clk/reset/enable and LEDs. It does not
+provide UART, program/data preload, result readback, or cycle-count readback.
+Adding a fair physical validation path requires a separate wrapper with those
+ports (or modifying the frozen core's memory interfaces), which has not been
+done under the no-core-modification rule.
+
+BOARD HARDWARE TESTS ACTUALLY RUN: NO
+OPTIMIZED CPU BITSTREAM: NOT RUN IN STAGE 27
+BASELINE CPU BITSTREAM: NOT RUN IN STAGE 27
+
+SIMULATION: frozen DOT4ACC architectural suite completed; Python golden edge
+vectors passed. No hardware PASS is claimed.
+
+STAGE 27B INTERFACE AUDIT: STOP CONDITION MET. Both frozen cores expose no
+program/data preload, data readback, start/done, or UART interface. Their
+instruction/data BRAMs are internal; hierarchical access is simulation-only.
+No validation RTL was fabricated and no frozen core was modified.
+Historical pre-final-rebuild implementation reference (superseded below).
+Paired 80 MHz implementation PASS. Baseline bitstream
+`.ai_cpu_baseline/ai_cpu_baseline.bit`: WNS +1.956 ns, WHS +0.093 ns, 2077
+LUT, 1883 FF, 1 RAMB18, 0 DSP. Optimized bitstream
+`.ai_cpu_optimized/ai_cpu_optimized.bit`: WNS +0.443 ns, WHS +0.117 ns, 2953
+LUT, 2192 FF, 1 RAMB18, 5 DSP. Both have zero TNS/THS and failing endpoints.
+Physical FPGA testing has not been performed.
+
+STAGE 27D PHYSICAL: Basys 3 xc7a35t target 210183BE6B56, COM4, 80 MHz.
+DOT4 baseline/optimized 0x46/42 and 0x46/17; DOT64 0x40/73 and 0x40/32;
+MATVEC 0x278,0xffff_ff11/27 and /20; EDGE 0x1/16 and 0x1/17. All equal
+golden. Speedups: 2.4706x, 2.2813x, 1.3500x, 0.9412x (EDGE slower).
+Reset/restart passed. Optimized stability 100/100, zero errors/timeouts.

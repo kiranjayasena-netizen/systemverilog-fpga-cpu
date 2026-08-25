@@ -40,6 +40,20 @@ obj_dir/
 *.dcp
 *.ltx
 reports/*_impl/
+reports/ai_mac_fmax_sweep/runs/
+reports/ai_mac8_timingopt/
+reports/ai_mac8_validonly_fmax/runs/
+reports/ai_mac8_boundary_sweep/runs/
+reports/dot4acc_stage_f/runs/
+reports/dot4acc_stage_g/runs/
+
+# Stage 27 local validation artifacts (recreate with the isolated build wrapper)
+.ai_cpu_baseline/
+.ai_cpu_optimized/
+*_physical*.json
+optimized_stability.json
+.vivado_signoff_user/
+.vivado_signoff_temp/
 
 # Temporary/editor files
 *.tmp
@@ -59,3 +73,38 @@ __pycache__/
 
 # Local Vivado project folders
 vivado/
+build/vector_stage5a/
+.stage10a_xsim/
+.stage10ab_equiv_xsim/
+.stage10b_bench_xsim/
+.stage11_depth6_xsim/
+.stage11_depth8_xsim/
+.stage11_depth12_xsim/
+.stage11_equiv_xsim/
+.stage11_bench_xsim/
+.stage11_depth6_synth/
+.stage11_depth8_synth/
+.stage11_depth6_impl/
+.stage11_depth8_impl/
+.stage11_depth8_bench_xsim/
+.stage10a_direct_xsim/
+.stage10b_direct_xsim/
+
+.stage10b_xsim/
+.stage12_xsim/
+.stage12_bench_xsim/
+.stage11_stage12_equiv_xsim/
+.stage12_synth/
+.stage12_impl/
+.stage13_xsim/
+.stage14_xsim/
+.stage14_bench_xsim/
+.stage14_analysis_xsim/
+.stage12_stage14_equiv_xsim/
+.stage14_synth/
+.stage14_impl/
+.stage18_analysis_xsim/
+.vector_gpu_accelerator_xsim/
+.final_gpu_synth/
+.final_gpu_impl/
+.final_gpu_bitstream/

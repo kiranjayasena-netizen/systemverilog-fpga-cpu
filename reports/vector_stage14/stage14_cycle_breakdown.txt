@@ -1,0 +1,10 @@
+Stage 14 cycle accounting (unchanged workloads, XSim)
+
+REG_VADD: total 4 = ALU 4 + all other primary categories 0.
+ARRAY_ADD: total 20 = ALU 4 + VLOAD_HIT 3 + VLOAD_MISS_ISSUE 4 + VLOAD_WRITEBACK 5 + VSTORE 4 + OTHER 0.
+XOR: total 13 = ALU 4 + VLOAD_HIT 3 + VLOAD_MISS_ISSUE 1 + VLOAD_WRITEBACK 1 + VSTORE 4 + OTHER 0.
+VSRA: total 13 = ALU 4 + VLOAD_HIT 3 + VLOAD_MISS_ISSUE 1 + VLOAD_WRITEBACK 1 + VSTORE 4 + OTHER 0.
+
+ARRAY_ADD primary sum = 20; measured total = 20; accounting PASS.
+ARRAY_ADD Stage 12 writeback cycles = 5; Stage 14 writeback-state observations remain 5, while one miss-issue/writeback schedule is overlapped and the total schedule is reduced by one cycle.
+Successful overlap count = 1; cycles saved = 1; RF double-write attempts = 0.

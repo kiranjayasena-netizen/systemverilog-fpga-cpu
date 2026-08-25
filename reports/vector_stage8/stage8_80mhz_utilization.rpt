@@ -1,0 +1,35 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Wed Aug 12 13:24:35 2026
+| Host         : DESKTOP-4GB7DVJ running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file reports/vector_stage8/stage8_80mhz_utilization.rpt
+| Design       : vector_memory_program_core_synth_top
+| Device       : xc7a35tcpg236-1
+| Speed File   : -1
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------------------+----------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|                 Instance                 |           Module           | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++------------------------------------------+----------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| vector_memory_program_core_synth_top     |                      (top) |       2784 |       2772 |      12 |    0 | 1039 |      2 |      0 |          0 |
+|   (vector_memory_program_core_synth_top) |                      (top) |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   core                                   | vector_memory_program_core |       2784 |       2772 |      12 |    0 | 1039 |      2 |      0 |          0 |
+|     pim                                  |  vector_instruction_memory |        102 |         90 |      12 |    0 |    0 |      0 |      0 |          0 |
+|     data_mem                             |         vector_data_memory |         78 |         78 |       0 |    0 |    0 |      2 |      0 |          0 |
+|     eu                                   |      vector_execution_unit |       2591 |       2591 |       0 |    0 | 1024 |      0 |      0 |          0 |
+|       vector_register_file_inst          |       vector_register_file |       2591 |       2591 |       0 |    0 | 1024 |      0 |      0 |          0 |
++------------------------------------------+----------------------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+
