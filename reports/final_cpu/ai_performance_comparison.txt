@@ -1,0 +1,44 @@
+STAGE 27 AI CPU PERFORMANCE COMPARISON
+
+SIMULATION SOURCE:
+Existing Stage E DOT4ACC benchmark report/results.csv and frozen
+tb/tb_cpu_core_pipeline_dot4acc_memopt_h13b_timingopt_t2.sv.
+
+DOT4ACC SEMANTICS:
+four signed INT8 products, accumulated into a 32-bit rd with modulo-2^32
+wraparound. Opcode 0xc; packed lanes are [7:0], [15:8], [23:16], [31:24].
+
+EXISTING SOFTWARE BASELINE:
+programs/ai_dot_product_baseline.mem, existing-ISA repeated ADD/SUB.
+DOT4ACC PROGRAM:
+programs/ai_dot_product_dot4acc.mem.
+
+REFERENCE SIMULATION RESULTS (historical verified report):
+64-element neuron: scalar 118 cycles, MAC8 70 cycles, DOT4ACC 27 cycles;
+DOT4ACC result matches the scalar reference and measured same-clock speedup
+over scalar is 4.37x. The selected H1.3b-T2 implementation has the retained
+93 MHz physical baseline of 2008 LUT, 1812 FF, 2 RAMB18, 5 DSP, setup WNS
++0.230 ns and hold WNS +0.059 ns in five repeatable runs.
+
+CURRENT STAGE 27 SIMULATION:
+The frozen DOT4ACC architectural XSim suite elaborated and completed via
+scripts/run_ai_cpu_dot4acc_xsim.tcl. The independent Python edge model passed.
+
+PHYSICAL COMPARISON:
+NOT RUN. The frozen CPU top exposes no UART/program-load/data-load/result-
+readback/cycle-counter interface. A fair baseline-vs-optimized hardware
+comparison requires a dedicated validation wrapper or core memory ports;
+adding that interface is outside this validation-only change set.
+
+STAGE 27B RESULT: no physical baseline-vs-DOT4ACC measurement was attempted
+because the required common validation contract cannot be implemented outside
+the frozen cores with the current interfaces.
+Stage 27C simulation-only ratios (not hardware speedup): DOT4 41/16 = 2.5625x;
+DOT64 72/31 = 2.3226x; MATVEC 26/19 = 1.3684x; EDGE 15/16 = 0.9375x.
+Numerical results match the workload expectations. Physical Basys 3 testing
+was not run.
+
+STAGE 27D PHYSICAL (80 MHz; UART time excluded): DOT4 42/17 cycles =
+2.4706x; DOT64 73/32 = 2.2813x; MATVEC 27/20 = 1.3500x; EDGE 16/17 =
+0.9412x. Results match golden; EDGE is an optimized slowdown. DOT64
+throughput is 70.14 M MAC/s baseline and 160.00 M MAC/s optimized.

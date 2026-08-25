@@ -256,6 +256,25 @@ Vivado closed timing at 100 and 105 MHz, but 110 MHz failed setup timing. Becaus
 | `docs/images/` | Selected screenshots and board evidence images |
 | `reports/` | Human-written reports and selected summaries |
 
+## CPU AI / DOT4ACC
+
+Stage 27 freezes a validation-specific baseline and signed-INT8 DOT4ACC CPU
+pair for the Basys 3. Both run at 80 MHz through the same UART validation
+interface. Measured physical results are:
+
+| Benchmark | Baseline cycles | Optimized cycles | Speedup | Result |
+|---|---:|---:|---:|---|
+| DOT4 | 42 | 17 | 2.4706x | PASS |
+| DOT64 | 73 | 32 | 2.2813x | PASS |
+| MATVEC | 27 | 20 | 1.3500x | PASS |
+| EDGE | 16 | 17 | 0.9412x | PASS; optimized slower |
+
+These measurements are from a Digilent Basys 3 at 80 MHz and use independent
+golden references. The optimized image passed 100/100 stability jobs. Build,
+programming, and workload instructions are in
+[`docs/cpu_ai_v1_reproduction.md`](docs/cpu_ai_v1_reproduction.md); detailed
+evidence and hashes are in the [release manifest](docs/cpu_ai_v1_release_manifest.md).
+
 ## Repository Status
 
 - Main hardware milestone reached: approximately 104 MIPS physically measured on Basys 3 in Phase 20E.
