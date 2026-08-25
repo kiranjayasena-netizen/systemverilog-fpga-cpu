@@ -275,6 +275,21 @@ programming, and workload instructions are in
 [`docs/cpu_ai_v1_reproduction.md`](docs/cpu_ai_v1_reproduction.md); detailed
 evidence and hashes are in the [release manifest](docs/cpu_ai_v1_release_manifest.md).
 
+## Canonical implementations and releases
+
+| Area | Canonical implementation | Board-facing entry point |
+|---|---|---|
+| CPU baseline | `rtl/cpu_core_pipeline_timingopt.sv` | Stage 27 validation wrapper |
+| CPU AI optimized | `rtl/cpu_core_pipeline_dot4acc_memopt_h13b_timingopt_t2.sv` | `rtl/basys3_ai_cpu_validation_top.sv` |
+| GPU | `rtl/vector_load_overlap_program_core.sv` | `rtl/basys3_vector_gpu_top.sv` |
+
+Other pipeline and vector RTL variants are retained as historical engineering
+stages. Published milestones are [book-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/book-v1.0),
+[gpu-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/gpu-v1.0),
+and [cpu-ai-v1.0](https://github.com/kiranjayasena-netizen/systemverilog-fpga-cpu/releases/tag/cpu-ai-v1.0).
+The [CPU-AI reproduction guide](docs/cpu_ai_v1_reproduction.md) and GPU
+quick-start documents provide build and validation commands.
+
 ## Repository Status
 
 - Main hardware milestone reached: approximately 104 MIPS physically measured on Basys 3 in Phase 20E.
