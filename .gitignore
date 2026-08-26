@@ -55,6 +55,9 @@ clockInfo.txt
 optimized_stability.json
 .vivado_signoff_user/
 .vivado_signoff_temp/
+.vivado_stage31_user/
+.vivado_stage31_temp/
+.ai_cpu_tiny_nn_xsim/
 
 # Temporary/editor files
 *.tmp
