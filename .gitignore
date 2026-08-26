@@ -50,6 +50,7 @@ reports/dot4acc_stage_g/runs/
 # Stage 27 local validation artifacts (recreate with the isolated build wrapper)
 .ai_cpu_baseline/
 .ai_cpu_optimized/
+clockInfo.txt
 *_physical*.json
 optimized_stability.json
 .vivado_signoff_user/
