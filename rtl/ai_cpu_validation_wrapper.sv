@@ -2,7 +2,9 @@
 // core remains cycle-for-cycle responsible for execution; this module only
 // owns the safe load/run/read control contract used by the board harness.
 module ai_cpu_validation_wrapper #(
-    parameter bit OPTIMIZED = 1'b0
+    parameter bit OPTIMIZED = 1'b0,
+    parameter bit STAGE31_COMPLETION = 1'b0,
+    parameter logic [31:0] STAGE31_DONE_ADDR = 32'd172
 ) (
     input  logic        clk,
     input  logic        rst,
@@ -23,6 +25,7 @@ module ai_cpu_validation_wrapper #(
 );
     logic run_active;
     logic core_done;
+    logic stage31_done;
     logic [31:0] core_cycles;
 
     // Common named nets allow the two generate branches to instantiate the
@@ -59,9 +62,13 @@ module ai_cpu_validation_wrapper #(
     logic dot_cancel_event;
 
     assign busy = run_active;
-    assign done = core_done;
+    assign done = STAGE31_COMPLETION ? stage31_done : core_done;
     assign cycle_count = core_cycles;
     assign data_rdata = validation_data_rdata;
+    // Stage 31 uses an explicit completion mailbox (byte address 172).  The
+    // core's validation_done remains available for legacy Stage 27 behavior,
+    // but is intentionally ignored by this additive mode.
+    assign stage31_done = retire_mem_write && (retire_mem_addr == STAGE31_DONE_ADDR);
 
     // load_mode is deliberately part of core reset.  This guarantees that a
     // newly loaded image starts from a clean architectural state and prevents
@@ -75,7 +82,8 @@ module ai_cpu_validation_wrapper #(
         end else begin
             if (start && !load_mode && !run_active)
                 run_active <= 1'b1;
-            if (core_done)
+            if ((!STAGE31_COMPLETION && core_done) ||
+                (STAGE31_COMPLETION && stage31_done))
                 run_active <= 1'b0;
         end
     end

@@ -8,6 +8,7 @@ H = [8, 9, 10, 11]
 
 def rr(op, rd, a, b): return (OP[op]<<28)|(rd<<23)|(a<<18)|(b<<13)
 def ri(op, rd, a, imm): return (OP[op]<<28)|(rd<<23)|(a<<18)|(imm & 0x1fff)
+def st(src, base, imm): return (OP['STORE']<<28)|(base<<18)|(src<<13)|(imm & 0x1fff)
 
 def emit_hidden(p, optimized, weights):
     for i, row in enumerate(weights):
@@ -18,8 +19,8 @@ def emit_hidden(p, optimized, weights):
         else:
             p += [ri('ADDI', rd, 0, 0)]
             for j, w in enumerate(row):
-                if w == 1: p += [rr('ADD', rd, rd, 4+j)]
-                elif w == -1: p += [rr('SUB', rd, rd, 4+j)]
+                if w == 1: p += [rr('ADD', rd, rd, 4+j), 0, 0]
+                elif w == -1: p += [rr('SUB', rd, rd, 4+j), 0, 0]
         # ReLU: sign-mask test; negative values are replaced with zero.
         p += [rr('AND', RACC, rd, RMASK), 0, ri('ADDI', rd, 0, 0)]
         # Replace placeholder branch with BEQ-to-positive continuation.
@@ -45,14 +46,15 @@ def build(optimized):
             p.extend([0, 0, 0])
         emit_hidden(p, False, [[1,1,1,1],[1,-1,1,-1],[-1,1,-1,1],[1,1,-1,-1]])
     # Output scores: y0 = h0+h1+h2+h3; y1 = h0-h1+h2-h3+3.
-    p += [ri('ADDI', 12, 0, 0), rr('ADD',12,12,8), rr('ADD',12,12,9),
-          rr('ADD',12,12,10), rr('ADD',12,12,11),
-          ri('ADDI',13,0,3), rr('ADD',13,13,8), rr('SUB',13,13,9),
-          rr('ADD',13,13,10), rr('SUB',13,13,11),
-          ri('STORE',12,RBASE,0), ri('STORE',13,RBASE,4)]
+    p += [ri('ADDI', 12, 0, 0), rr('ADD',12,12,8),0,0, rr('ADD',12,12,9),0,0,
+          rr('ADD',12,12,10),0,0, rr('ADD',12,12,11),0,0,
+          ri('ADDI',13,0,3), rr('ADD',13,13,8),0,0, rr('SUB',13,13,9),0,0,
+          rr('ADD',13,13,10),0,0, rr('SUB',13,13,11),0,0,
+          0,0,0, st(13,RBASE,4),0,0,0, st(12,RBASE,0)]
     # class = (y0-y1 < 0), using sign mask; final store is completion event.
     p += [rr('SUB',14,12,13), rr('AND',RACC,14,RMASK), ri('ADDI',15,0,0),
-          ri('BEQ',0,RACC,3), ri('ADDI',15,0,1), ri('STORE',15,RBASE,8)]
+          ri('BEQ',0,RACC,3), ri('ADDI',15,0,1), 0,0,0, st(15,RBASE,8),
+          ri('ADDI',16,0,1), 0,0,0, st(16,RBASE,12)]
     p += [0]
     return p
 
