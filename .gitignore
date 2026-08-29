@@ -58,6 +58,9 @@ optimized_stability.json
 .vivado_stage31_user/
 .vivado_stage31_temp/
 .ai_cpu_tiny_nn_xsim/
+.stage31_build/
+.ai_cpu_stage31_baseline/
+.ai_cpu_stage31_optimized/
 
 # Temporary/editor files
 *.tmp

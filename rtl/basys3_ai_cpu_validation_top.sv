@@ -1,5 +1,6 @@
 module basys3_ai_cpu_validation_top #(
-    parameter bit OPTIMIZED = 1'b0
+    parameter bit OPTIMIZED = 1'b0,
+    parameter bit STAGE31_COMPLETION = 1'b0
 ) (
     input logic clk100, input logic rst_btn, input logic uart_rx,
     output logic uart_tx, output logic [15:0] led
@@ -20,7 +21,7 @@ module basys3_ai_cpu_validation_top #(
         .CLKOUT0(gpu_clk_mmcm), .CLKFBOUT(gpu_clk_fb), .LOCKED(locked));
     BUFG bufg_i(.I(gpu_clk_mmcm),.O(gpu_clk));
 
-    ai_cpu_validation_wrapper #(.OPTIMIZED(OPTIMIZED)) cpu_i (
+    ai_cpu_validation_wrapper #(.OPTIMIZED(OPTIMIZED), .STAGE31_COMPLETION(STAGE31_COMPLETION)) cpu_i (
         .clk(gpu_clk), .rst(rst_btn | ~locked | reset_req), .load_mode(load_mode),
         .start(start), .prog_we(prog_we), .prog_addr(prog_addr), .prog_data(prog_data),
         .data_we(data_we), .data_addr_host(data_addr), .data_wdata(data_wdata),
@@ -53,4 +54,16 @@ module basys3_ai_cpu_optimized_top(
     input logic clk100,input logic rst_btn,input logic uart_rx,
     output logic uart_tx,output logic [15:0] led);
     basys3_ai_cpu_validation_top #(.OPTIMIZED(1'b1)) i(.*);
+endmodule
+
+module basys3_ai_cpu_stage31_baseline_top(
+    input logic clk100,input logic rst_btn,input logic uart_rx,
+    output logic uart_tx,output logic [15:0] led);
+    basys3_ai_cpu_validation_top #(.OPTIMIZED(1'b0),.STAGE31_COMPLETION(1'b1)) i(.*);
+endmodule
+
+module basys3_ai_cpu_stage31_optimized_top(
+    input logic clk100,input logic rst_btn,input logic uart_rx,
+    output logic uart_tx,output logic [15:0] led);
+    basys3_ai_cpu_validation_top #(.OPTIMIZED(1'b1),.STAGE31_COMPLETION(1'b1)) i(.*);
 endmodule
